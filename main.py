@@ -1,8 +1,11 @@
+import Yehor
+
+
 class Game :
 
 
     def __init__(self):
-        self.money = 10000000
+        self.money = 1000000
         self.infected_population = 1
         self.public_dissatisfaction = 20
         self.research_progress = 0
@@ -16,7 +19,7 @@ class Game :
         pass
     def check_game_status(self):
 
-        if self.infected_population >= 100000:
+        if self.infected_population >= 99:
             print("The infection has spread globally. Game Over!")
             self.game_over = True
         elif self.public_dissatisfaction >= 100:
@@ -28,3 +31,4 @@ class Game :
 
 
 game1 = Game()
+Yehor.function()
