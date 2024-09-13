@@ -25,7 +25,7 @@ def get_airport_coordinates(icao_code):
             port=3306,
             database='test',
             user='root',
-            password='3560',
+            password='root',
             autocommit=True
         )
 
