@@ -1,9 +1,6 @@
 import mariadb
 from geopy.distance import geodesic
 
-import Yehor
-
-
 class Game :
 
 
@@ -50,4 +47,3 @@ Yehor.payment_choice(
 )
 
 print(Yehor.distance_between_two(Yehor.get_airport_coordinates("SA01"),Yehor.get_airport_coordinates("SA01")))
-## Testing line 2
