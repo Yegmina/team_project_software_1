@@ -5,7 +5,6 @@ def function():
     print("Hello")
     return
 
-
 def payment_choice(game, local_money_needed, local_infected_changing, local_dissatisfaction_changing, local_research_progress_changing, local_text):
     if local_money_needed > game.money:
         print("Not enough money to do this choice.")
