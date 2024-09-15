@@ -1,6 +1,7 @@
 import mariadb
 from geopy.distance import geodesic
 
+
 def function():
     print("Hello")
     return
