@@ -1,6 +1,11 @@
 import mariadb
 from geopy.distance import geodesic
 
+import Yehor
+
+
+
+
 class Game :
 
 
