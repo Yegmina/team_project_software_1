@@ -38,14 +38,16 @@ def create_game_database(game_count) :
     for i in range(6) :
         query = (f"SELECT ident FROM airport WHERE continent = '{continents[i]}'"
                  f" AND type = 'large_airport'")
-        customList = run(query)
+        customList = run(query)                     ##Holds all LARGE AIRPORTS from EACH continent
 
         for num in range(NoCountriesEachContinent[i]) :
             airport = customList[random.randint(0, len(customList) - 1)][0]
             if airport not in GameAirports:
-                GameAirports.append(airport)
+                GameAirports.append(airport)        ##Randomizes from each continent the number of
+                                                    ##necessary airports
 
-    run(f"DROP TABLE IF EXISTS game_{game_count}")
+
+    run(f"DROP TABLE IF EXISTS game_{game_count}")  ##Creating the table
     run(f"CREATE TABLE game_{game_count} ("
         f"  icao_code VARCHAR(10) NOT NULL,"        ##Airplane ICAO Code
         f"  infected BOOLEAN DEFAULT FALSE,"        ##Default Infected var is FALSE (Not infected)
