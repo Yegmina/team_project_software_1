@@ -13,7 +13,7 @@ class Game :
         self.infected_population = 1 #%
         self.public_dissatisfaction = 20 #%
         self.research_progress = 0 #%
-        #self.cure_cost = 30000 #not needed now
+        #self.cure_cost = 30000 #not needed now, it should be dynamic
         self.game_over = False
         self.game_turn = 0 #counter
 
@@ -50,4 +50,4 @@ Yehor.payment_choice(
     local_text="You invested in vaccine research."
 )
 
-print(Yehor.distance_between_two(Yehor.get_airport_coordinates("SA01"),Yehor.get_airport_coordinates("SA01")))
+print(Yehor.distance_between_two(Yehor.get_airport_coordinates("SA02"),Yehor.get_airport_coordinates("SA01")))
