@@ -19,7 +19,7 @@ while True:
     if Start_choice == 1:
         print("RULES: AKJSDAKDKAJNDSSNKJADASDAJKN JKSNDKJDKASDAKD ")
 
-    if Start_choice == 2:
+    elif Start_choice == 2:
         print(" Loading... ")
         break
 
