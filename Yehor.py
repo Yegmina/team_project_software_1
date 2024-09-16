@@ -54,4 +54,4 @@ def distance_between_two(local_coordinates_1, local_coordinates_2):
         distance = geodesic(local_coordinates_1, local_coordinates_2).kilometers
         return distance
     else:
-        return "ERROR: Could not calculate distance because one or both coordinates were not provided."
+        return 999999999 # can be changed
