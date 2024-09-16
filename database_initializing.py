@@ -46,15 +46,14 @@ def create_game_database(game_count) :
 
     run(f"DROP TABLE IF EXISTS game_{game_count}")
     run(f"CREATE TABLE game_{game_count} ("
-        f"  icao_code VARCHAR(10) NOT NULL,"
-        f"  infected BOOLEAN DEFAULT FALSE,"
-        f"  closed BOOLEAN DEFAULT FALSE,"
-        f"  CONSTRAINT game_{game_count}_ibfk_1 FOREIGN KEY (icao_code) REFERENCES airport(ident)"
+        f"  icao_code VARCHAR(10) NOT NULL,"        ##Airplane ICAO Code
+        f"  infected BOOLEAN DEFAULT FALSE,"        ##Default Infected var is FALSE (Not infected)
+        f"  closed BOOLEAN DEFAULT FALSE,"          ##Default Airport status var is FALSE (Not closed)
+        f"  CONSTRAINT game_{game_count}_ibfk_1 FOREIGN KEY (icao_code) REFERENCES airport(ident)"      
+            ##ICAO Code is directly connected to airport(ident)
         f") ENGINE=InnoDB DEFAULT CHARSET=latin1;")
 
     for airport in GameAirports :
         run(f"INSERT INTO game_{game_count} VALUES ('{airport}', 0 , 0)")
 #</editor-fold>
-
-create_game_database(1)
 
