@@ -4,28 +4,31 @@ import tai
 
 import Yehor
 
-
-class Game :
-
+class Game:
 
     def __init__(self):
         self.money = 1000000
-        self.infected_population = 1 #%
-        self.public_dissatisfaction = 20 #%
-        self.research_progress = 0 #%
-        #self.cure_cost = 30000 #not needed now, it should be dynamic
+        self.infected_population = 1  # %
+        self.public_dissatisfaction = 20  # %
+        self.research_progress = 0  # %
         self.game_over = False
-        self.game_turn = 0 #counter
+        self.game_turn = 0  # counter
 
     def start(self):
         print("Game started! Good luck!")
         self.game_turn = 1  # Reset the game turn
 
     def make_choice(self):
-        pass
+        Yehor.payment_choice(
+            self,  # Use 'self' to refer to the current game instance
+            local_money_needed=50000,
+            local_infected_changing=-1,
+            local_dissatisfaction_changing=0,
+            local_research_progress_changing=15,
+            local_text="You invested in vaccine research."
+        )
 
     def check_game_status(self):
-
         if self.infected_population >= 99:
             print("The infection has spread globally. Game Over!")
             self.game_over = True
@@ -46,27 +49,14 @@ def main():
         game.start()
         # Proceed with game logic, like showing actions, making choices, etc.
         # After this line example, just for debugging purposes
-        print(Yehor.get_airport_coordinates("SA01"))
+        while game.game_over == False:  # Fix the capitalization of 'False'
+            game.make_choice()  # Call the make_choice method from the Game class
+            game.check_game_status()  # Call the check_game_status method from the Game class
 
-        Yehor.payment_choice(
-            game,
-            local_money_needed=50000,
-            local_infected_changing=-1,
-            local_dissatisfaction_changing=0,
-            local_research_progress_changing=15,
-            local_text="You invested in vaccine research."
-        )
 
-        print(Yehor.distance_between_two(
-            Yehor.get_airport_coordinates("SA02"),
-            Yehor.get_airport_coordinates("SA01")
-        ))
 
     elif player_choice == 'continue':
         print("Loading game... (Add loading logic here)")
-        # I don't know how we are going to save and load it. Maybe using database is good things.
-        # Like get info from infected table and user (all global variables).
-        # Maybe we can also provide sth like login + password way to store data and playing sessions
 
     elif player_choice == 'quit':
         print("Exiting the game... Goodbye! Moi moi!")
@@ -74,3 +64,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
