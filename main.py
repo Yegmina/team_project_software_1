@@ -1,7 +1,7 @@
 import mariadb
 from geopy.distance import geodesic
 import tai
-
+import random
 import Yehor
 
 class Game:
@@ -22,7 +22,9 @@ class Game:
         #there should be randomly selected 3-4 choices. After player make choice from that, call payment_choice function like below
         choices = Yehor.load_choices_from_json('choices.json')
         choice_tuples = [Yehor.convert_choice_to_tuple(choice) for choice in choices]
-        Yehor.payment_choice(self, choice_tuples[1])
+
+        print(choice_tuples[0][0]) #name of the choice
+        Yehor.payment_choice(self, choice_tuples[0])
 
 
 

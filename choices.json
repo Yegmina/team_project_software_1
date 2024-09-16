@@ -1,6 +1,7 @@
 {
     "choices": [
         {
+            "local_name": "Vaccine Research Investment",
             "local_money_needed": 50000,
             "local_infected_changing": -1,
             "local_dissatisfaction_changing": 0,
@@ -8,6 +9,7 @@
             "local_text": "You invested in vaccine research."
         },
         {
+            "local_name": "Ignore the problem",
             "local_money_needed": 0,
             "local_infected_changing": 1,
             "local_dissatisfaction_changing": 5,

@@ -10,6 +10,7 @@ def load_choices_from_json(local_json_file):
 
 def convert_choice_to_tuple(local_choice_dict):
     return (
+        local_choice_dict['local_name'],
         local_choice_dict['local_money_needed'],
         local_choice_dict['local_infected_changing'],
         local_choice_dict['local_dissatisfaction_changing'],
@@ -24,7 +25,7 @@ def function():
 
 
 def payment_choice(game, local_choice_tuple):
-    local_money_needed, local_infected_changing, local_dissatisfaction_changing, local_research_progress_changing, local_text = local_choice_tuple
+    local_name, local_money_needed, local_infected_changing, local_dissatisfaction_changing, local_research_progress_changing, local_text = local_choice_tuple
 
     if local_money_needed > game.money:
         print("Not enough money to do this choice.")
