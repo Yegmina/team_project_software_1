@@ -19,8 +19,9 @@ class Game:
         self.game_turn = 1  # Reset the game turn
 
     def make_choice(self):
+        #there should be randomly selected 3-4 choices. After player make choice from that, call payment_choice function like below
         Yehor.payment_choice(
-            self,  # Use 'self' to refer to the current game instance
+            self,
             local_money_needed=50000,
             local_infected_changing=-1,
             local_dissatisfaction_changing=0,
@@ -49,9 +50,9 @@ def main():
         game.start()
         # Proceed with game logic, like showing actions, making choices, etc.
         # After this line example, just for debugging purposes
-        while game.game_over == False:  # Fix the capitalization of 'False'
-            game.make_choice()  # Call the make_choice method from the Game class
-            game.check_game_status()  # Call the check_game_status method from the Game class
+        while game.game_over == False:
+            game.make_choice()
+            game.check_game_status()
 
 
 
