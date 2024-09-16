@@ -7,7 +7,13 @@ import database_initializing
 
 class Game:
 
+    total_games = 0
+
     def __init__(self):
+        Game.total_games += 1                                           ##Count the number of totalgames
+        self.designated_db_table = f"game_{Game.total_games}"           ##And initialize database
+        database_initializing.create_game_database(Game.total_games)
+
         self.money = 1000000
         self.infected_population = 1  # %
         self.public_dissatisfaction = 20  # %
@@ -40,13 +46,17 @@ class Game:
             print("The cure has been developed! You saved the world!")
             self.game_over = True
 
+saved_games = [Game()]              ##List of saved games
+
+
 # Main game logic
 def main():
     # Call the start() function from tai.py to get the user's choice
     player_choice = tai.start()
 
     if player_choice == 'new':
-        game = Game()  # Create a new game instance
+        game = Game()               ##Rewrote this part using the saved_games list
+        saved_games.append(game)
         game.start()
         # Proceed with game logic, like showing actions, making choices, etc.
         # After this line example, just for debugging purposes
