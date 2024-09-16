@@ -37,7 +37,7 @@ except :
 #NA - 5 ; OC - 3 ; SA & AN - 1
 #<editor-fold desc="IMPLEMENTATION OF THE GAME DATABASE CREATION">
 import random
-class GameDatabase :
+def create_game_database() :
     continents = ('AF', 'AS', 'EU', 'NA', 'OC', 'SA', 'AN')
     NoCountriesEachContinent = (7, 7, 6, 5, 3, 1, 1)
     GameAirports = []
@@ -51,8 +51,7 @@ class GameDatabase :
             if airport not in GameAirports:
                 GameAirports.append(airport)
 
-    for i in range(len(GameAirports)) :
-        print(GameAirports[i])
+    ##I
 
     cursor.execute(f"USE game_database;")
 #</editor-fold>
