@@ -45,9 +45,7 @@ def get_airport_coordinates(icao_code):
         print(f"Error connecting to MariaDB: {e}")
         return None
 
-    finally:
-        if connection:
-            connection.close()
+
 
 def distance_between_two(local_coordinates_1, local_coordinates_2):
     if local_coordinates_1 and local_coordinates_2:
