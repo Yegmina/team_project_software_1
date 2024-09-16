@@ -1,0 +1,18 @@
+{
+    "choices": [
+        {
+            "local_money_needed": 50000,
+            "local_infected_changing": -1,
+            "local_dissatisfaction_changing": 0,
+            "local_research_progress_changing": 15,
+            "local_text": "You invested in vaccine research."
+        },
+        {
+            "local_money_needed": 0,
+            "local_infected_changing": 1,
+            "local_dissatisfaction_changing": 5,
+            "local_research_progress_changing": -1,
+            "local_text": "You ignored health protocols."
+        }
+    ]
+}
