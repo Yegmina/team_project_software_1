@@ -3,6 +3,7 @@ from geopy.distance import geodesic
 import tai
 import random
 import Yehor
+import database_initializing
 
 class Game:
 

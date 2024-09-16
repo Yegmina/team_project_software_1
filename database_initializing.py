@@ -31,10 +31,10 @@ import main
 #ICAO Code - Infected (Bool) - Closed (Bool) - Large airport
 
 GameAirports = []
-def create_game_database() :
+def create_game_database(game_count) :
+
     continents = ('AF', 'AS', 'EU', 'NA', 'OC', 'SA')
     NoCountriesEachContinent = (7, 7, 7, 5, 3, 1)
-
     for i in range(6) :
         query = (f"SELECT name FROM airport WHERE continent = '{continents[i]}'"
                  f" AND type = 'large_airport'")
@@ -46,6 +46,14 @@ def create_game_database() :
             airport = customList[random.randint(0, len(customList) - 1)][0]
             if airport not in GameAirports:
                 GameAirports.append(airport)
+
+    run(f"DROP TABLE IF EXISTS game_{game_count}")
+    run(f"CREATE TABLE game_{game_count} ("
+        f"  infected BOOLEAN DEFAULT FALSE,"
+        f"  closed BOOLEAN DEFAULT FALSE,"
+        f"  icao_code VARCHAR(10) NOT NULL,"
+        f"  CONSTRAINT game_{game_count}_ibfk_1 FOREIGN KEY (icao_code) REFERENCES airport(ident)"
+        f") ENGINE=InnoDB DEFAULT CHARSET=latin1;")
 
 
 #</editor-fold>
