@@ -25,12 +25,13 @@ def run(s) :
 #Below is the table specifying which contients should have how many airports
 #AF - 7 ; AS - 7 ; EU - 6
 #NA - 5 ; OC - 3 ; SA & AN - 1
+
+
 #<editor-fold desc="IMPLEMENTATION OF INSERTING DATA INTO game_database DB">
 
 #ICAO Code - Infected (Bool) - Closed (Bool) - Large airport
-
-GameAirports = []
 def create_game_database(game_count) :
+    GameAirports = []
 
     continents = ('AF', 'AS', 'EU', 'NA', 'OC', 'SA')
     NoCountriesEachContinent = (7, 7, 7, 5, 3, 1)
