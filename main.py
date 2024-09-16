@@ -20,14 +20,9 @@ class Game:
 
     def make_choice(self):
         #there should be randomly selected 3-4 choices. After player make choice from that, call payment_choice function like below
-        Yehor.payment_choice(
-            self,
-            local_money_needed=50000,
-            local_infected_changing=-1,
-            local_dissatisfaction_changing=0,
-            local_research_progress_changing=15,
-            local_text="You invested in vaccine research."
-        )
+        choice = (50000, -1, 0, 15, "You invested in vaccine research.")
+
+        Yehor.payment_choice(self, choice)
 
     def check_game_status(self):
         if self.infected_population >= 99:
