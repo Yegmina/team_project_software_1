@@ -1,6 +1,6 @@
 import mariadb
 from geopy.distance import geodesic
-
+import tai
 
 import Yehor
 
@@ -18,7 +18,8 @@ class Game :
         self.game_turn = 0 #counter
 
     def start(self):
-        pass
+        print("Game started! Good luck!")
+        self.game_turn = 1  # Reset the game turn
 
     def make_choice(self):
         pass
@@ -35,19 +36,41 @@ class Game :
             print("The cure has been developed! You saved the world!")
             self.game_over = True
 
+# Main game logic
+def main():
+    # Call the start() function from tai.py to get the user's choice
+    player_choice = tai.start()
 
-#testing
-game1 = Game()
-print(Yehor.get_airport_coordinates("SA01"))
+    if player_choice == 'new':
+        game = Game()  # Create a new game instance
+        game.start()
+        # Proceed with game logic, like showing actions, making choices, etc.
+        # After this line example, just for debugging purposes
+        print(Yehor.get_airport_coordinates("SA01"))
+
+        Yehor.payment_choice(
+            game,
+            local_money_needed=50000,
+            local_infected_changing=-1,
+            local_dissatisfaction_changing=0,
+            local_research_progress_changing=15,
+            local_text="You invested in vaccine research."
+        )
+
+        print(Yehor.distance_between_two(
+            Yehor.get_airport_coordinates("SA02"),
+            Yehor.get_airport_coordinates("SA01")
+        ))
+
+    elif player_choice == 'continue':
+        print("Loading game... (Add loading logic here)")
+        # I don't know how we are going to save and load it. Maybe using database is good things.
+        # Like get info from infected table and user (all global variables).
+        # Maybe we can also provide sth like login + password way to store data and playing sessions
+
+    elif player_choice == 'quit':
+        print("Exiting the game... Goodbye! Moi moi!")
 
 
-Yehor.payment_choice(
-    game1,
-    local_money_needed=50000,
-    local_infected_changing=5,
-    local_dissatisfaction_changing=0,
-    local_research_progress_changing=15,
-    local_text="You invested in vaccine research."
-)
-
-print(Yehor.distance_between_two(Yehor.get_airport_coordinates("SA02"),Yehor.get_airport_coordinates("SA01")))
+if __name__ == "__main__":
+    main()
