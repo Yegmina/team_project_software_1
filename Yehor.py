@@ -1,10 +1,10 @@
 import mariadb
 from geopy.distance import geodesic
 
+
 def function():
     print("Hello")
     return
-
 
 def payment_choice(game, local_money_needed, local_infected_changing, local_dissatisfaction_changing, local_research_progress_changing, local_text):
     if local_money_needed > game.money:
@@ -23,7 +23,7 @@ def get_airport_coordinates(icao_code):
         connection = mariadb.connect(
             host='127.0.0.1',
             port=3306,
-            database='test',
+            database='flight_game',
             user='root',
             password='root',
             autocommit=True
@@ -45,13 +45,11 @@ def get_airport_coordinates(icao_code):
         print(f"Error connecting to MariaDB: {e}")
         return None
 
-    finally:
-        if connection:
-            connection.close()
+
 
 def distance_between_two(local_coordinates_1, local_coordinates_2):
     if local_coordinates_1 and local_coordinates_2:
         distance = geodesic(local_coordinates_1, local_coordinates_2).kilometers
         return distance
     else:
-        return "ERROR: Could not calculate distance because one or both coordinates were not provided."
+        return 999999999 # can be changed
