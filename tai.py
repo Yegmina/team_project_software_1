@@ -37,6 +37,9 @@ while True:
 if Start_choice == 2:
     pass
     # Insert game here;
+if Start_choice == 3:
+    pass
+    # Insert game here Yehorr~~~~;
 
 
 
