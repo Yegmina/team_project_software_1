@@ -12,7 +12,7 @@ class Game:
     def __init__(self):
         Game.total_games += 1                                           ##Count the number of totalgames
         self.designated_db_table = f"game_{Game.total_games}"           ##And initialize database
-        database_initializing.create_game_database(Game.total_games)
+        db.create_game_database(Game.total_games)
 
         self.money = 1000000
         self.infected_population = 1  # %
