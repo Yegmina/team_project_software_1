@@ -3,6 +3,7 @@ from geopy.distance import geodesic
 import json
 import database_initializing as db
 import main
+import time
 
 def load_choices_from_json(local_json_file):
     with open(local_json_file, 'r') as file:
@@ -35,13 +36,24 @@ def payment_choice(game, local_choice_tuple):
     else:
         game.money -= local_money_needed
         game.game_turn += 1
-        game.infected_population += local_infected_changing
-        game.public_dissatisfaction += local_dissatisfaction_changing
-        game.research_progress += local_research_progress_changing
+        if local_infected_changing!=0:
+            game.infected_population += local_infected_changing
+            print(f"Infected population grow by {local_infected_changing}. Now it is {game.infected_population}")
+            time.sleep(1)
+        if local_dissatisfaction_changing!=0:
+            game.public_dissatisfaction += local_dissatisfaction_changing
+            print(f"Public dissatisfaction grow by {local_dissatisfaction_changing}. Now it is {game.public_dissatisfaction}")
+            time.sleep(1)
+        if local_research_progress_changing!=0:
+            game.research_progress += local_research_progress_changing
+            print(f"Research progress grow by {local_research_progress_changing}. Now it is {game.research_progress}")
+            time.sleep(1)
+
         if local_sql_query!="":
             local_string_query=f"UPDATE {game.designated_db_table}\n {local_sql_query}"
             db.run(local_string_query)
-        # print(f"UPDATE {game.designated_db_table}\n SET closed = 1\n WHERE 1=1")
+        if local_text!="":
+            print(local_text)
         #print(game.designated_db_table)
 
 

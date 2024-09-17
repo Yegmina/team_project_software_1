@@ -4,6 +4,8 @@ import tai
 import random
 import Yehor
 import database_initializing as db
+import time
+
 
 class Game:
 
@@ -28,13 +30,19 @@ class Game:
         self.game_turn = 1  # Reset the game turn
 
     def make_choice(self):
-        #there should be randomly selected 3-4 choices. After player make choice from that, call payment_choice function like below
         choices = Yehor.load_choices_from_json('choices.json')
         choice_tuples = [Yehor.convert_choice_to_tuple(choice) for choice in choices]
 
-        print(choice_tuples[0][0]) #name of the choice
-        Yehor.payment_choice(self, choice_tuples[2])
+        random_indices_tuple = random.sample(range(len(choice_tuples)), 3)  # This guarantees 5 unique random indices
 
+        generated_choices_tuple = [choice_tuples[i] for i in sorted(random_indices_tuple[:3])]
+        print("You should choose something!")
+        time.sleep(1)
+        for i in range(len(generated_choices_tuple)):
+            print(generated_choices_tuple[i][0])
+        user_choice = int(input("Your choice: "))
+        Yehor.payment_choice(self, generated_choices_tuple[user_choice])
+        #print(generated_choices_tuple)
 
 
     def check_game_status(self):

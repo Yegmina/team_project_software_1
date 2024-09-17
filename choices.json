@@ -24,8 +24,161 @@
             "local_infected_changing": -5,
             "local_dissatisfaction_changing": 50,
             "local_research_progress_changing": -5,
-            "local_text": "You closed all airports",
+            "local_text": "You closed all airports.",
             "local_sql_query": "SET closed = 1\n WHERE 1=1"
+        },
+        {
+            "local_name": "Distribute Free Masks",
+            "local_money_needed": 10000,
+            "local_infected_changing": -2,
+            "local_dissatisfaction_changing": -10,
+            "local_research_progress_changing": 0,
+            "local_text": "You distributed free masks.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Impose Lockdown",
+            "local_money_needed": 0,
+            "local_infected_changing": -3,
+            "local_dissatisfaction_changing": 30,
+            "local_research_progress_changing": -2,
+            "local_text": "You imposed a lockdown.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Fund Local Hospitals",
+            "local_money_needed": 30000,
+            "local_infected_changing": -1,
+            "local_dissatisfaction_changing": -5,
+            "local_research_progress_changing": 5,
+            "local_text": "You funded local hospitals.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Increase Testing",
+            "local_money_needed": 20000,
+            "local_infected_changing": -2,
+            "local_dissatisfaction_changing": -3,
+            "local_research_progress_changing": 0,
+            "local_text": "You increased testing efforts.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Hold a Public Awareness Campaign",
+            "local_money_needed": 15000,
+            "local_infected_changing": -1,
+            "local_dissatisfaction_changing": -5,
+            "local_research_progress_changing": 0,
+            "local_text": "You held a public awareness campaign.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Open Temporary Quarantine Centers",
+            "local_money_needed": 25000,
+            "local_infected_changing": -2,
+            "local_dissatisfaction_changing": 5,
+            "local_research_progress_changing": 0,
+            "local_text": "You opened temporary quarantine centers.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Raise Taxes to Fund Healthcare",
+            "local_money_needed": 0,
+            "local_infected_changing": 0,
+            "local_dissatisfaction_changing": 10,
+            "local_research_progress_changing": 5,
+            "local_text": "You raised taxes to fund healthcare improvements.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Mobilize Military to Enforce Quarantine",
+            "local_money_needed": 0,
+            "local_infected_changing": -3,
+            "local_dissatisfaction_changing": 25,
+            "local_research_progress_changing": 0,
+            "local_text": "You mobilized the military to enforce quarantine.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Purchase Ventilators",
+            "local_money_needed": 40000,
+            "local_infected_changing": -1,
+            "local_dissatisfaction_changing": -3,
+            "local_research_progress_changing": 10,
+            "local_text": "You purchased additional ventilators.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Develop Digital Contact Tracing App",
+            "local_money_needed": 50000,
+            "local_infected_changing": -2,
+            "local_dissatisfaction_changing": -2,
+            "local_research_progress_changing": 5,
+            "local_text": "You developed a digital contact tracing app.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Ignore Quarantine Violations",
+            "local_money_needed": 0,
+            "local_infected_changing": 2,
+            "local_dissatisfaction_changing": -5,
+            "local_research_progress_changing": -2,
+            "local_text": "You ignored quarantine violations.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Open Borders Early",
+            "local_money_needed": 0,
+            "local_infected_changing": 3,
+            "local_dissatisfaction_changing": -10,
+            "local_research_progress_changing": -5,
+            "local_text": "You opened borders early.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Nationalize Vaccine Production",
+            "local_money_needed": 100000,
+            "local_infected_changing": -3,
+            "local_dissatisfaction_changing": -20,
+            "local_research_progress_changing": 20,
+            "local_text": "You nationalized vaccine production.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Cancel Public Events",
+            "local_money_needed": 0,
+            "local_infected_changing": -1,
+            "local_dissatisfaction_changing": 15,
+            "local_research_progress_changing": 0,
+            "local_text": "You canceled all public events.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Offer Free Vaccines to the Public",
+            "local_money_needed": 60000,
+            "local_infected_changing": -4,
+            "local_dissatisfaction_changing": -15,
+            "local_research_progress_changing": 10,
+            "local_text": "You offered free vaccines to the public.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Enforce Strict Social Distancing",
+            "local_money_needed": 0,
+            "local_infected_changing": -3,
+            "local_dissatisfaction_changing": 20,
+            "local_research_progress_changing": -1,
+            "local_text": "You enforced strict social distancing.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Fast Track Vaccine Trials",
+            "local_money_needed": 80000,
+            "local_infected_changing": 0,
+            "local_dissatisfaction_changing": -5,
+            "local_research_progress_changing": 25,
+            "local_text": "You fast-tracked vaccine trials.",
+            "local_sql_query": ""
         }
     ]
 }
