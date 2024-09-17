@@ -35,6 +35,7 @@ class Game:
 
 
 
+
     def check_game_status(self):
         if self.infected_population >= 99:
             print("The infection has spread globally. Game Over!")

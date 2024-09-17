@@ -41,6 +41,7 @@ def saved_games_database() :
         f")")
 
 
+
 #ICAO Code - Infected (Bool) - Closed (Bool) - Large airport
 def create_game_database(name) :
     name = remove_spacing(name)

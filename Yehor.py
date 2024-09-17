@@ -44,6 +44,7 @@ def payment_choice(game, local_choice_tuple):
         # print(f"UPDATE {game.designated_db_table}\n SET closed = 1\n WHERE 1=1")
         #print(game.designated_db_table)
 
+
 def get_airport_coordinates(icao_code):
     try:
         connection = mariadb.connect(
