@@ -19,8 +19,8 @@ class Game:
         db.run(f"INSERT INTO saved_games VALUE ('{name}');")
 
         self.money = 1000000
-        self.infected_population = 1  # %
-        self.public_dissatisfaction = 20  # %
+        self.infected_population = 5  # %
+        self.public_dissatisfaction = 10  # %
         self.research_progress = 0  # %
         self.game_over = False
         self.game_turn = 0  # counter
@@ -39,9 +39,10 @@ class Game:
         print("You should choose something!")
         time.sleep(1)
         for i in range(len(generated_choices_tuple)):
-            print(generated_choices_tuple[i][0])
+
+            print(f"{i+1}. {generated_choices_tuple[i][0]}, cost {generated_choices_tuple[i][1]}")
         user_choice = int(input("Your choice: "))
-        Yehor.payment_choice(self, generated_choices_tuple[user_choice])
+        Yehor.payment_choice(self, generated_choices_tuple[user_choice-1])
         #print(generated_choices_tuple)
 
 
