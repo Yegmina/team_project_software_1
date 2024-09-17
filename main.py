@@ -7,12 +7,12 @@ import database_initializing as db
 
 class Game:
 
-    total_games = 0
+    db.saved_games_database()
 
-    def __init__(self):
-        Game.total_games += 1                                           ##Count the number of totalgames
-        self.designated_db_table = f"game_{Game.total_games}"           ##And initialize database
-        db.create_game_database(Game.total_games)
+    def __init__(self, name):
+
+        self.designated_db_table = f"game_{name}"           ##And initialize database
+        db.create_game_database(name)
 
         self.money = 1000000
         self.infected_population = 1  # %
@@ -46,7 +46,7 @@ class Game:
             print("The cure has been developed! You saved the world!")
             self.game_over = True
 
-saved_games = [Game()]              ##List of saved games
+saved_games = []              ##List of saved games
 
 
 # Main game logic
@@ -55,7 +55,14 @@ def main():
     player_choice = tai.start()
 
     if player_choice == 'new':
-        game = Game()               ##Rewrote this part using the saved_games list
+
+        while True :
+            try :
+                game = Game(input("Enter your game name: "))               ##Rewrote this part using the saved_games list
+                break
+            except :
+                print("Please only enter characters from a..z and numbers 0..9")
+
         saved_games.append(game)
         game.start()
         # Proceed with game logic, like showing actions, making choices, etc.
