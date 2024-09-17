@@ -31,7 +31,7 @@ class Game:
         choice_tuples = [Yehor.convert_choice_to_tuple(choice) for choice in choices]
 
         print(choice_tuples[0][0]) #name of the choice
-        Yehor.payment_choice(self, choice_tuples[0])
+        Yehor.payment_choice(self, choice_tuples[2])
 
 
 
@@ -82,4 +82,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

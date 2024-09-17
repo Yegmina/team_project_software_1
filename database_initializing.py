@@ -40,6 +40,7 @@ def saved_games_database() :
         f"  id INT PRIMARY KEY AUTO_INCREMENT"
         f")")
 
+
 #ICAO Code - Infected (Bool) - Closed (Bool) - Large airport
 def create_game_database(name) :
     name = remove_spacing(name)

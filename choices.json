@@ -6,7 +6,8 @@
             "local_infected_changing": -1,
             "local_dissatisfaction_changing": 0,
             "local_research_progress_changing": 15,
-            "local_text": "You invested in vaccine research."
+            "local_text": "You invested in vaccine research.",
+            "local_sql_query": ""
         },
         {
             "local_name": "Ignore the problem",
@@ -14,7 +15,17 @@
             "local_infected_changing": 1,
             "local_dissatisfaction_changing": 5,
             "local_research_progress_changing": -1,
-            "local_text": "You ignored health protocols."
+            "local_text": "You ignored health protocols.",
+            "local_sql_query": ""
+        },
+        {
+            "local_name": "Close all airports",
+            "local_money_needed": 0,
+            "local_infected_changing": -5,
+            "local_dissatisfaction_changing": 50,
+            "local_research_progress_changing": -5,
+            "local_text": "You closed all airports",
+            "local_sql_query": "SET closed = 1\n WHERE 1=1"
         }
     ]
 }
