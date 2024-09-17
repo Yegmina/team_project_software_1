@@ -73,7 +73,6 @@ def main():
         print("Exiting the game... Goodbye! Moi moi!")
 
 
-
 if __name__ == "__main__":
     main()
 

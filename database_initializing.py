@@ -36,9 +36,11 @@ def create_game_database(game_count) :
     continents = ('AF', 'AS', 'EU', 'NA', 'OC', 'SA')
     NoCountriesEachContinent = (7, 7, 7, 5, 3, 1)
     for i in range(6) :
-        query = (f"SELECT ident FROM airport WHERE continent = '{continents[i]}'"
-                 f" AND type = 'large_airport'")
-        customList = run(query)                         ##Holds all LARGE AIRPORTS from EACH continent
+        query = (f"SELECT ident FROM airport"
+                 f"WHERE continent = '{continents[i]}'"
+                 f"AND type = 'large_airport'")
+        customList = run(query)
+        ##Holds all LARGE AIRPORTS from EACH continent
 
         for num in range(NoCountriesEachContinent[i]) :
             airport = customList[random.randint(0, len(customList) - 1)][0]
@@ -59,4 +61,3 @@ def create_game_database(game_count) :
     for airport in GameAirports :
         run(f"INSERT INTO game_{game_count} VALUES ('{airport}', 0 , 0)")
 #</editor-fold>
-
