@@ -1,3 +1,5 @@
+import database_initializing as db
+
 def start():
     print("WELCOME TO AIRPORT GAME!! (Press Enter to continue)")
     input()  # Pause for user to press Enter
@@ -29,7 +31,6 @@ def start():
         except ValueError:
             print("Please enter a valid number.")
 #design game over
-start()
 print("         / ____|                       / __ \                ")
 print("        | |  __  __ _ _ __ ___   ___  | |  | |_   _____ _ __ ")
 print("        | | |_ |/ _` | '_ ` _ \ / _ \ | |  | \ \ / / _ \ '__|")
