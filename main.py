@@ -12,7 +12,6 @@ class Game:
     db.saved_games_database()
 
     def __init__(self, name):
-        if name == '' : return exception
         name = ('game_' + db.remove_spacing(name)).lower()
         self.designated_db_table = f"{name}"           ##And initialize database
         db.create_game_database(name)
