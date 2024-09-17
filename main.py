@@ -12,13 +12,14 @@ class Game:
     db.saved_games_database()
 
     def __init__(self, name):
+        if name == '' : pass
         name = ('game_' + db.remove_spacing(name)).lower()
         self.designated_db_table = f"{name}"           ##And initialize database
         db.create_game_database(name)
         db.run(f"INSERT INTO saved_games VALUE ('{name}');")
 
         self.money = 1000000
-        self.infected_population = 5  # %
+        self.infected_population = 10  # %
         self.public_dissatisfaction = 10  # %
         self.research_progress = 0  # %
         self.game_over = False
@@ -49,9 +50,15 @@ class Game:
         if self.infected_population >= 99:
             print("The infection has spread globally. Game Over!")
             self.game_over = True
+        elif self.infected_population <= 0:
+            print("Everyone is healed. You win!")
+            self.game_over = True
         elif self.public_dissatisfaction >= 100:
             print("Public dissatisfaction has reached critical levels. Anarchy ensues. Game Over!")
             self.game_over = True
+        elif self.public_dissatisfaction <= 0:
+            print("All people are happy about your choices! But it does not mean they are healthy!")
+            self.public_dissatisfaction = 0
         elif self.research_progress >= 100:
             print("The cure has been developed! You saved the world!")
             self.game_over = True
