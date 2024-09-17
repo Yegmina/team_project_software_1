@@ -57,6 +57,7 @@ def payment_choice(game, local_choice_tuple):
         #print(game.designated_db_table)
 
 
+
 def get_airport_coordinates(icao_code):
     try:
         connection = mariadb.connect(
