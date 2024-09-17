@@ -33,13 +33,12 @@ def remove_spacing(s) :
         if s[i] == ' ' : s[i] = '_'
     return "".join(s)
 
+
 #<editor-fold desc="IMPLEMENTATION OF INSERTING DATA INTO game_database DB">
 def saved_games_database() :
     run(f"CREATE TABLE IF NOT EXISTS saved_games ("
-        f"  name VARCHAR(10) NOT NULL,"
-        f"  id INT PRIMARY KEY AUTO_INCREMENT"
+        f"  name VARCHAR(64) NOT NULL"
         f")")
-
 
 
 #ICAO Code - Infected (Bool) - Closed (Bool) - Large airport
@@ -63,18 +62,15 @@ def create_game_database(name) :
                                                         ##necessary airports
 
 
-    run(f"DROP TABLE IF EXISTS game_{name}")      ##Creating the table
-    run(f"CREATE TABLE game_{name} ("
+    run(f"DROP TABLE IF EXISTS {name}")      ##Creating the table
+    run(f"CREATE TABLE {name} ("
         f"  icao_code VARCHAR(10) NOT NULL,"            ##Airplane ICAO Code
         f"  infected BOOLEAN DEFAULT FALSE,"            ##Default Infected var is FALSE (Not infected)
         f"  closed BOOLEAN DEFAULT FALSE,"              ##Default Airport status var is FALSE (Not closed)
-        f"  CONSTRAINT game_{name}_ibfk_1 FOREIGN KEY (icao_code) REFERENCES airport(ident)"      
+        f"  CONSTRAINT {name}_ibfk_1 FOREIGN KEY (icao_code) REFERENCES airport(ident)"      
             ##ICAO Code is directly connected to airport(ident)
         f") ENGINE=InnoDB DEFAULT CHARSET=latin1;")
 
     for airport in GameAirports :
-        run(f"INSERT INTO game_{name} VALUES ('{airport}', 0 , 0)")
+        run(f"INSERT INTO {name} VALUES ('{airport}', 0 , 0)")
 #</editor-fold>
-
-
-saved_games_database()

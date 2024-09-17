@@ -11,8 +11,10 @@ class Game:
 
     def __init__(self, name):
 
-        self.designated_db_table = f"game_{name}"           ##And initialize database
+        name = ('game_' + db.remove_spacing(name)).lower()
+        self.designated_db_table = f"{name}"           ##And initialize database
         db.create_game_database(name)
+        db.run(f"INSERT INTO saved_games VALUE ('{name}');")
 
         self.money = 1000000
         self.infected_population = 1  # %
@@ -32,7 +34,6 @@ class Game:
 
         print(choice_tuples[0][0]) #name of the choice
         Yehor.payment_choice(self, choice_tuples[2])
-
 
 
 
@@ -58,7 +59,7 @@ def main():
     if player_choice == 'new':
 
         while True :
-            try :
+            try:
                 game = Game(input("Enter your game name: "))               ##Rewrote this part using the saved_games list
                 break
             except :
