@@ -27,3 +27,10 @@ def start():
                 print("Invalid choice. Please try again.")
         except ValueError:
             print("Please enter a valid number.")
+#design game over
+start()
+print("         / ____|                       / __ \                ")
+print("        | |  __  __ _ _ __ ___   ___  | |  | |_   _____ _ __ ")
+print("        | | |_ |/ _` | '_ ` _ \ / _ \ | |  | \ \ / / _ \ '__|")
+print("        | |__| | (_| | | | | | |  __/ | |__| |\ V /  __/ |   ")
+print("         \_____|\__,_|_| |_| |_|\___|  \____/  \_/ \___|_|   ")
