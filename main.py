@@ -3,7 +3,7 @@ from geopy.distance import geodesic
 import tai
 import random
 import Yehor
-import database_initializing
+import database_initializing as db
 
 class Game:
 
@@ -71,6 +71,7 @@ def main():
 
     elif player_choice == 'quit':
         print("Exiting the game... Goodbye! Moi moi!")
+
 
 
 if __name__ == "__main__":
