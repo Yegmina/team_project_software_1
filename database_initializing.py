@@ -36,8 +36,8 @@ def create_game_database(game_count) :
     continents = ('AF', 'AS', 'EU', 'NA', 'OC', 'SA')
     NoCountriesEachContinent = (7, 7, 7, 5, 3, 1)
     for i in range(6) :
-        query = (f"SELECT ident FROM airport"
-                 f"WHERE continent = '{continents[i]}'"
+        query = (f"SELECT ident FROM airport "
+                 f"WHERE continent = '{continents[i]}' "
                  f"AND type = 'large_airport';")
         customList = run(query)
         ##Holds all LARGE AIRPORTS from EACH continent
