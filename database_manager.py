@@ -39,27 +39,28 @@ def format_name(s) :
 
 #<editor-fold desc="IMPLEMENTATION OF INSERTING DATA INTO game_database DB">
 def saved_games_database() :
-    run(f"CREATE TABLE IF NOT EXISTS `saved_games` ("           ##The table saves all
-        f"  `name` VARCHAR(64) PRIMARY KEY,"                    ##of each game's variables
-        f"  `input_name` VARCHAR(64),"                          
-        f"  `money` INT(16),"                                   ##It also saves the 
-        f"  `infected_population` INT(16),"                     ##name in formatted version
-        f"  `public_dissatisfaction` INT(16),"                  ##and the original (user input)
-        f"  `research_progress` INT(16),"                       ##version.
-        f"  `game_over` BOOLEAN DEFAULT FALSE,"
-        f"  `game_turn` INT(16)"
+    run(f"CREATE TABLE IF NOT EXISTS `saved_games` ("               ##The table saves all
+        f"  `name`                   VARCHAR(64) PRIMARY KEY,"      ##of each game's variables
+        f"  `input_name`             VARCHAR(64),"                          
+        f"  `money`                  INT(16),"                      ##It also saves the 
+        f"  `infected_population`    INT(16),"                      ##name in formatted version
+        f"  `public_dissatisfaction` INT(16),"                      ##and the original (user input)
+        f"  `research_progress`      INT(16),"                      ##version.
+        f"  `game_over`              BOOLEAN DEFAULT FALSE,"
+        f"  `game_turn`              INT(16)"
         f") ENGINE=InnoDB DEFAULT CHARSET=latin1;")
+
 
 def create_game_database(name) :
 
     formatted_name = format_name(name)
 
     # ICAO Code - Infected (Bool) - Closed (Bool) - Large airport
-    run(f"DROP TABLE IF EXISTS {formatted_name};")      ##Creating the table
+    run(f"DROP TABLE IF EXISTS {formatted_name};")                  ##Creating the table
     run(f"CREATE TABLE {formatted_name} ("
-        f"  icao_code VARCHAR(10) NOT NULL,"            ##Airplane ICAO Code
-        f"  infected BOOLEAN DEFAULT FALSE,"            ##Default Infected var is FALSE (Not infected)
-        f"  closed BOOLEAN DEFAULT FALSE,"              ##Default Airport status var is FALSE (Not closed)
+        f"  icao_code           VARCHAR(10) NOT NULL,"              ##Airplane ICAO Code
+        f"  infected            BOOLEAN DEFAULT FALSE,"             ##Default Infected var is FALSE (Not infected)
+        f"  closed              BOOLEAN DEFAULT FALSE,"             ##Default Airport status var is FALSE (Not closed)
         f"  CONSTRAINT {formatted_name}_ibfk_1 FOREIGN KEY (icao_code) REFERENCES airport(ident)"      
         f") ENGINE=InnoDB DEFAULT CHARSET=latin1;")
             ##ICAO Code is directly connected to airport(ident)
@@ -85,9 +86,9 @@ def create_game_database(name) :
     continents = ('AF', 'AS', 'EU', 'NA', 'OC', 'SA')
     NoCountriesEachContinent = (7, 7, 7, 5, 3, 1)
     for i in range(6) :
-        query = (f"SELECT ident FROM airport "
-                 f"WHERE continent = '{continents[i]}' "
-                 f"AND type = 'large_airport';")
+        query = (f"SELECT   ident FROM airport "
+                 f"WHERE    continent = '{continents[i]}' "
+                 f"AND      type = 'large_airport';")
         customList = run(query)
         ##Holds all LARGE AIRPORTS from EACH continent
 
@@ -102,6 +103,5 @@ def create_game_database(name) :
 
 ##The project needs another game-saving function (DATA FOR EACH GAME)
 ##And the 'Continue' option in Tai.py needs to fetch data for each saved games
-
 
 #</editor-fold>
