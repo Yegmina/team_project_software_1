@@ -67,10 +67,12 @@ class Game:
             self.game_over = True
 
     ##Saving game function here
-    ##Outputting game data function here
     def save(self):
         pass
-saved_games = []
+    ##Outputting game data function here
+    def print_data(self):                   ##Will have to rewrite __init__ to specify
+        pass                                ##Game() initializing to have variables
+
 
 # Main game logic
 def main():
@@ -83,16 +85,17 @@ def main():
             name = input("Enter your game name: ")
             formatted_name = db.format_name(name)
             name_list = db.run(f"SELECT name FROM saved_games WHERE name = '{formatted_name}';")
+            ##Checking if there is a game with that name
+
 
             if name == '' :
-                print("The name cannot be empty\n")
+                print("The name cannot be empty\n")     ##Self-explanatory
                 continue
             elif len(name_list) != 0 :
-                print(name_list)
-                print("Profile already exists")
+                print("Profile already exists")         ##Checking if there's already been a
+                                                        ##game with the inputted name
             try :
                 game = Game(name)
-                saved_games.append(game)
                 break
             except :
                 print("Please only enter characters from a..z and numbers 0..9")
