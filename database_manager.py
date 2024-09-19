@@ -1,6 +1,7 @@
 import mariadb
 import random
 
+
 connection = mariadb.connect(
     host = 'localhost',
     user = 'root',
@@ -18,6 +19,8 @@ def run(s) :
         return cursor.fetchall()
     except :
         return None
+
+
 #</editor-fold>
 
 #Each game' database should consist of 30 airports
@@ -26,23 +29,41 @@ def run(s) :
 #NA - 5 ; OC - 3 ; SA & AN - 1
 
 #Formatting each player's game's name into one without spaces
-def remove_spacing(s) :
+def format_name(s) :
     s = list(s)
     for i in range(len(s)) :
         if s[i] == ' ' : s[i] = '_'
-    return "".join(s)
+        else: s[i].lower()
+    return 'game_' + "".join(s)
 
 
 #<editor-fold desc="IMPLEMENTATION OF INSERTING DATA INTO game_database DB">
 def saved_games_database() :
-    run(f"CREATE TABLE IF NOT EXISTS saved_games ("
-        f"  name VARCHAR(64) NOT NULL"
-        f")")
+    run(f"CREATE TABLE IF NOT EXISTS `saved_games` ("
+        f"  `name` VARCHAR(64) PRIMARY KEY,"
+        f"  `input_name` VARCHAR(64),"
+        f"  `money` INT(16),"
+        f"  `infected_population` INT(16),"
+        f"  `public_dissatisfaction` INT(16),"
+        f"  `research_progress` INT(16),"
+        f"  `game_over` BOOLEAN DEFAULT FALSE,"
+        f"  `game_turn` INT(16)"
+        f") ENGINE=InnoDB DEFAULT CHARSET=latin1;")
 
-
-#ICAO Code - Infected (Bool) - Closed (Bool) - Large airport
 def create_game_database(name) :
-    name = remove_spacing(name)
+
+    formatted_name = format_name(name)
+
+    run(f"INSERT INTO saved_games VALUES "
+        f"('{formatted_name}',"            ## Name
+        f" '{name}',"                      ## User-input name                            
+        f" 1000000,"                       ## Initial money
+        f" 10,"                            ## Initial infected_population
+        f" 10,"                            ## Initial public_dissatisfaction
+        f" 0,"                             ## Initial research_progress
+        f" False,"                         ## Initial game_over as False
+        f" 1);")                           ## Initial game_turn as 0
+
     GameAirports = []
 
     continents = ('AF', 'AS', 'EU', 'NA', 'OC', 'SA')
@@ -61,20 +82,25 @@ def create_game_database(name) :
                                                         ##necessary airports
 
 
-    run(f"DROP TABLE IF EXISTS {name}")      ##Creating the table
-    run(f"CREATE TABLE {name} ("
+    # ICAO Code - Infected (Bool) - Closed (Bool) - Large airport
+    run(f"DROP TABLE IF EXISTS {formatted_name};")      ##Creating the table
+    run(f"CREATE TABLE {formatted_name} ("
         f"  icao_code VARCHAR(10) NOT NULL,"            ##Airplane ICAO Code
         f"  infected BOOLEAN DEFAULT FALSE,"            ##Default Infected var is FALSE (Not infected)
         f"  closed BOOLEAN DEFAULT FALSE,"              ##Default Airport status var is FALSE (Not closed)
-        f"  CONSTRAINT {name}_ibfk_1 FOREIGN KEY (icao_code) REFERENCES airport(ident)"      
-            ##ICAO Code is directly connected to airport(ident)
+        f"  CONSTRAINT {formatted_name}_ibfk_1 FOREIGN KEY (icao_code) REFERENCES airport(ident)"      
         f") ENGINE=InnoDB DEFAULT CHARSET=latin1;")
+            ##ICAO Code is directly connected to airport(ident)
+
 
     for airport in GameAirports :
-        run(f"INSERT INTO {name} VALUES ('{airport}', 0 , 0)")
+        run(f"INSERT INTO {formatted_name} VALUES ('{airport}', 0 , 0)")
+
+##Testing space
 
 
 ##The project needs another game-saving function (DATA FOR EACH GAME)
 ##And the 'Continue' option in Tai.py needs to fetch data for each saved games
+
 
 #</editor-fold>

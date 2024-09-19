@@ -12,12 +12,15 @@ class Game:
     db.saved_games_database()
 
     def __init__(self, name):
-        if name == '' : pass
-        name = ('game_' + db.remove_spacing(name)).lower()
-        self.designated_db_table = f"{name}"           ##And initialize database
-        db.create_game_database(name)
-        db.run(f"INSERT INTO saved_games VALUE ('{name}');")
 
+
+        # formatted_name = ('game_' + db.remove_spacing(name)).lower()
+        # self.designated_db_table = f"{formatted_name}"           ##And initialize database
+        db.create_game_database(name)
+
+
+        # self.formatted_name = db.remove_spacing(name)
+        self.name = name
         self.money = 1000000
         self.infected_population = 10  # %
         self.public_dissatisfaction = 10  # %
@@ -63,9 +66,11 @@ class Game:
             print("The cure has been developed! You saved the world!")
             self.game_over = True
 
-saved_games = []              ##List of saved games
-
-
+    ##Saving game function here
+    ##Outputting game data function here
+    def save(self):
+        pass
+saved_games = []
 
 # Main game logic
 def main():
@@ -76,17 +81,23 @@ def main():
 
         while True:
             name = input("Enter your game name: ")
+            formatted_name = db.format_name(name)
+            name_list = db.run(f"SELECT name FROM saved_games WHERE name = '{formatted_name}';")
+
             if name == '' :
                 print("The name cannot be empty\n")
                 continue
+            elif len(name_list) != 0 :
+                print(name_list)
+                print("Profile already exists")
             try :
                 game = Game(name)
+                saved_games.append(game)
                 break
             except :
                 print("Please only enter characters from a..z and numbers 0..9")
+                continue
 
-        saved_games.append(game)
-        game.start()
         # Proceed with game logic, like showing actions, making choices, etc.
         # After this line example, just for debugging purposes
         while game.game_over == False:
