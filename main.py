@@ -13,13 +13,9 @@ class Game:
 
     def __init__(self, name):
 
-
-        # formatted_name = ('game_' + db.remove_spacing(name)).lower()
-        # self.designated_db_table = f"{formatted_name}"           ##And initialize database
         db.create_game_database(name)
 
-
-        # self.formatted_name = db.remove_spacing(name)
+        self.designated_db_table = f"{db.format_name(name)}"
         self.name = name
         self.money = 1000000
         self.infected_population = 10  # %
