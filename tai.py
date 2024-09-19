@@ -1,4 +1,4 @@
-import database_initializing as db
+import database_manager as db
 
 def start():
     print("WELCOME TO AIRPORT GAME!! (Press Enter to continue)")

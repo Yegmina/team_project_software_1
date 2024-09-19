@@ -1,7 +1,7 @@
 import mariadb
 from geopy.distance import geodesic
 import json
-import database_initializing as db
+import database_manager as db
 import main
 import time
 

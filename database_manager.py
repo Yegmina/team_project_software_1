@@ -20,7 +20,6 @@ def run(s) :
         return None
 #</editor-fold>
 
-
 #Each game' database should consist of 30 airports
 #Below is the table specifying which contients should have how many airports
 #AF - 7 ; AS - 7 ; EU - 6
@@ -73,4 +72,9 @@ def create_game_database(name) :
 
     for airport in GameAirports :
         run(f"INSERT INTO {name} VALUES ('{airport}', 0 , 0)")
+
+
+##The project needs another game-saving function (DATA FOR EACH GAME)
+##And the 'Continue' option in Tai.py needs to fetch data for each saved games
+
 #</editor-fold>

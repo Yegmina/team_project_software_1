@@ -3,7 +3,7 @@ from geopy.distance import geodesic
 import tai
 import random
 import Yehor
-import database_initializing as db
+import database_manager as db
 import time
 
 
