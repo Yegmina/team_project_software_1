@@ -59,7 +59,7 @@ def create_game_database(name) :
     run(f"DROP TABLE IF EXISTS {formatted_name};")                  ##Creating the table
     run(f"CREATE TABLE {formatted_name} ("
         f"  icao_code           VARCHAR(10) NOT NULL,"              ##Airplane ICAO Code
-        f"  infected            BOOLEAN DEFAULT FALSE,"             ##Default Infected var is FALSE (Not infected)
+        f"  infected            INT(16),"             ##Default Infected var is FALSE (Not infected)
         f"  closed              BOOLEAN DEFAULT FALSE,"             ##Default Airport status var is FALSE (Not closed)
         f"  CONSTRAINT {formatted_name}_ibfk_1 FOREIGN KEY (icao_code) REFERENCES airport(ident)"      
         f") ENGINE=InnoDB DEFAULT CHARSET=latin1;")
