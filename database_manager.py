@@ -98,7 +98,6 @@ def create_game_database(name) :
                 airport = customList[random.randint(0, len(customList) - 1)][0]
             GameAirports.append(airport)
 
-                                                        ##necessary airports
     for airport in GameAirports :
         run(f"INSERT INTO {formatted_name} VALUES ('{airport}', 0 , 0)")
 
