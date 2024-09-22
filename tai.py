@@ -40,7 +40,7 @@ def over():
     print("         \_____|\__,_|_| |_| |_|\___|  \____/  \_/ \___|_|   ")
 
 
-# 1. cac game choi gan nhat len dau tien
+# 1. cac game choi gan nhat len dau tien NE
 def fetch_game() :
     all_saved_games = db.run("SELECT * FROM saved_games")
     input_name = 1 #Input_name column is the second column in saved_games table

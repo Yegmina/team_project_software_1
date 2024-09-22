@@ -75,8 +75,6 @@ def main():
     # Call the start() function from tai.py to get the user's choice
     player_choice = tai.start()
 
-    current_game = None
-
     if player_choice == 'new':
 
         while True:
@@ -93,26 +91,24 @@ def main():
                 print("Profile already exists")         ##Checking if there's already been a
                                                         ##game with the inputted name
             try :
-                current_game = Game(name)
+                game = Game(name)
                 break
             except :
                 print("Please only enter characters from a..z and numbers 0..9")
                 continue
 
-# '''
-#         # Proceed with game logic, like showing actions, making choices, etc.
-#         # After this line example, just for debugging purposes
-#         while game.game_over == False:
-#             game.make_choice()
-#             game.check_game_status()
-# '''
+        # Proceed with game logic, like showing actions, making choices, etc.
+        # After this line example, just for debugging purposes
+        while game.game_over == False:
+            game.make_choice()
+            game.check_game_status()
+
+
 
     elif player_choice == 'continue':
-        ## current_game = tai.fetch_game()
         print("Loading game... (Add loading logic here)")
 
 
-#Play current_game
     elif player_choice == 'quit':
         print("Exiting the game... Goodbye! Moi moi!")
 
