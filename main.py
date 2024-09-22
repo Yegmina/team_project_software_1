@@ -3,7 +3,7 @@ from geopy.distance import geodesic
 import tai
 import random
 import Yehor
-import database_initializing as db
+import database_manager as db
 import time
 
 
@@ -12,12 +12,11 @@ class Game:
     db.saved_games_database()
 
     def __init__(self, name):
-        if name == '' : pass
-        name = ('game_' + db.remove_spacing(name)).lower()
-        self.designated_db_table = f"{name}"           ##And initialize database
-        db.create_game_database(name)
-        db.run(f"INSERT INTO saved_games VALUE ('{name}');")
 
+        db.create_game_database(name)
+
+        self.designated_db_table = f"{db.format_name(name)}"
+        self.name = name
         self.money = 1000000
         self.infected_population = 10  # %
         self.public_dissatisfaction = 10  # %
@@ -63,8 +62,12 @@ class Game:
             print("The cure has been developed! You saved the world!")
             self.game_over = True
 
-saved_games = []              ##List of saved games
-
+    ##Saving game function here
+    def save(self):
+        pass
+    ##Outputting game data function here
+    def print_data(self):                   ##Will have to rewrite __init__ to specify
+        pass                                ##Game() initializing to have variables
 
 
 # Main game logic
@@ -76,17 +79,24 @@ def main():
 
         while True:
             name = input("Enter your game name: ")
+            formatted_name = db.format_name(name)
+            name_list = db.run(f"SELECT name FROM saved_games WHERE name = '{formatted_name}';")
+            ##Checking if there is a game with that name
+
+
             if name == '' :
-                print("The name cannot be empty\n")
+                print("The name cannot be empty\n")     ##Self-explanatory
                 continue
+            elif len(name_list) != 0 :
+                print("Profile already exists")         ##Checking if there's already been a
+                                                        ##game with the inputted name
             try :
                 game = Game(name)
                 break
             except :
                 print("Please only enter characters from a..z and numbers 0..9")
+                continue
 
-        saved_games.append(game)
-        game.start()
         # Proceed with game logic, like showing actions, making choices, etc.
         # After this line example, just for debugging purposes
         while game.game_over == False:
