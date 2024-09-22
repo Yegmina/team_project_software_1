@@ -98,6 +98,7 @@ def main():
     elif player_choice == 'continue':
         print("Loading game... (Add loading logic here)")
 
+
     elif player_choice == 'quit':
         print("Exiting the game... Goodbye! Moi moi!")
 

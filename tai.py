@@ -22,6 +22,8 @@ def start():
                 return 'new'
             elif Start_choice == 3:
                 print("Loading previous game...")
+
+                #add continue from this
                 return 'continue'
             elif Start_choice == 4:
                 print("Goodbye!")
@@ -30,10 +32,15 @@ def start():
                 print("Invalid choice. Please try again.")
         except ValueError:
             print("Please enter a valid number.")
+# design continue game
+# def continue_game():
+
 #design game over
 def over():
+    print("          _____                         ____                 ")
     print("         / ____|                       / __ \                ")
     print("        | |  __  __ _ _ __ ___   ___  | |  | |_   _____ _ __ ")
     print("        | | |_ |/ _` | '_ ` _ \ / _ \ | |  | \ \ / / _ \ '__|")
     print("        | |__| | (_| | | | | | |  __/ | |__| |\ V /  __/ |   ")
     print("         \_____|\__,_|_| |_| |_|\___|  \____/  \_/ \___|_|   ")
+
