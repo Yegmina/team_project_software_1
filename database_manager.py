@@ -33,7 +33,7 @@ def format_name(s) :
     s = list(s)
     for i in range(len(s)) :
         if s[i] == ' ' : s[i] = '_'
-        else: s[i].lower()
+        else: s[i] = s[i].lower()
     return 'game_' + "".join(s)
 
 
