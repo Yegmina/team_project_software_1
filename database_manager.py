@@ -94,8 +94,10 @@ def create_game_database(name) :
 
         for num in range(NoCountriesEachContinent[i]) :
             airport = customList[random.randint(0, len(customList) - 1)][0]
-            if airport not in GameAirports:
-                GameAirports.append(airport)            ##Randomizes from each continent the number of
+            while airport in GameAirports:
+                airport = customList[random.randint(0, len(customList) - 1)][0]
+            GameAirports.append(airport)
+
                                                         ##necessary airports
     for airport in GameAirports :
         run(f"INSERT INTO {formatted_name} VALUES ('{airport}', 0 , 0)")
