@@ -90,4 +90,4 @@ def fetch_game() :
 
     game_option -= 1
 
-fetch_game()
+# fetch_game()
