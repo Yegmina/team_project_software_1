@@ -29,10 +29,10 @@ class Game:
         self.game_turn = 1  # Reset the game turn
 
     def make_choice(self):
-        choices = Yehor.load_choices_from_json('choices.json')
+        choices = Yehor.load_choices_from_db()
         choice_tuples = [Yehor.convert_choice_to_tuple(choice) for choice in choices]
 
-        random_indices_tuple = random.sample(range(len(choice_tuples)), 3)  # This guarantees 5 unique random indices
+        random_indices_tuple = random.sample(range(len(choice_tuples)), 3)  # This guarantees 3 unique random indices
 
         generated_choices_tuple = [choice_tuples[i] for i in sorted(random_indices_tuple[:3])]
         print("You should choose something!")
@@ -93,6 +93,7 @@ def main():
             try :
                 game = Game(name)
                 break
+
             except :
                 print("Please only enter characters from a..z and numbers 0..9")
                 continue

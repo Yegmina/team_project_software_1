@@ -1,62 +1,53 @@
 import mariadb
 from geopy.distance import geodesic
-import json
 import database_manager as db
 import main
 import time
 
-def load_choices_from_json(local_json_file):
-    with open(local_json_file, 'r') as file:
-        data = json.load(file)
-        return data['choices']  # Returns the list of choices
+# Load choices directly from the database
+def load_choices_from_db():
+    query = "SELECT name, money_needed, infected_changing, dissatisfaction_changing, research_progress_changing, text, sql_query FROM choices;"
+    return db.run(query)
 
-
-def convert_choice_to_tuple(local_choice_dict):
-    return (
-        local_choice_dict['local_name'],
-        local_choice_dict['local_money_needed'],
-        local_choice_dict['local_infected_changing'],
-        local_choice_dict['local_dissatisfaction_changing'],
-        local_choice_dict['local_research_progress_changing'],
-        local_choice_dict['local_text'],
-        local_choice_dict['local_sql_query']
-    )
-
+# Convert database result row to tuple (not necessary since SQL result is already a tuple)
+def convert_choice_to_tuple(db_choice_row):
+    return db_choice_row
 
 def function():
     print("Hello")
     return
 
+# Function to handle making a choice
+def payment_choice(game, choice_tuple):
+    name, money_needed, infected_changing, dissatisfaction_changing, research_progress_changing, text, sql_query = choice_tuple
 
-def payment_choice(game, local_choice_tuple):
-    local_name, local_money_needed, local_infected_changing, local_dissatisfaction_changing, local_research_progress_changing, local_text, local_sql_query = local_choice_tuple
-
-    if local_money_needed > game.money:
+    if money_needed > game.money:
         print("Not enough money to do this choice.")
     else:
-        game.money -= local_money_needed
+        game.money -= money_needed
         game.game_turn += 1
-        if local_infected_changing!=0:
-            game.infected_population += local_infected_changing
-            print(f"Infected population grow by {local_infected_changing}. Now it is {game.infected_population}")
-            time.sleep(1)
-        if local_dissatisfaction_changing!=0:
-            game.public_dissatisfaction += local_dissatisfaction_changing
-            print(f"Public dissatisfaction grow by {local_dissatisfaction_changing}. Now it is {game.public_dissatisfaction}")
-            time.sleep(1)
-        if local_research_progress_changing!=0:
-            game.research_progress += local_research_progress_changing
-            print(f"Research progress grow by {local_research_progress_changing}. Now it is {game.research_progress}")
+
+        if infected_changing != 0:
+            game.infected_population += infected_changing
+            print(f"Infected population changed by {infected_changing}. Now it is {game.infected_population}")
             time.sleep(1)
 
-        if local_sql_query!="":
-            local_string_query=f"UPDATE {game.designated_db_table}\n {local_sql_query}"
-            db.run(local_string_query)
-        if local_text!="":
-            print(local_text)
-        #print(game.designated_db_table)
+        if dissatisfaction_changing != 0:
+            game.public_dissatisfaction += dissatisfaction_changing
+            print(f"Public dissatisfaction changed by {dissatisfaction_changing}. Now it is {game.public_dissatisfaction}")
+            time.sleep(1)
 
+        if research_progress_changing != 0:
+            game.research_progress += research_progress_changing
+            print(f"Research progress changed by {research_progress_changing}. Now it is {game.research_progress}")
+            time.sleep(1)
 
+        if sql_query != "":
+            string_query = f"UPDATE {game.designated_db_table} {sql_query}"
+            db.run(string_query)
+
+        if text != "":
+            print(text)
 
 def get_airport_coordinates(icao_code):
     try:
@@ -85,11 +76,9 @@ def get_airport_coordinates(icao_code):
         print(f"Error connecting to MariaDB: {e}")
         return None
 
-
-
-def distance_between_two(local_coordinates_1, local_coordinates_2):
-    if local_coordinates_1 and local_coordinates_2:
-        distance = geodesic(local_coordinates_1, local_coordinates_2).kilometers
+def distance_between_two(coord_1, coord_2):
+    if coord_1 and coord_2:
+        distance = geodesic(coord_1, coord_2).kilometers
         return distance
     else:
-        return 999999999 # can be changed
+        return 999999999  # can be changed
