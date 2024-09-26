@@ -9,20 +9,32 @@ import time
 
 class Game:
 
-    db.saved_games_database()
+    def __init__(self, name,
+                 money = 1000000,
+                 infected_population = 10,
+                 public_dissatisfaction = 10,
+                 research_progress = 0,
+                 game_over = False,
+                 game_turn = 0) :
 
-    def __init__(self, name):
-
-        db.create_game_database(name)
-
-        self.designated_db_table = f"{db.format_name(name)}"
         self.name = name
-        self.money = 1000000
-        self.infected_population = 10  # %
-        self.public_dissatisfaction = 10  # %
-        self.research_progress = 0  # %
-        self.game_over = False
-        self.game_turn = 0  # counter
+        self.money = money
+        self.infected_population = infected_population
+        self.public_dissatisfaction = public_dissatisfaction
+        self.research_progress = research_progress
+        self.game_over = game_over
+        self.game_turn = game_turn
+
+        db.run(f"INSERT INTO saved_games VALUES"
+               f"(id,"
+               f"'{name}', "
+               f"{money}, "
+               f"{infected_population},"
+               f"{public_dissatisfaction},"
+               f"{research_progress},"
+               f"{game_over},"
+               f"{game_turn}"
+               f")")
 
     def start(self):
         print("Game started! Good luck!")
@@ -64,7 +76,17 @@ class Game:
 
     ##Saving game function here
     def save(self):
-        pass
+        # name | money | infec | pub | researc | over | turn
+        db.run(f"UPDATE saved_games"
+               f"SET"
+               f"   money = {self.money},"
+               f"   infected_population = {self.infected_population},"
+               f"   public_dissatisfaction = {self.public_dissatisfaction},"
+               f"   research_progress = {self.research_progress},"
+               f"   game_over = {self.game_over},"
+               f"   game_turn = {self.game_turn}"
+               f"WHERE input_name = '{self.name}';")
+
     ##Outputting game data function here
     def print_data(self):                   ##Will have to rewrite __init__ to specify
         pass                                ##Game() initializing to have variables
@@ -72,6 +94,9 @@ class Game:
 
 # Main game logic
 def main():
+
+    db.saved_games_database()
+
     # Call the start() function from tai.py to get the user's choice
     player_choice = tai.start()
 
@@ -79,30 +104,23 @@ def main():
 
         while True:
             name = input("Enter your game name: ")
-            formatted_name = db.format_name(name)
-            name_list = db.run(f"SELECT name FROM saved_games WHERE name = '{formatted_name}';")
+            name_list = db.run(f"SELECT input_name FROM saved_games WHERE input_name = '{name}';")
             ##Checking if there is a game with that name
-
-
             if name == '' :
                 print("The name cannot be empty\n")     ##Self-explanatory
                 continue
             elif len(name_list) != 0 :
                 print("Profile already exists")         ##Checking if there's already been a
                                                         ##game with the inputted name
-            try :
-                game = Game(name)
-                break
-
-            except :
-                print("Please only enter characters from a..z and numbers 0..9")
-                continue
+            game = Game(name)
+            break
 
         # Proceed with game logic, like showing actions, making choices, etc.
         # After this line example, just for debugging purposes
         while game.game_over == False:
             game.make_choice()
             game.check_game_status()
+            game.save()
 
 
 
@@ -115,4 +133,5 @@ def main():
 
 
 if __name__ == "__main__":
+    db.saved_games_database()
     main()

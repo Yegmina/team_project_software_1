@@ -59,5 +59,3 @@ def saved_games_database() :
         f"  FOREIGN KEY (game_id)"
         f"           REFERENCES saved_games(id)"
         f") ENGINE=InnoDB DEFAULT CHARSET=latin1;")
-
-
