@@ -28,7 +28,7 @@ def run(s) :
 
 #<editor-fold desc="Database manager v1.0">
 
-# Formatting each player's game's name into one without spaces
+## Formatting each player's game's name into one without spaces
 def format_name(s) :
     s = list(s)
     for i in range(len(s)) :
