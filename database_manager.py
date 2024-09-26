@@ -50,7 +50,7 @@ def saved_games_database() :
         f") ENGINE=InnoDB DEFAULT CHARSET=latin1;")
     #
     run(f"CREATE TABLE IF NOT EXISTS `airport_info` ("
-        f"  `game_id`                INT(16) AUTO_INCREMENT,"
+        f"  `game_id`                INT(16),"
         f"  `airport_id`             VARCHAR(40) NOT NULL,"
         f"  `infected`               BOOLEAN DEFAULT FALSE,"
         f"  `closed`                 BOOLEAN DEFAULT FALSE,"
