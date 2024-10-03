@@ -78,7 +78,7 @@ def fetch_game() :
 
             print("Are you sure about this game ?")
             c = str(input('YES or NO: '))
-            if c == 'YES':
+            if c == 'YES' or c=='yes' or c=='y':
                 #LET THEM COOK
                 #return game
                 break
@@ -90,4 +90,4 @@ def fetch_game() :
 
     game_option -= 1
 
-# fetch_game()
+fetch_game()
