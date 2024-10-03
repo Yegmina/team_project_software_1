@@ -15,7 +15,7 @@ class Game:
                  public_dissatisfaction = 10,
                  research_progress = 0,
                  game_over = False,
-                 game_turn = 0)
+                 game_turn = 0) :
 
         self.name = name
         self.money = money
