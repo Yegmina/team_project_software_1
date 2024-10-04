@@ -20,20 +20,20 @@ import Yehor
 import database_manager as db
 
 # Checks if another country will get infected through a flight.
-def airport_spread(spreading_country):
+def airport_spread(spreading_airport):
 
     ##How far planes fly
     plane_flight_distance = 2000
 
     #Checks to see if the airport is infected and thus able to infect other countries
-    if db.run(f"SELECT airport_id FROM airport_info WHERE game_id = {spreading_country};") == True:
-        Yehor.get_airport_coordinates(spreading_country)
+    if db.run(f"SELECT airport_id FROM airport_info WHERE game_id = {spreading_airport};") == True:
+        Yehor.get_airport_coordinates(spreading_airport)
 
         #Runs through all the airports in the current game and applys the infection chance
         i = 1
         while i <= 30:
             country2 = db.run(f'SELECT airport_id FROM airport_info WHERE game_id = {i};')
-            if Yehor.distance_between_two(spreading_country,country2) < plane_flight_distance:
+            if Yehor.distance_between_two(spreading_airport,country2) < plane_flight_distance:
                 if randint(1,2) == 1:
                     db.run(f'UPDATE airport_info'
                     f'SET infected = {True}'
@@ -51,4 +51,4 @@ def close_1_airport(icao_code):
            f'WHERE airport_id = {icao_code};')
 
 def close_continents_airports(continent):
-    db.run(f'select airport_id from airport_info,airport where continent = {continent} and airport_id = {continent};')
+    db.run(f'select airport_id from airport_info,airport where continent = {continent} and airport_id = ident;')

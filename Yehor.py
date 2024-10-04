@@ -4,6 +4,19 @@ import database_manager as db
 import main
 import time
 
+def run_sql_from_file(sql_file_path: object = 'choices.sql') -> object:
+    try:
+        with open(sql_file_path, 'r') as file:
+            sql_query = file.read()
+
+        return db.run(sql_query)
+    except FileNotFoundError:
+        print(f"Error: File {sql_file_path} not found.")
+        return None
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+
 # Load choices directly from the database
 def load_choices_from_db():
     query = "SELECT name, money_needed, infected_changing, dissatisfaction_changing, research_progress_changing, text, sql_query FROM choices;"
