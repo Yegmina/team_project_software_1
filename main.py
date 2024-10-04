@@ -36,6 +36,32 @@ class Game:
                f"{game_turn}"
                f")")
 
+        # AF - 7 ; AS - 10 ; EU - 5
+        # NA - 3 ; OC - 1 ; SA - 4
+        continents = ('AF', 'AS', 'EU', 'NA', 'OC', 'SA')
+        countries_each_con = (7, 10, 5, 3, 1, 4)
+        length = 6
+        game_id = db.run(f"SELECT id FROM saved_games WHERE input_name = '{self.name}'")[0][0]
+        for index in range(length):
+            game_airports = []
+
+            airports = db.run(f"SELECT ident FROM airport "
+                              f"WHERE type = 'large_airport' "
+                              f"AND continent = '{continents[index]}';")
+
+            for num in range(countries_each_con[index]):
+
+                rand = random.randint(0, len(airports) - 1)
+                while airports[rand][0] in game_airports:
+                    rand = random.randint(0, len(airports) - 1)
+
+                game_airports.append(airports[rand][0])
+
+            for airport in game_airports:
+                db.run(f"INSERT INTO airport_info VALUES ('{game_id}', '{airport}', 0, 0)")
+
+
+
     def start(self):
         print("Game started! Good luck!")
         self.game_turn = 1  # Reset the game turn
