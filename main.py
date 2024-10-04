@@ -74,17 +74,15 @@ class Game:
             print("The cure has been developed! You saved the world!")
             self.game_over = True
 
-    ##Saving game function here
     def save(self):
-        # name | money | infec | pub | researc | over | turn
-        db.run(f"UPDATE saved_games"
-               f"SET"
-               f"   money = {self.money},"
-               f"   infected_population = {self.infected_population},"
-               f"   public_dissatisfaction = {self.public_dissatisfaction},"
-               f"   research_progress = {self.research_progress},"
-               f"   game_over = {self.game_over},"
-               f"   game_turn = {self.game_turn}"
+        # Corrected SQL syntax
+        db.run(f"UPDATE saved_games "
+               f"SET money = {self.money}, "
+               f"   infected_population = {self.infected_population}, "
+               f"   public_dissatisfaction = {self.public_dissatisfaction}, "
+               f"   research_progress = {self.research_progress}, "
+               f"   game_over = {self.game_over}, "
+               f"   game_turn = {self.game_turn} "
                f"WHERE input_name = '{self.name}';")
 
     ##Outputting game data function here
