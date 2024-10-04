@@ -56,7 +56,12 @@ def payment_choice(game, choice_tuple):
             time.sleep(1)
 
         if sql_query != "":
-            string_query = f"UPDATE {game.designated_db_table} {sql_query}"
+            game_id = db.run(f"SELECT id FROM saved_games WHERE input_name = '{game.name}'")[0][0]
+            string_query = (f"UPDATE airport_info "
+                            f"{sql_query} " #SET closed = 1
+                            f"WHERE game_id = {game_id}")
+            #Update ... SET closed = 1
+
             db.run(string_query)
 
         if text != "":

@@ -16,7 +16,7 @@ INSERT INTO choices (
 VALUES
 ('Vaccine Research Investment', 50000, -1, 0, 15, 'You invested in vaccine research.', ''),
 ('Ignore the problem', 0, 1, 5, -1, 'You ignored health protocols.', ''),
-('Close all airports', 0, -5, 50, -5, 'You closed all airports.', 'SET closed = 1 WHERE 1=1'),
+('Close all airports', 0, -5, 50, -5, 'You closed all airports.', 'SET closed = 1'),
 ('Distribute Free Masks', 10000, -2, -10, 0, 'You distributed free masks.', ''),
 ('Impose Lockdown', 0, -3, 30, -2, 'You imposed a lockdown.', ''),
 ('Fast Track Vaccine Trials', 80000, 0, -5, 25, 'You fast-tracked vaccine trials.', '');

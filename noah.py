@@ -51,4 +51,4 @@ def close_1_airport(icao_code):
            f'WHERE airport_id = {icao_code};')
 
 def close_continents_airports(continent):
-    db.run(f'select airport_id from airport_info,airport where continent = {continent} and airport_id = {continent};')
+    db.run(f'select airport_id from airport_info,airport where continent = {continent} and airport_id = ident;')
