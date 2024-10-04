@@ -1,13 +1,14 @@
 import mariadb
 import random
+import mysql.connector
+import mysql
 
-
-connection = mariadb.connect(
-    host = 'localhost',
-    user = 'root',
-    database = 'flight_game',
-    password = 'root',
-    autocommit = True,
+connection = mysql.connector.connect(
+    user="yehort",
+    password="root123",
+    host="mysql.metropolia.fi",
+    port=3306,
+    database="yehort"
 )
 
 #<editor-fold desc = "MYSQL-cursor optimization">

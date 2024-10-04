@@ -1,8 +1,10 @@
 import mariadb
+import mysql
 from geopy.distance import geodesic
 import database_manager as db
 import main
 import time
+import mysql.connector
 
 def run_sql_from_file(sql_file_path: object = 'choices.sql') -> object:
     try:
@@ -25,10 +27,6 @@ def load_choices_from_db():
 # Convert database result row to tuple (not necessary since SQL result is already a tuple)
 def convert_choice_to_tuple(db_choice_row):
     return db_choice_row
-
-def function():
-    print("Hello")
-    return
 
 # Function to handle making a choice
 def payment_choice(game, choice_tuple):
@@ -69,13 +67,12 @@ def payment_choice(game, choice_tuple):
 
 def get_airport_coordinates(icao_code):
     try:
-        connection = mariadb.connect(
-            host='127.0.0.1',
+        connection = mysql.connector.connect(
+            user="yehort",
+            password="root123",
+            host="mysql.metropolia.fi",
             port=3306,
-            database='flight_game',
-            user='root',
-            password='root',
-            autocommit=True
+            database="yehort"
         )
 
         sql = f"SELECT latitude_deg, longitude_deg FROM airport WHERE ident='{icao_code}';"
