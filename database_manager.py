@@ -2,13 +2,14 @@ import mariadb
 import random
 import mysql.connector
 import mysql
-
+#vpngp.metropolia.f
 connection = mysql.connector.connect(
     user="yehort",
     password="root123",
     host="mysql.metropolia.fi",
     port=3306,
-    database="yehort"
+    database="yehort",
+    autocommit = True
 )
 
 #<editor-fold desc = "MYSQL-cursor optimization">
