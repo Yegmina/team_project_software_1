@@ -36,6 +36,32 @@ class Game:
                f"{game_turn}"
                f")")
 
+        # AF - 7 ; AS - 10 ; EU - 5
+        # NA - 3 ; OC - 1 ; SA - 4
+        continents = ('AF', 'AS', 'EU', 'NA', 'OC', 'SA')
+        countries_each_con = (7, 10, 5, 3, 1, 4)
+        length = 6
+        game_id = db.run(f"SELECT id FROM saved_games WHERE input_name = '{self.name}'")[0][0]
+        for index in range(length):
+            game_airports = []
+
+            airports = db.run(f"SELECT ident FROM airport "
+                              f"WHERE type = 'large_airport' "
+                              f"AND continent = '{continents[index]}';")
+
+            for num in range(countries_each_con[index]):
+
+                rand = random.randint(0, len(airports) - 1)
+                while airports[rand][0] in game_airports:
+                    rand = random.randint(0, len(airports) - 1)
+
+                game_airports.append(airports[rand][0])
+
+            for airport in game_airports:
+                db.run(f"INSERT INTO airport_info VALUES ('{game_id}', '{airport}', 0, 0)")
+
+
+
     def start(self):
         print("Game started! Good luck!")
         self.game_turn = 1  # Reset the game turn
@@ -43,18 +69,26 @@ class Game:
     def make_choice(self):
         choices = Yehor.load_choices_from_db()
         choice_tuples = [Yehor.convert_choice_to_tuple(choice) for choice in choices]
+        local_choices_amount=3
+        random_indices_tuple = random.sample(range(len(choice_tuples)), local_choices_amount)  # This guarantees 3 unique random indices
 
-        random_indices_tuple = random.sample(range(len(choice_tuples)), 3)  # This guarantees 3 unique random indices
-
-        generated_choices_tuple = [choice_tuples[i] for i in sorted(random_indices_tuple[:3])]
+        generated_choices_tuple = [choice_tuples[i] for i in sorted(random_indices_tuple[:local_choices_amount])]
         print("You should choose something!")
         time.sleep(1)
         for i in range(len(generated_choices_tuple)):
 
             print(f"{i+1}. {generated_choices_tuple[i][0]}, cost {generated_choices_tuple[i][1]}")
-        user_choice = int(input("Your choice: "))
+
+        user_choice_string = input("Your choice: ")
+
+        while not user_choice_string.isdigit() or not (1 <= int(user_choice_string) <= 3):
+            print("Invalid choice!")
+            user_choice_string = input("Your choice: ")
+        user_choice = int(user_choice_string)
+
         Yehor.payment_choice(self, generated_choices_tuple[user_choice-1])
         #print(generated_choices_tuple)
+
 
 
     def check_game_status(self):

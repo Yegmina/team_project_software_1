@@ -1,13 +1,15 @@
 import mariadb
 import random
-
-
-connection = mariadb.connect(
-    host = 'localhost',
-    user = 'root',
-    database = 'flight_game',
-    password = 'root',
-    autocommit = True,
+import mysql.connector
+import mysql
+#vpngp.metropolia.f
+connection = mysql.connector.connect(
+    user="yehort",
+    password="root123",
+    host="mysql.metropolia.fi",
+    port=3306,
+    database="yehort",
+    autocommit = True
 )
 
 #<editor-fold desc = "MYSQL-cursor optimization">
@@ -23,19 +25,8 @@ def run(s) :
 
 #Each game' database should consist of 30 airports
 #Below is the table specifying which contients should have how many airports
-#AF - 7 ; AS - 7 ; EU - 6
-#NA - 5 ; OC - 3 ; SA & AN - 1
 
 #<editor-fold desc="Database manager v1.0">
-
-## Formatting each player's game's name into one without spaces
-def format_name(s) :
-    s = list(s)
-    for i in range(len(s)) :
-        if s[i] == ' ' : s[i] = '_'
-        else: s[i] = s[i].lower()
-    return 'game_' + "".join(s)
-
 
 def saved_games_database() :
     run(f"CREATE TABLE IF NOT EXISTS `saved_games` ("                               ##The table saves all
