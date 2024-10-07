@@ -2,7 +2,7 @@ import mariadb
 import random
 import mysql.connector
 import mysql
-#vpngp.metropolia.f
+
 connection = mysql.connector.connect(
     user="yehort",
     password="root123",
@@ -37,7 +37,8 @@ def saved_games_database() :
         f"  `public_dissatisfaction` INT(16),"                                      ##and the original (user input)
         f"  `research_progress`      INT(16),"                                      ##version.
         f"  `game_over`              BOOLEAN DEFAULT FALSE,"
-        f"  `game_turn`              INT(16)"
+        f"  `game_turn`              INT(16),"
+        f"  `infection_rate`         SMALLINT(5)" 
         f") ENGINE=InnoDB DEFAULT CHARSET=latin1;")
     #
     run(f"CREATE TABLE IF NOT EXISTS `airport_info` ("
