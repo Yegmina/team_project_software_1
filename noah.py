@@ -20,10 +20,12 @@ import Yehor
 import database_manager as db
 
 def infection_spread(game_name):
-    for i in
-        infected_airport_list = db.run(f"SELECT * FROM airport_info,saved_games "
-                                       f"WHERE airport_info.game_id = saved_games.id "
-                                       f"AND input_name = '{game_name}';")
+    infected_airport_list = db.run(f"SELECT airport_id FROM saved_games "
+                                    f"RIGHT OUTER JOIN airport_info on airport_info.game_id = saved_games.id "
+                                    f"WHERE input_name = '{game_name}' "
+                                    f"AND infected = 1 "
+                                    f"AND closed = 0;")
+
 
 
 # Checks if another country will get infected through a flight.
