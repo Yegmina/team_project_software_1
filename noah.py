@@ -19,28 +19,33 @@ from random import randint
 import Yehor
 import database_manager as db
 
-# Checks if another country will get infected through a flight.
-def airport_spread(spreading_airport):
+def infection_spread(game_name):
+    for i in
+        infected_airport_list = db.run(f"SELECT * FROM airport_info,saved_games "
+                                       f"WHERE airport_info.game_id = saved_games.id "
+                                       f"AND input_name = '{game_name}';")
 
+
+# Checks if another country will get infected through a flight.
+def airport_spread(spreading_airport,game_name, infection_rate):
+
+    game_id = db.run(f"SELECT id FROM saved_games WHERE input_name = '{game_name}';")[0][0]
     ##How far planes fly
     plane_flight_distance = 2000
 
     #Checks to see if the airport is infected and thus able to infect other countries
-    if db.run(f"SELECT airport_id FROM airport_info WHERE game_id = {spreading_airport};") == True:
-        Yehor.get_airport_coordinates(spreading_airport)
+    if db.run(f"SELECT infected FROM airport_info WHERE game_id = '{game_id}' and airport_id = '{spreading_airport}';")[0][0]:
+        spreading_airport = Yehor.get_airport_coordinates(spreading_airport)
 
         #Runs through all the airports in the current game and applys the infection chance
-        i = 1
-        while i <= 30:
-            country2 = db.run(f'SELECT airport_id FROM airport_info WHERE game_id = {i};')
-            if Yehor.distance_between_two(spreading_airport,country2) < plane_flight_distance:
-                if randint(1,2) == 1:
-                    db.run(f'UPDATE airport_info'
-                    f'SET infected = {True}'
-                    f'WHERE airport_id = {country2};')
-                else:
-                    return
-            i+=1
+        table = db.run(f"SELECT airport_id FROM airport_info WHERE game_id = '{game_id}';")
+        for country1 in table:
+            airport1 = Yehor.get_airport_coordinates(country1[1])
+
+            if Yehor.distance_between_two(spreading_airport,airport1) < plane_flight_distance and randint(0,100) < infection_rate:
+                db.run(f'UPDATE airport_info '
+                        f'SET infected = True '
+                        f'WHERE airport_id = {country1[1]};')
     else:
         return
 
