@@ -82,7 +82,7 @@ def fetch_game() :
             if game_option == 0 :
                 return new_game()
 
-            print_data(all_saved_games[game_option - 1][1])
+            print_data(all_saved_games[game_option - 1][0])
             #print data from all_saved_games[game_option - 1]
             print("Are you sure about this game ?")
             c = str(input('YES or NO: '))
@@ -100,8 +100,8 @@ def fetch_game() :
     game_option -= 1
 
 
-def print_data(game_name) :
-    game_data = db.run(f"SELECT * FROM saved_games WHERE input_name = '{game_name}';")
+def print_data(game_id) :
+    game_data = db.run(f"SELECT * FROM saved_games WHERE id = '{game_id}';")
     (money, infected_population, public_dissastisfaction, research_progress, game_turns, infection_rate) = 2, 3, 4, 5, 7, 8
     print(f"+{'':-^16}+{'':-^21}+{'':-^16}+{'':-^17}+{'':-^16}+{'':-^20}+")
 

@@ -25,8 +25,8 @@ def infection_spread(game_name,infection_rate):
                                     f"WHERE input_name = '{game_name}' "
                                     f"AND infected = 1 "
                                     f"AND closed = 0;")
-    for i in infected_airport_list:
-        airport_spread(infected_airport_list[i],game_name,infection_rate)
+    for i in range(infected_airport_list):
+        airport_spread(infected_airport_list[i][0],game_name,infection_rate)
 
 
 # Checks if another country will get infected through a flight.

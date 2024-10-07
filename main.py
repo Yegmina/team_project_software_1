@@ -75,6 +75,9 @@ class Game:
                    f"   infected = 1 "
                    f"WHERE airport_id = '{game_airports[first_infected_airport]}';")
 
+        elif new_game == 0 :
+            self.id = db.run(f"SELECT id FROM saved_games WHERE input_name = '{self.name}';")[0][0]
+
 
 
 
@@ -83,28 +86,54 @@ class Game:
         self.game_turn = 1  # Reset the game turn
 
     def make_choice(self):
+        # Load all choices from the database
         choices = Yehor.load_choices_from_db()
         choice_tuples = [Yehor.convert_choice_to_tuple(choice) for choice in choices]
-        local_choices_amount=3
-        random_indices_tuple = random.sample(range(len(choice_tuples)), local_choices_amount)  # This guarantees 3 unique random indices
 
-        generated_choices_tuple = [choice_tuples[i] for i in sorted(random_indices_tuple[:local_choices_amount])]
+        # Get choices already made by the user for this game
+        game_id = db.run(f"SELECT id FROM saved_games WHERE input_name = '{self.name}';")[0][0]
+        already_made_choices = db.run(f"SELECT choice_id FROM choices_made WHERE game_id = {game_id};")
+        already_made_choice_ids = {row[0] for row in already_made_choices}
+
+        # Filter out choices that have already been made
+        available_choices = [choice for choice in choice_tuples if
+                             db.run(f"SELECT id FROM choices WHERE name = '{choice[0]}'")[0][
+                                 0] not in already_made_choice_ids]
+
+        # Handle the case where there are no available choices left
+        if not available_choices:
+            print("You have already made all available choices.")
+            return
+
+        # Randomly select 3 available choices (or less if fewer than 3 are left)
+        local_choices_amount = min(3, len(available_choices))
+        random_indices_tuple = random.sample(range(len(available_choices)),
+                                             local_choices_amount)  # unique random indices
+        generated_choices_tuple = [available_choices[i] for i in sorted(random_indices_tuple[:local_choices_amount])]
+
+        # Prompt the user to choose
         print("You should choose something!")
         time.sleep(1)
         for i in range(len(generated_choices_tuple)):
+            print(f"{i + 1}. {generated_choices_tuple[i][0]}, cost {generated_choices_tuple[i][1]}")
 
-            print(f"{i+1}. {generated_choices_tuple[i][0]}, cost {generated_choices_tuple[i][1]}")
-
+        # Get user input for their choice
         user_choice_string = input("Your choice: ")
 
-        while not user_choice_string.isdigit() or not (1 <= int(user_choice_string) <= 3):
+        # Validate the input
+        while not user_choice_string.isdigit() or not (1 <= int(user_choice_string) <= local_choices_amount):
             print("Invalid choice!")
             user_choice_string = input("Your choice: ")
+
         user_choice = int(user_choice_string)
+        chosen_tuple = generated_choices_tuple[user_choice - 1]
 
-        Yehor.payment_choice(self, generated_choices_tuple[user_choice-1])
-        #print(generated_choices_tuple)
+        # Process the choice
+        choice_name = chosen_tuple[0]
+        choice_id = db.run(f"SELECT id FROM choices WHERE name = '{choice_name}'")[0][0]
 
+        # Save the choice as made
+        Yehor.payment_choice(self, chosen_tuple)
 
     def check_game_status(self):
         if self.infected_population >= 99:
@@ -122,6 +151,42 @@ class Game:
         elif self.research_progress >= 100:
             print("The cure has been developed! You saved the world!")
             self.game_over = True
+
+    def infection_spread(self):
+        infected_airport_list = db.run(f"SELECT airport_id FROM saved_games "
+                                       f"LEFT JOIN airport_info on airport_info.game_id = saved_games.id "
+                                       f"WHERE input_name = '{self.name}' "
+                                       f"AND infected = 1 "
+                                       f"AND closed = 0;")
+        if len(infected_airport_list) == 0:
+            return
+
+        for i in range(len(infected_airport_list)):
+            self.airport_spread(infected_airport_list[i][0])
+
+    def airport_spread(self, spreading_airport):
+
+        # How far planes fly
+        plane_flight_distance = 2000
+
+        # Checks to see if the airport is infected and thus able to infect other countries
+        if db.run(f"SELECT infected FROM airport_info "
+                  f"WHERE game_id = '{self.id}' "
+                  f"AND airport_id = '{spreading_airport}';")[0][0]:
+            spreading_airport = Yehor.get_airport_coordinates(spreading_airport)
+
+            # Runs through all the airports in the current game and applys the infection chance
+            table = db.run(f"SELECT airport_id FROM airport_info WHERE game_id = '{self.id}';")
+            for country1 in table:
+                airport1 = Yehor.get_airport_coordinates(country1[1])
+
+                if (Yehor.distance_between_two(spreading_airport, airport1) < plane_flight_distance
+                        and random.randint(0,100) < self.infection_rate):
+                    db.run(f'UPDATE airport_info '
+                           f'SET infected = True '
+                           f'WHERE airport_id = {country1[1]};')
+        else:
+            return
 
     def save(self):
         # Corrected SQL syntax
@@ -186,17 +251,23 @@ def main():
 ##----------------- Game starts here ------------------ ##
 
         while game.game_over == False :
+
+            pre_choice_infected_airports = db.run(f"SELECT airport_id FROM airport_info "
+                                                  f"WHERE infected = 1")
+
+    ##------- Game choice -------##
             game.make_choice()
-            ## Make sure in the first 3-5 choices there are no closing airports. (later)
+            game.infection_spread()
+    ##------- Game choice -------##
 
-            if game.game_turn <= 5 :
-                pass
-                ##Add plane departure here (with infected airplane)
-            else :
-                pass
-                ##Add randomized plane departures
+            post_choice_infected_airports = db.run(f"SELECT airport_id FROM airport_info "
+                                                   f"WHERE infected = 1")
 
-            ##------ Check if there's any newly infected airport / cured airport and notify them
+            ##------ Check if there's any newly infected airport / cured airport and notify them ------##
+            for infected_airport in post_choice_infected_airports :
+                if infected_airport not in pre_choice_infected_airports :
+                    print(f"{infected_airport} has been infected by the disease.")
+            ##------ Check if there's any newly infected airport / cured airport and notify them ------##
 
 
             game.check_game_status()

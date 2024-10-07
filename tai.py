@@ -45,6 +45,8 @@ def fetch_game() :
     all_saved_games = db.run("SELECT * FROM saved_games")
     input_name = 1 #Input_name column is the second column in saved_games table
 
+
+
     game_option = None
     while True :
         print()
@@ -77,7 +79,6 @@ def fetch_game() :
             print("Are you sure about this game ?")
             c = str(input('YES or NO: '))
             if c == 'YES' or c=='yes' or c=='y':
-                #LET THEM COOK
                 #return game
                 break
             elif c == 'NO':
@@ -88,4 +89,4 @@ def fetch_game() :
 
     game_option -= 1
 
-# fetch_game()
+#fetch_game()
