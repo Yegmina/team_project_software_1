@@ -81,9 +81,11 @@ class Game:
 
 
 
+
     def start(self):
         print("Game started! Good luck!")
         self.game_turn = 1  # Reset the game turn
+
 
     def make_choice(self):
         # Load all choices from the database

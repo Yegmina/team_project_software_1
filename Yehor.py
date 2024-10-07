@@ -69,6 +69,7 @@ def payment_choice(game, choice_tuple):
     if text:
         print(text)
 
+
     # Record the choice in the database (after processing the choice)
     choice_id = db.run(f"SELECT id FROM choices WHERE name = '{name}'")[0][0]
     db.run(f"INSERT INTO choices_made (game_id, choice_id) VALUES ({game.id}, {choice_id});")
