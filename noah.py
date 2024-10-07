@@ -25,11 +25,12 @@ def infection_spread(game_name):
                                     f"WHERE input_name = '{game_name}' "
                                     f"AND infected = 1 "
                                     f"AND closed = 0;")
-
+    for i in infected_airport_list:
+        airport_spread(infected_airport_list[i],game_name,infection_rate=10)
 
 
 # Checks if another country will get infected through a flight.
-def airport_spread(spreading_airport,game_name, infection_rate):
+def airport_spread(spreading_airport,game_name,infection_rate):
 
     game_id = db.run(f"SELECT id FROM saved_games WHERE input_name = '{game_name}';")[0][0]
     ##How far planes fly
