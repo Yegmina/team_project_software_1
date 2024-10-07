@@ -23,6 +23,10 @@ def new_game() :
                 except :
                     print("Please enter 1 or 2.")
                     pass
+                finally :
+                    if player_choice < 1 or player_choice > 2 :
+                        print("Please enter 1 or 2.")
+                        continue
             if player_choice == 1 :
                 gsf = name_list[0]          ## Game stats fetch
                 game_stats = (gsf[1], gsf[2], gsf[3], gsf[4], gsf[5], gsf[6], gsf[7], gsf[8], 0)

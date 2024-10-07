@@ -49,14 +49,14 @@ class Game:
             countries_each_con = (7, 10, 5, 3, 1, 4)
             length = 6
             game_id = db.run(f"SELECT id FROM saved_games WHERE input_name = '{self.name}';")[0][0]
+            self.id = game_id
+            game_airports = []
+            game_airports_countries = []
             for index in range(length):
-                game_airports = []
-                game_airports_countries = []
 
                 airports = db.run(f"SELECT ident, iso_country FROM airport "
                                   f"WHERE type = 'large_airport' "
                                   f"AND continent = '{continents[index]}';")
-
                 for num in range(countries_each_con[index]):
 
                     rand = random.randint(0, len(airports) - 1)
@@ -66,8 +66,15 @@ class Game:
                     game_airports.append(airports[rand][0])
                     game_airports_countries.append(airports[rand][1])
 
-                for airport in game_airports:
-                    db.run(f"INSERT INTO airport_info VALUES ('{game_id}', '{airport}', 0, 0)")
+            for airport in game_airports:
+                db.run(f"INSERT INTO airport_info VALUES ('{game_id}', '{airport}', 0, 0)")
+
+            first_infected_airport = random.randint(0, 29)
+            db.run(f"UPDATE airport_info "
+                   f"SET "
+                   f"   infected = 1 "
+                   f"WHERE airport_id = '{game_airports[first_infected_airport]}';")
+
 
 
 
@@ -128,9 +135,7 @@ class Game:
                f"   infection_rate = {self.infection_rate} "
                f"WHERE input_name = '{self.name}';")
 
-    ##Outputting game data function here
-    def print_data(self):                   ##Will have to rewrite __init__ to specify
-        pass                                ##Game() initializing to have variables
+    # def
 
 
 # Main game logic
@@ -178,10 +183,27 @@ def main():
         print("\nLoading game data...")
         print("Entering game. \n\n")
 
+##----------------- Game starts here ------------------ ##
+
         while game.game_over == False :
             game.make_choice()
+            ## Make sure in the first 3-5 choices there are no closing airports. (later)
+
+            if game.game_turn <= 5 :
+                pass
+                ##Add plane departure here (with infected airplane)
+            else :
+                pass
+                ##Add randomized plane departures
+
+            ##------ Check if there's any newly infected airport / cured airport and notify them
+
+
             game.check_game_status()
+
             game.save()
+
+##----------------- Game ends here ------------------ ##
 
 
 if __name__ == "__main__":
