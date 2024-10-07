@@ -6,6 +6,8 @@ import Yehor
 import database_manager as db
 import time
 
+import heli
+
 
 class Game:
 
@@ -15,7 +17,9 @@ class Game:
                  public_dissatisfaction = 10,
                  research_progress = 0,
                  game_over = False,
-                 game_turn = 0) :
+                 game_turn = 0,
+                 infection_rate = 5,
+                 new_game = 1) :
 
         self.name = name
         self.money = money
@@ -24,41 +28,46 @@ class Game:
         self.research_progress = research_progress
         self.game_over = game_over
         self.game_turn = game_turn
+        self.infection_rate = infection_rate
 
-        db.run(f"INSERT INTO saved_games VALUES"
-               f"(id,"
-               f"'{name}', "
-               f"{money}, "
-               f"{infected_population},"
-               f"{public_dissatisfaction},"
-               f"{research_progress},"
-               f"{game_over},"
-               f"{game_turn}"
-               f")")
+        if new_game == 1:
+            db.run(f"INSERT INTO saved_games VALUES"
+                   f"(id,"
+                   f"'{name}', "
+                   f"{money}, "
+                   f"{infected_population},"
+                   f"{public_dissatisfaction},"
+                   f"{research_progress},"
+                   f"{game_over},"
+                   f"{game_turn},"
+                   f"{infection_rate}"
+                   f")")
 
-        # AF - 7 ; AS - 10 ; EU - 5
-        # NA - 3 ; OC - 1 ; SA - 4
-        continents = ('AF', 'AS', 'EU', 'NA', 'OC', 'SA')
-        countries_each_con = (7, 10, 5, 3, 1, 4)
-        length = 6
-        game_id = db.run(f"SELECT id FROM saved_games WHERE input_name = '{self.name}'")[0][0]
-        for index in range(length):
-            game_airports = []
+            # AF - 7 ; AS - 10 ; EU - 5
+            # NA - 3 ; OC - 1 ; SA - 4
+            continents = ('AF', 'AS', 'EU', 'NA', 'OC', 'SA')
+            countries_each_con = (7, 10, 5, 3, 1, 4)
+            length = 6
+            game_id = db.run(f"SELECT id FROM saved_games WHERE input_name = '{self.name}';")[0][0]
+            for index in range(length):
+                game_airports = []
+                game_airports_countries = []
 
-            airports = db.run(f"SELECT ident FROM airport "
-                              f"WHERE type = 'large_airport' "
-                              f"AND continent = '{continents[index]}';")
+                airports = db.run(f"SELECT ident, iso_country FROM airport "
+                                  f"WHERE type = 'large_airport' "
+                                  f"AND continent = '{continents[index]}';")
 
-            for num in range(countries_each_con[index]):
+                for num in range(countries_each_con[index]):
 
-                rand = random.randint(0, len(airports) - 1)
-                while airports[rand][0] in game_airports:
                     rand = random.randint(0, len(airports) - 1)
+                    while airports[rand][0] in game_airports or airports[rand][1] in game_airports_countries:
+                        rand = random.randint(0, len(airports) - 1)
 
-                game_airports.append(airports[rand][0])
+                    game_airports.append(airports[rand][0])
+                    game_airports_countries.append(airports[rand][1])
 
-            for airport in game_airports:
-                db.run(f"INSERT INTO airport_info VALUES ('{game_id}', '{airport}', 0, 0)")
+                for airport in game_airports:
+                    db.run(f"INSERT INTO airport_info VALUES ('{game_id}', '{airport}', 0, 0)")
 
 
 
@@ -90,7 +99,6 @@ class Game:
         #print(generated_choices_tuple)
 
 
-
     def check_game_status(self):
         if self.infected_population >= 99:
             print("The infection has spread globally. Game Over!")
@@ -116,7 +124,8 @@ class Game:
                f"   public_dissatisfaction = {self.public_dissatisfaction}, "
                f"   research_progress = {self.research_progress}, "
                f"   game_over = {self.game_over}, "
-               f"   game_turn = {self.game_turn} "
+               f"   game_turn = {self.game_turn}, "
+               f"   infection_rate = {self.infection_rate} "
                f"WHERE input_name = '{self.name}';")
 
     ##Outputting game data function here
@@ -128,40 +137,51 @@ class Game:
 def main():
 
     db.saved_games_database()
-
     # Call the start() function from tai.py to get the user's choice
-    player_choice = tai.start()
+    while True :
+        player_choice = tai.start()
 
-    if player_choice == 'new':
+        ##result = Game()
 
-        while True:
-            name = input("Enter your game name: ")
-            name_list = db.run(f"SELECT input_name FROM saved_games WHERE input_name = '{name}';")
-            ##Checking if there is a game with that name
-            if name == '' :
-                print("The name cannot be empty\n")     ##Self-explanatory
-                continue
-            elif len(name_list) != 0 :
-                print("Profile already exists")         ##Checking if there's already been a
-                                                        ##game with the inputted name
-            game = Game(name)
-            break
+        if player_choice == 'new':
+            result = heli.new_game() ## Will transfer to tai.py
 
         # Proceed with game logic, like showing actions, making choices, etc.
         # After this line example, just for debugging purposes
-        while game.game_over == False:
+
+        elif player_choice == 'continue':
+            branch_output = heli.continue_game()
+
+            if branch_output == 0 : ## Find game inside the game list
+                result = heli.fetch_game()
+                pass
+
+            elif branch_output == 1 : ## The game list is empty
+                result = heli.new_game() ## Will transfer to tai.py
+                pass
+
+            elif branch_output == 2 : ## No want new game
+                continue
+                pass
+
+
+        elif player_choice == 'quit':
+            print("Exiting the game... Goodbye! Moi moi!")
+            pass
+
+
+        name, money, infected, public_diss, research, over, turn, rate, newgame = result
+        game = Game(name, money, infected, public_diss,
+                    research, over, turn, rate, newgame)
+
+
+        print("\nLoading game data...")
+        print("Entering game. \n\n")
+
+        while game.game_over == False :
             game.make_choice()
             game.check_game_status()
             game.save()
-
-
-
-    elif player_choice == 'continue':
-        print("Loading game... (Add loading logic here)")
-
-
-    elif player_choice == 'quit':
-        print("Exiting the game... Goodbye! Moi moi!")
 
 
 if __name__ == "__main__":
