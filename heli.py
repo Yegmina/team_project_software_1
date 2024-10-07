@@ -53,6 +53,8 @@ def continue_game() :
         while True:
             try :
                 option = int(input("YES (1) or NO (2): "))
+                if option != 1 and option != 2 :
+                    continue
                 break
             except :
                 print("Please enter 1 or 2.")
