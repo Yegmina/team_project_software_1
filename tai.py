@@ -32,13 +32,25 @@ def start():
             print("Please enter a valid number.")
 #design game over
 def over():
-    print("          _____                         ____                 ")
     print("         / ____|                       / __ \                ")
     print("        | |  __  __ _ _ __ ___   ___  | |  | |_   _____ _ __ ")
     print("        | | |_ |/ _` | '_ ` _ \ / _ \ | |  | \ \ / / _ \ '__|")
     print("        | |__| | (_| | | | | | |  __/ | |__| |\ V /  __/ |   ")
     print("         \_____|\__,_|_| |_| |_|\___|  \____/  \_/ \___|_|   ")
 
+def win():
+    print("          __     __                        ")
+    print("          \ \   / /                        ")
+    print("           \ \_/ /   __    _    _          ")
+    print("            \   /  / _ \  | |  | |         ")
+    print("             | |  | ( ) | | |__| |         ")
+    print("             |_|   \___/   \____/          ")
+    print("          __          __             ")
+    print("          \ \        / /             ")
+    print("           \ \  /\  / /__  _ __      ")
+    print("            \ \/  \/ / _ \| '_ \     ")
+    print("             \  /\  / (_) | | | |    ")
+    print("              \/  \/ \___/|_| |_|    ")
 
 # 1. cac game choi gan nhat len dau tien NE
 def fetch_game() :

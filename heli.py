@@ -13,7 +13,7 @@ def new_game() :
             print("The name cannot be empty\n")  ##Self-explanatory
             continue
         elif len(name_list) != 0:
-            print_data(name)
+            print_data(name_list[0][0])
             print("Profile already exists.\nDo you want to play on this profile instead?")
             while True :
                 try :
@@ -29,7 +29,7 @@ def new_game() :
                         continue
             if player_choice == 1 :
                 gsf = name_list[0]          ## Game stats fetch
-                game_stats = (gsf[1], gsf[2], gsf[3], gsf[4], gsf[5], gsf[6], gsf[7], gsf[8], 0)
+                game_stats = (gsf[1], gsf[2], gsf[3], gsf[4], gsf[5], gsf[6], gsf[7], gsf[8], gsf[9], 0)
                 ## 0 at the end is for new_game = 0
                 return game_stats
 
@@ -38,7 +38,7 @@ def new_game() :
                                                                 ##Checking if there's already been a
             continue                                            ##game with the inputted name
                                                                 ## IDEA : We could add an option for the player to choose
-        return name, 1000000, 10, 10, 0, False, 0, 200, 1          ## play the profile with the existing name if the name were
+        return name, 10, 10, 10, 0, False, 1, 10, 8000, 1          ## play the profile with the existing name if the name were
                                                                 ## to be a duplicate
 
         ##This returns a tuple to declare a new game.
@@ -89,7 +89,7 @@ def fetch_game() :
             if c == 'YES' or c=='yes' or c=='y':
                 #LET THEM COOK
                 gsf = all_saved_games[game_option - 1]
-                return gsf[1], gsf[2], gsf[3], gsf[4], gsf[5], gsf[6], gsf[7], gsf[8], 0
+                return gsf[1], gsf[2], gsf[3], gsf[4], gsf[5], gsf[6], gsf[7], gsf[8], gsf[9], 0
 
             elif c == 'NO':
                 continue

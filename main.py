@@ -13,13 +13,14 @@ import heli
 class Game:
 
     def __init__(self, name,
-                 money = 1000000,
+                 money = 10,
                  infected_population = 10,
                  public_dissatisfaction = 10,
                  research_progress = 0,
                  game_over = False,
-                 game_turn = 0,
-                 infection_rate = 5,
+                 game_turn = 1,
+                 infection_rate = 10,
+                 max_distance = 8000,
                  new_game = 1) :
 
         self.name = name
@@ -30,6 +31,9 @@ class Game:
         self.game_over = game_over
         self.game_turn = game_turn
         self.infection_rate = infection_rate
+        self.max_distance = 8000
+
+        self.infected_country = 1
 
         if new_game == 1:
             db.run(f"INSERT INTO saved_games VALUES"
@@ -41,7 +45,8 @@ class Game:
                    f"{research_progress},"
                    f"{game_over},"
                    f"{game_turn},"
-                   f"{infection_rate}"
+                   f"{infection_rate},"
+                   f"{max_distance}"
                    f")")
 
             # AF - 7 ; AS - 10 ; EU - 5
@@ -78,9 +83,9 @@ class Game:
 
         elif new_game == 0 :
             self.id = db.run(f"SELECT id FROM saved_games WHERE input_name = '{self.name}';")[0][0]
-
-
-
+            self.infected_country = db.run(f"SELECT COUNT(*) FROM airport_info "
+                                           f"WHERE infected = 1 "
+                                           f"AND game_id = {self.id};")[0][0]
 
 
     def start(self):
@@ -120,13 +125,19 @@ class Game:
         for i in range(len(generated_choices_tuple)):
             print(f"{i + 1}. {generated_choices_tuple[i][0]}, cost {generated_choices_tuple[i][1]}")
 
-        # Get user input for their choice
+        # Get user input for their cice
         user_choice_string = input("Your choice: ")
 
         # Validate the input
         while not user_choice_string.isdigit() or not (1 <= int(user_choice_string) <= local_choices_amount):
-            print("Invalid choice!")
-            user_choice_string = input("Your choice: ")
+            if user_choice_string == 'data' :
+                heli.print_data(self.id)
+                user_choice_string = input("Your choice: ")
+            else :
+                print("Invalid choice!")
+                user_choice_string = input("Your choice: ")
+
+
 
         user_choice = int(user_choice_string)
         chosen_tuple = generated_choices_tuple[user_choice - 1]
@@ -143,24 +154,26 @@ class Game:
             print("The infection has spread globally. Game Over!")
             self.game_over = True
         elif self.infected_population <= 0:
-            print("Everyone is healed. You win!")
+            print("Everyone is healed. ")
+            tai.win()
             self.game_over = True
         elif self.public_dissatisfaction >= 100:
             print("Public dissatisfaction has reached critical levels. Anarchy ensues. Game Over!")
             self.game_over = True
-        elif self.public_dissatisfaction <= 0:
-            print("All people are happy about your choices! But it does not mean they are healthy!")
-            self.public_dissatisfaction = 0
+            tai.over()
         elif self.research_progress >= 100:
             print("The cure has been developed! You saved the world!")
             self.game_over = True
+            tai.win()
+        elif self.public_dissatisfaction <= 0:
+            print("All people are happy about your choices! But it does not mean they are healthy!")
+            self.public_dissatisfaction = 0
 
     def infection_spread(self):
-        infected_airport_list = db.run(f"SELECT airport_id FROM saved_games "
-                                       f"LEFT JOIN airport_info on airport_info.game_id = saved_games.id "
-                                       f"WHERE input_name = '{self.name}' "
+        infected_airport_list = db.run(f"SELECT airport_id FROM airport_info "
+                                       f"WHERE game_id = {self.id} "
                                        f"AND infected = 1 "
-                                       f"AND closed = 0;")
+                                       f"AND closed = 0")
         if len(infected_airport_list) == 0:
             return
 
@@ -170,24 +183,27 @@ class Game:
     def airport_spread(self, spreading_airport):
 
         # How far planes fly
-        plane_flight_distance = 2000
-
         # Checks to see if the airport is infected and thus able to infect other countries
         if db.run(f"SELECT infected FROM airport_info "
                   f"WHERE game_id = '{self.id}' "
                   f"AND airport_id = '{spreading_airport}';")[0][0]:
+
             spreading_airport = Yehor.get_airport_coordinates(spreading_airport)
 
             # Runs through all the airports in the current game and applys the infection chance
-            table = db.run(f"SELECT airport_id FROM airport_info WHERE game_id = '{self.id}';")
+            table = db.run(f"SELECT airport_id FROM airport_info "
+                           f"WHERE game_id = '{self.id}' "
+                           f"AND infected = 0;")
             for country1 in table:
-                airport1 = Yehor.get_airport_coordinates(country1[1])
+                airport1 = Yehor.get_airport_coordinates(country1[0])
 
-                if (Yehor.distance_between_two(spreading_airport, airport1) < plane_flight_distance
-                        and random.randint(0,100) < self.infection_rate):
+                randomNumber = random.randint(0, 100)
+                if (Yehor.distance_between_two(spreading_airport, airport1) <= self.max_distance
+                        and randomNumber < self.infection_rate):
+                    self.infected_country += 1
                     db.run(f'UPDATE airport_info '
-                           f'SET infected = True '
-                           f'WHERE airport_id = {country1[1]};')
+                           f'   SET infected = True '
+                           f'WHERE airport_id = "{country1[0]}";')
         else:
             return
 
@@ -212,6 +228,7 @@ def main():
     db.saved_games_database()
     # Call the start() function from tai.py to get the user's choice
     while True :
+
         player_choice = tai.start()
 
         ##result = Game()
@@ -243,9 +260,8 @@ def main():
             pass
 
 
-        name, money, infected, public_diss, research, over, turn, rate, newgame = result
-        game = Game(name, money, infected, public_diss,
-                    research, over, turn, rate, newgame)
+        name, money, infected, public_diss, research, over, turn, rate, max_distance, newgame = result
+        game = Game(name, money, infected, public_diss, research, over, turn, rate, max_distance, newgame)
 
 
         print("\nLoading game data...")
@@ -254,26 +270,46 @@ def main():
 ##----------------- Game starts here ------------------ ##
 
         while game.game_over == False :
-
+            print('\n\n')
+            s = f"Turn  {game.game_turn}"
+            print(f"{s:-^50}")
             pre_choice_infected_airports = db.run(f"SELECT airport_id FROM airport_info "
-                                                  f"WHERE infected = 1")
+                                                  f"WHERE infected = 1 "
+                                                  f"AND game_id = '{game.id}'")
 
-    ##------- Game choice -------##
+            ##------- Game choice -------##
             game.make_choice()
             game.infection_spread()
-    ##------- Game choice -------##
+            ##------- Game choice -------##
 
             post_choice_infected_airports = db.run(f"SELECT airport_id FROM airport_info "
-                                                   f"WHERE infected = 1")
+                                                   f"WHERE infected = 1 "
+                                                   f"AND game_id = '{game.id}'")
 
             ##------ Check if there's any newly infected airport / cured airport and notify them ------##
             for infected_airport in post_choice_infected_airports :
                 if infected_airport not in pre_choice_infected_airports :
-                    print(f"{infected_airport} has been infected by the disease.")
+                    airport_name = db.run(f"SELECT name FROM airport WHERE ident = '{infected_airport[0]}';")[0][0]
+                    print((Colours.RED)+f"{airport_name} has been infected by the disease.\n"+Colours.RESET)
+                    time.sleep(0.5)
             ##------ Check if there's any newly infected airport / cured airport and notify them ------##
 
 
             game.check_game_status()
+
+            ##------ Changing game variables based on random variable changes
+            game.max_distance += random.randint(-10, 100)
+
+            constant_growth = 10
+            game.infected_population = game.infected_population + int(game.infected_country / 30 * constant_growth)
+            game.infected_population = min(game.infected_population, game.infected_country * 10 / 3)
+
+
+            coeff = 3 * random.random()
+            game.public_dissatisfaction = int(game.public_dissatisfaction + (coeff ** ((game.public_dissatisfaction+game.infected_population) / 20)))
+
+            game.money=game.money+random.randint(0, 1000)+(100-game.infected_population)*100
+            ##------ Changing game vairables
 
             game.save()
 

@@ -14,15 +14,15 @@ def run_sql_from_file(sql_file_path: object = 'choices.sql') -> object:
 
         return db.run(sql_query)
     except FileNotFoundError:
-        print(f"Error: File {sql_file_path} not found.")
+        print(Colours.RED + f"Error: File {sql_file_path} not found." + Colours.RESET) #red
         return None
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(Colours.RED + f"An error occurred: {e}" + Colours.RESET) #red
         return None
 
 # Load choices directly from the database
 def load_choices_from_db():
-    query = "SELECT name, money_needed, infected_changing, dissatisfaction_changing, research_progress_changing, text, sql_query FROM choices;"
+    query = "SELECT name, money_needed, infected_changing, dissatisfaction_changing, research_progress_changing, text, sql_query, infection_rate FROM choices;"
     return db.run(query)
 
 # Convert database result row to tuple (not necessary since SQL result is already a tuple)
@@ -31,7 +31,7 @@ def convert_choice_to_tuple(db_choice_row):
 
 # Function to handle making a choice
 def payment_choice(game, choice_tuple):
-    name, money_needed, infected_changing, dissatisfaction_changing, research_progress_changing, text, sql_query = choice_tuple
+    name, money_needed, infected_changing, dissatisfaction_changing, research_progress_changing, text, sql_query, infection_rate  = choice_tuple
 
     # Ensure the player has enough money to make the choice
     if money_needed > game.money:
@@ -45,7 +45,15 @@ def payment_choice(game, choice_tuple):
     # Update infected population
     if infected_changing != 0:
         game.infected_population += infected_changing
-        print(f"Infected population changed by {infected_changing}. Now it is {game.infected_population}")
+        print(f"Infected population changed by {infected_changing}. Now it is {game.infected_population}" )
+        time.sleep(1)
+
+    if infection_rate != 0:
+        game.infection_rate += infection_rate
+        if infection_rate > 0:
+            print(Colours.RED + f"The infection is spreading at an increased rate" + Colours.RESET)
+        else:
+            print(Colours.GREEN + f"The infection is spreading at an decreased rate" + Colours.RESET)
         time.sleep(1)
 
     # Update public dissatisfaction
@@ -57,7 +65,7 @@ def payment_choice(game, choice_tuple):
     # Update research progress
     if research_progress_changing != 0:
         game.research_progress += research_progress_changing
-        print((Colours.GREEN if research_progress_changing > 0 else Colours.RED) + f"Research progress changed by {research_progress_changing}. Now it is {game.research_progress}" + Colours.RESET)
+        print((Colours.BLUE if research_progress_changing > 0 else Colours.RED) + f"Research progress changed by {research_progress_changing}. Now it is {game.research_progress}" + Colours.RESET)
         time.sleep(1)
 
     # Execute any additional SQL query provided by the choice
