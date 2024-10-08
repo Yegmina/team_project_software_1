@@ -5,6 +5,7 @@ import random
 import Yehor
 import database_manager as db
 import time
+import Colours
 
 import heli
 

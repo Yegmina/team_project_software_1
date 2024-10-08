@@ -5,6 +5,7 @@ import database_manager as db
 import main
 import time
 import mysql.connector
+import Colours
 
 def run_sql_from_file(sql_file_path: object = 'choices.sql') -> object:
     try:
@@ -34,7 +35,7 @@ def payment_choice(game, choice_tuple):
 
     # Ensure the player has enough money to make the choice
     if money_needed > game.money:
-        print("Not enough money to make this choice.")
+        print(Colours.BRIGHT_YELLOW + "Not enough money to make this choice." + Colours.RESET)
         return
 
     # Deduct money and increment game turn
@@ -50,13 +51,13 @@ def payment_choice(game, choice_tuple):
     # Update public dissatisfaction
     if dissatisfaction_changing != 0:
         game.public_dissatisfaction += dissatisfaction_changing
-        print(f"Public dissatisfaction changed by {dissatisfaction_changing}. Now it is {game.public_dissatisfaction}")
+        print((Colours.RED if dissatisfaction_changing > 0 else Colours.GREEN) + f"Public dissatisfaction changed by {dissatisfaction_changing}. Now it is {game.public_dissatisfaction}" + Colours.RESET);
         time.sleep(1)
 
     # Update research progress
     if research_progress_changing != 0:
         game.research_progress += research_progress_changing
-        print(f"Research progress changed by {research_progress_changing}. Now it is {game.research_progress}")
+        print((Colours.GREEN if research_progress_changing > 0 else Colours.RED) + f"Research progress changed by {research_progress_changing}. Now it is {game.research_progress}" + Colours.RESET)
         time.sleep(1)
 
     # Execute any additional SQL query provided by the choice
