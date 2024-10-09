@@ -13,7 +13,7 @@ import heli
 class Game:
 
     def __init__(self, name,
-                 money = 10,
+                 money = 10000,
                  infected_population = 10,
                  public_dissatisfaction = 10,
                  research_progress = 0,
@@ -121,7 +121,7 @@ class Game:
         generated_choices_tuple = [available_choices[i] for i in sorted(random_indices_tuple[:local_choices_amount])]
 
         # Prompt the user to choose
-        print("You should choose something!")
+        print("Make your choice!")
         time.sleep(1)
         for i in range(len(generated_choices_tuple)):
             print(f"{i + 1}. {generated_choices_tuple[i][0]}, cost {generated_choices_tuple[i][1]}")

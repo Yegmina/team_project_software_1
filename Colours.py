@@ -15,4 +15,4 @@ BRIGHT_MAGENTA   = '\033[95m'
 BRIGHT_CYAN      = '\033[96m'
 WHITE            = '\033[97m'
 RESET            = '\033[0m'
-
+STRIKE           = '\033[9m'

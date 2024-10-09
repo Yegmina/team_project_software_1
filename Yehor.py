@@ -52,7 +52,7 @@ def payment_choice(game, choice_tuple):
     # Update infected population
     if infected_changing != 0:
         game.infected_population += infected_changing
-        print(f"Infected population changed by {infected_changing}. Now it is {game.infected_population}" )
+        #print(f"Infected population changed by {infected_changing}. Now it is {game.infected_population}" )
         time.sleep(1)
 
     if infection_rate != 0:
@@ -64,12 +64,24 @@ def payment_choice(game, choice_tuple):
         time.sleep(1)
 
     # Update public dissatisfaction
+    if game.public_dissatisfaction > 100:
+        game.public_dissatisfaction = 100
+
+    if game.public_dissatisfaction < 0:
+        game.public_dissatisfaction = 0
+
     if dissatisfaction_changing != 0:
         game.public_dissatisfaction += dissatisfaction_changing
         print((Colours.RED if dissatisfaction_changing > 0 else Colours.GREEN) + f"Public dissatisfaction changed by {dissatisfaction_changing}. Now it is {game.public_dissatisfaction}" + Colours.RESET);
         time.sleep(1)
 
     # Update research progress
+    if game.research_progress > 100:
+        game.research_progress = 100
+
+    if game.research_progress < 0:
+        game.research_progress = 0
+
     if research_progress_changing != 0:
         game.research_progress += research_progress_changing
         print((Colours.BLUE if research_progress_changing > 0 else Colours.RED) + f"Research progress changed by {research_progress_changing}. Now it is {game.research_progress}" + Colours.RESET)

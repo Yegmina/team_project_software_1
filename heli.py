@@ -38,7 +38,7 @@ def new_game() :
                                                                 ##Checking if there's already been a
             continue                                            ##game with the inputted name
                                                                 ## IDEA : We could add an option for the player to choose
-        return name, 10, 10, 10, 0, False, 1, 10, 8000, 1          ## play the profile with the existing name if the name were
+        return name, 10000, 10, 10, 0, False, 1, 10, 8000, 1          ## play the profile with the existing name if the name were
                                                                 ## to be a duplicate
 
         ##This returns a tuple to declare a new game.
