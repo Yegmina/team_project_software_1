@@ -6,14 +6,14 @@ import Yehor
 import database_manager as db
 import time
 import Colours
-
+import noah as nh
 import heli
 
 
 class Game:
 
     def __init__(self, name,
-                 money = 10,
+                 money = 10000,
                  infected_population = 10,
                  public_dissatisfaction = 10,
                  research_progress = 0,
@@ -109,9 +109,10 @@ class Game:
                                  0] not in already_made_choice_ids]
 
         # Handle the case where there are no available choices left
-        if not available_choices:
-            print("You have already made all available choices.")
-            return
+        #if not available_choices:
+            #print("You have already made all available choices.")
+            #return
+
 
         # Randomly select 3 available choices (or less if fewer than 3 are left)
         local_choices_amount = min(3, len(available_choices))
@@ -120,10 +121,15 @@ class Game:
         generated_choices_tuple = [available_choices[i] for i in sorted(random_indices_tuple[:local_choices_amount])]
 
         # Prompt the user to choose
-        print("You should choose something!")
+        print("Make your choice!")
         time.sleep(1)
         for i in range(len(generated_choices_tuple)):
             print(f"{i + 1}. {generated_choices_tuple[i][0]}, cost {generated_choices_tuple[i][1]}")
+        min_game_turn=5
+        #ANOTHER TYPE OF CHOICES
+        if self.game_turn>min_game_turn:
+            print(f"4. Close airport by ICAO code")
+            print(f"5. Close the continent")
 
         # Get user input for their cice
         user_choice_string = input("Your choice: ")
@@ -133,6 +139,25 @@ class Game:
             if user_choice_string == 'data' :
                 heli.print_data(self.id)
                 user_choice_string = input("Your choice: ")
+            elif not user_choice_string.isdigit():
+                print("Your answer should be number")
+                user_choice_string = input("Your choice: ")
+
+            elif int(user_choice_string)==4 and self.game_turn < min_game_turn:
+
+                nh.print_all_icao_codes(self.name)
+                local_icao=input("Write ICAO code of airport that are you going to close ")
+                local_boolean=nh.check_and_close_airport(self.name, local_icao)
+                if local_boolean==True:
+                    self.game_turn=self.game_turn+1
+
+                user_choice_string = input("Do you want to choose something else? Write your choice: ")
+
+            elif int(user_choice_string)==5 and self.game_turn < min_game_turn:
+                local_continent=input("Write continent code that are you going to close ")
+                nh.close_continents_airports(local_continent)
+
+                user_choice_string = input("Do you want to choose something else? Write your choice: ")
             else :
                 print("Invalid choice!")
                 user_choice_string = input("Your choice: ")
@@ -216,7 +241,8 @@ class Game:
                f"   research_progress = {self.research_progress}, "
                f"   game_over = {self.game_over}, "
                f"   game_turn = {self.game_turn}, "
-               f"   infection_rate = {self.infection_rate} "
+               f"   infection_rate = {self.infection_rate}, "
+               f"   max_distance = {self.max_distance} "
                f"WHERE input_name = '{self.name}';")
 
     # def
@@ -270,9 +296,14 @@ def main():
 ##----------------- Game starts here ------------------ ##
 
         while game.game_over == False :
+
             print('\n\n')
             s = f"Turn  {game.game_turn}"
+
             print(f"{s:-^50}")
+
+            time.sleep(1.5)
+            heli.print_data(game.id)
             pre_choice_infected_airports = db.run(f"SELECT airport_id FROM airport_info "
                                                   f"WHERE infected = 1 "
                                                   f"AND game_id = '{game.id}'")
@@ -312,6 +343,8 @@ def main():
             ##------ Changing game vairables
 
             game.save()
+
+
 
 ##----------------- Game ends here ------------------ ##
 

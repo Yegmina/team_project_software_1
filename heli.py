@@ -38,7 +38,7 @@ def new_game() :
                                                                 ##Checking if there's already been a
             continue                                            ##game with the inputted name
                                                                 ## IDEA : We could add an option for the player to choose
-        return name, 10, 10, 10, 0, False, 1, 10, 8000, 1          ## play the profile with the existing name if the name were
+        return name, 10000, 10, 10, 0, False, 1, 10, 8000, 1          ## play the profile with the existing name if the name were
                                                                 ## to be a duplicate
 
         ##This returns a tuple to declare a new game.
@@ -103,20 +103,19 @@ def fetch_game() :
 def print_data(game_id) :
     game_data = db.run(f"SELECT * FROM saved_games WHERE id = '{game_id}';")
     (money, infected_population, public_dissastisfaction, research_progress, game_turns, infection_rate) = 2, 3, 4, 5, 7, 8
-    print(f"+{'':-^16}+{'':-^21}+{'':-^16}+{'':-^17}+{'':-^16}+{'':-^20}+")
+    print(f"+{'':-^16}+{'':-^21}+{'':-^22}+{'':-^17}+{'':-^20}+")
 
-    print(f"|{'MONEY': ^16}|{'INFECTED POPULATION': ^21}|{'PUBLIC DISS...': ^16}|"
-          f"{'RESEARCH PROGRESS': ^16}|{'GAME TURNS': ^16}|{'INFECTION RATE': ^20}|")
+    print(f"|{'MONEY': ^16}|{'INFECTED POPULATION': ^21}|{'PUBLIC DISSATISFACTION': ^22}|"
+          f"{'RESEARCH PROGRESS': ^16}|{'INFECTION RATE': ^20}|")
 
-    print(f"|{'':-^16}+{'':-^21}+{'':-^16}+{'':-^17}+{'':-^16}|{'':-^20}|")
+    print(f"|{'':-^16}+{'':-^21}+{'':-^22}+{'':-^17}|{'':-^20}|")
 
     print(f"|{game_data[0][money]:^16}"
           f"|{game_data[0][infected_population] :^21}"
-          f"|{game_data[0][public_dissastisfaction] :^16}"
+          f"|{game_data[0][public_dissastisfaction] :^22}"
           f"|{game_data[0][research_progress] :^17}"
-          f"|{game_data[0][game_turns] :^16}"
           f"|{game_data[0][infection_rate] : ^ 20}|")
 
-    print(f"+{'':-^16}+{'':-^21}+{'':-^16}+{'':-^17}+{'':-^16}+{'':-^20}+")
+    print(f"+{'':-^16}+{'':-^21}+{'':-^22}+{'':-^17}+{'':-^20}+")
 
 # print_data('Chi Kien')

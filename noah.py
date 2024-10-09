@@ -1,24 +1,10 @@
 ### Noah's Code Goes Here ###
-'''
-i = 0
-growthrate = 2
-local_infected_population = 1
-while i < 50 and local_infected_population < 100:
-    local_infected_population = int(local_infected_population * growthrate)
-    print(local_infected_population)
-    i += 1
-import database_manager as db
-infected_poplulation = 1
-infection_multiplyer = 2
-def infection_spread(local_infected_population, )
-    infected_population*infection_multiplyer
-    print(inefcted_population)
-    '''
 from random import randint
 
+import Colours
 import Yehor
 import database_manager as db
-
+import Colours
 
 def infection_spread(game_name,infection_rate):
     infected_airport_list = db.run(f"SELECT airport_id FROM saved_games "
@@ -53,11 +39,52 @@ def airport_spread(spreading_airport,game_name,infection_rate):
     else:
         return
 
-#
+def print_all_icao_codes(game_name):
+    game_id = db.run(f"SELECT id FROM saved_games WHERE input_name = '{game_name}';")[0][0]
+
+    icao_code_list = db.run(f'SELECT airport_id, infected, closed '
+                            f'FROM airport_info '
+                            f'WHERE game_id = "{game_id}";')
+
+    for i in range(0, int(len(icao_code_list) / 3)):
+        print(
+            f"{(Colours.RED if icao_code_list[i][1] == 1 else Colours.GREEN)}"
+            f"{(Colours.STRIKE if icao_code_list[i][2] == 1 else '')}"  # Strikethrough for closed airports
+            f"{i + 1}. {icao_code_list[i][0]} "
+            f"{Colours.RESET}"  # Reset after each section
+
+            f"{(Colours.RED if icao_code_list[i + int(len(icao_code_list) / 3)][1] == 1 else Colours.GREEN)}"
+            f"{(Colours.STRIKE if icao_code_list[i + int(len(icao_code_list) / 3)][2] == 1 else '')}"
+            f"{i + int(len(icao_code_list) / 3) + 1}. {icao_code_list[i + int(len(icao_code_list) / 3)][0]} "
+            f"{Colours.RESET}"
+
+            f"{(Colours.RED if icao_code_list[i + int(len(icao_code_list) / 3) * 2][1] == 1 else Colours.GREEN)}"
+            f"{(Colours.STRIKE if icao_code_list[i + int(len(icao_code_list) / 3) * 2][2] == 1 else '')}"
+            f"{i + int(len(icao_code_list) / 3) * 2 + 1}. {icao_code_list[i + int(len(icao_code_list) / 3) * 2][0]} "
+            f"{Colours.RESET}"
+        )
+
+
+def check_and_close_airport(game_name, input_icao_code):
+
+    game_id = db.run(f"SELECT id FROM saved_games WHERE input_name = '{game_name}';")[0][0]
+
+    icao_code_list = db.run(f'SELECT airport_id '
+                            f'FROM airport_info '
+                            f'WHERE game_id = "{game_id}";')
+
+    if any(input_icao_code in icao_code[0] for icao_code in icao_code_list):
+        close_1_airport(input_icao_code)
+        return True
+    else:
+        print('Not a proper ICAO code, try another')
+        return False
+
+
 def close_1_airport(icao_code):
-    db.run(f'UPDATE airport_info'
-           f'SET closed = {True}'
-           f'WHERE airport_id = {icao_code};')
+    db.run(f'UPDATE airport_info '
+           f'SET closed = 1 '
+           f'WHERE airport_id = "{icao_code}";')
 
 def close_continents_airports(continent):
     db.run(f'select airport_id from airport_info,airport where continent = {continent} and airport_id = ident;')

@@ -4,7 +4,7 @@ def start():
     print("WELCOME TO AIRPORT GAME!! (Press Enter to continue)")
     input()  # Pause for user to press Enter
 
-    input("This game is about managing airport logistics...")  # Game description
+    input("This game is about managing a disease outbreak...")  # Game description
 
     print("Rules          : R(1)\n"
           "New Game       : N(2)\n"
