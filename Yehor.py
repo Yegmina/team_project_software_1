@@ -33,14 +33,21 @@ def convert_choice_to_tuple(db_choice_row):
 def payment_choice(game, choice_tuple):
     name, money_needed, infected_changing, dissatisfaction_changing, research_progress_changing, text, sql_query, infection_rate  = choice_tuple
 
+    game.game_turn += 1
+    if game.game_turn % 5 == 1:
+        if game.infected_population<80:
+            print(f"Infected is now {int(game.infected_population)}")
+        else:
+            print(Colours.RED + f"Attention!!! The world's population is almost all infected - {game.infected_population}" + Colours.RESET)
+        time.sleep(1)
+
     # Ensure the player has enough money to make the choice
     if money_needed > game.money:
-        print(Colours.BRIGHT_YELLOW + "Not enough money to make this choice." + Colours.RESET)
+        print(Colours.BRIGHT_YELLOW + "Not enough money, so you skipped the choice this turn!" + Colours.RESET)
         return
 
     # Deduct money and increment game turn
     game.money -= money_needed
-    game.game_turn += 1
 
     # Update infected population
     if infected_changing != 0:
@@ -116,3 +123,5 @@ def distance_between_two(coord_1, coord_2):
         return distance
     else:
         return 999999999  # can be changed
+
+#def outbreak_notification(game)
