@@ -169,7 +169,6 @@ class Game:
 
                 local_boolean=nh.check_and_close_airport(self, local_icao)
                 if local_boolean == True:
-                    print("You closed")
                     self.game_turn = self.game_turn+1
 
                 elif local_boolean == False :
