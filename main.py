@@ -336,7 +336,6 @@ def main():
             s = f"Turn {game.game_turn}"
 
             print(f"{s:-^102}")
-            print(game.public_dissatisfaction)
 
             time.sleep(1.5)
             heli.print_data(game.id)
