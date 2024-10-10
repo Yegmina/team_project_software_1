@@ -1,5 +1,3 @@
-import mariadb
-import random
 import mysql.connector
 import mysql
 
@@ -22,9 +20,6 @@ def run(s) :
     except :
         return None
 
-
-#Each game' database should consist of 30 airports
-#Below is the table specifying which contients should have how many airports
 
 #<editor-fold desc="Database manager v1.0">
 

@@ -38,7 +38,7 @@ def new_game() :
                                                                 ##Checking if there's already been a
             continue                                            ##game with the inputted name
                                                                 ## IDEA : We could add an option for the player to choose
-        return name, 10000, 10, 10, 0, False, 1, 10, 8000, 1          ## play the profile with the existing name if the name were
+        return name, 10000, 3, 7, 0, False, 1, 7, 8000, 1          ## play the profile with the existing name if the name were
                                                                 ## to be a duplicate
 
         ##This returns a tuple to declare a new game.
@@ -85,13 +85,28 @@ def fetch_game() :
             print_data(all_saved_games[game_option - 1][0])
             #print data from all_saved_games[game_option - 1]
             print("Are you sure about this game ?")
-            c = str(input('YES or NO: '))
-            if c == 'YES' or c=='yes' or c=='y':
-                #LET THEM COOK
-                gsf = all_saved_games[game_option - 1]
-                return gsf[1], gsf[2], gsf[3], gsf[4], gsf[5], gsf[6], gsf[7], gsf[8], gsf[9], 0
 
-            elif c == 'NO':
+            correct_input, sure = False, True
+            while correct_input == 0:
+
+                try :
+                    c = int(input('YES (1) or NO (2): '))
+                    if c == 1 :
+                        #LET THEM COOK
+                        gsf = all_saved_games[game_option - 1]
+                        return gsf[1], gsf[2], gsf[3], gsf[4], gsf[5], gsf[6], gsf[7], gsf[8], gsf[9], 0
+
+                    elif c == 2:
+                        correct_input = True
+                        sure = False
+                        continue
+                    else :
+                        print('Please enter 1 or 2.')
+                except :
+                    print("Please enter 1 or 2.")
+                    pass
+
+            if sure == 0 :
                 continue
 
         except :
@@ -117,5 +132,3 @@ def print_data(game_id) :
           f"|{game_data[0][infection_rate] : ^ 20}|")
 
     print(f"+{'':-^16}+{'':-^21}+{'':-^22}+{'':-^17}+{'':-^20}+")
-
-# print_data('Chi Kien')

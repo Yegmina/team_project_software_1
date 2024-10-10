@@ -2,7 +2,7 @@ import mariadb
 import mysql
 from geopy.distance import geodesic
 import database_manager as db
-import main
+# import main
 import time
 import mysql.connector
 import Colours
@@ -44,6 +44,7 @@ def payment_choice(game, choice_tuple):
     # Ensure the player has enough money to make the choice
     if money_needed > game.money:
         print(Colours.BRIGHT_YELLOW + "Not enough money, so you skipped the choice this turn!" + Colours.RESET)
+
         return
 
     # Deduct money and increment game turn
@@ -52,7 +53,7 @@ def payment_choice(game, choice_tuple):
     # Update infected population
     if infected_changing != 0:
         game.infected_population += infected_changing
-        #print(f"Infected population changed by {infected_changing}. Now it is {game.infected_population}" )
+        # print(f"Infected population changed by {infected_changing}. Now it is {game.infected_population}" )
         time.sleep(1)
 
     if infection_rate != 0:
