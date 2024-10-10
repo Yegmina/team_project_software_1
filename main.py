@@ -174,9 +174,9 @@ class Game:
                 if local_icao == 'Done' :
                     return
 
-                local_boolean=nh.check_and_close_airport(self.id, local_icao)
+                local_boolean=nh.check_and_close_airport(self, local_icao)
                 if local_boolean == True:
-                    ## Insert increase in public dissatisfaction
+                    print("You closed")
                     self.game_turn = self.game_turn+1
 
                 elif local_boolean == False :
@@ -190,9 +190,10 @@ class Game:
                 if local_continent == 'Done' :
                     return
 
-                local_boolean = nh.close_continents_airports(self.id, local_continent)
+                local_boolean = nh.close_continents_airports(self, local_continent)
                 if local_boolean == True :
                     ## Insert increase in public dissatisfaction
+                    ## Added in close_continents function
                     self.game_turn = self.game_turn + 1
                     return
                 elif local_boolean == False :
@@ -217,7 +218,7 @@ class Game:
         Yehor.payment_choice(self, chosen_tuple)
 
     def check_game_status(self):
-        if self.infected_population >= 100:
+        if self.infected_population >= 99:
             print("The infection has spread globally. Game Over!")
             tai.over()
             self.game_over = True
@@ -225,11 +226,11 @@ class Game:
             print("Everyone is healed. ")
             tai.win()
             self.game_over = True
-        elif self.public_dissatisfaction >= 100:
+        elif self.public_dissatisfaction >= 99:
             print("Public dissatisfaction has reached critical levels. Anarchy ensues. Game Over!")
             self.game_over = True
             tai.over()
-        elif self.research_progress >= 100:
+        elif self.research_progress >= 99:
             print("The cure has been developed! You saved the world!")
             self.game_over = True
             tai.win()
@@ -343,6 +344,7 @@ def main():
             s = f"Turn {game.game_turn}"
 
             print(f"{s:-^102}")
+            print(game.public_dissatisfaction)
 
             time.sleep(1.5)
             heli.print_data(game.id)
@@ -370,7 +372,6 @@ def main():
             ##------ Check if there's any newly infected airport / cured airport and notify them ------##
 
 
-            game.check_game_status()
 
             ##------ Changing game variables based on random variable changes
             print()
@@ -393,6 +394,7 @@ def main():
             game.money=game.money+random.randint(0, 1000)+(100-game.infected_population)*100
             ##------ Changing game vairables
 
+            game.check_game_status()
             game.save()
 
 

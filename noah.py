@@ -57,28 +57,46 @@ def print_all_icao_codes(game_id, highlighted_continent):
 
         print(f"{output_string}", end = '' if i % 3 != 2 else '\n')
 
-def check_and_close_airport(game_id, input_icao_code):
+def check_and_close_airport(game, input_icao_code):
+    game_id = game.id
 
     icao_code_list = db.run(f'SELECT airport_id '
                             f'FROM airport_info '
                             f'WHERE game_id = "{game_id}";')
 
     if any(input_icao_code in icao_code[0] for icao_code in icao_code_list):
-        close_1_airport(game_id, input_icao_code)
-        print(f"Airport {input_icao_code} has been closed.")
-        return True
+        local_boolean = close_1_airport(game_id, input_icao_code)
+        if local_boolean :
+            game.infected_country += 1
+            delta_value = int(game.public_dissatisfaction ** (1 / 3.0) / 0.6)
+            print(f"Airport {input_icao_code} has been closed successfully, but the public does not like that decision.\n"
+                  f"Public dissatisfaction increased by {delta_value}. "
+                  f"Now it is {game.public_dissatisfaction + delta_value}")
+            game.public_dissatisfaction += delta_value
+            return True
+
+        else :
+            print("\nThe airport you just entered has been closed. Please try another airport.")
     else:
         print('Not a proper input. Please enter "Done" or an ICAO code listed above.')
         return False
 
 
 def close_1_airport(game_id, icao_code):
+    check = db.run(f"SELECT closed FROM airport_info "
+           f"WHERE game_id = '{game_id}' "
+           f"AND airport_id = '{icao_code}' "
+           f"AND closed = 0;")
+    if len(check) == 0 :
+        return False
+
     db.run(f'UPDATE airport_info '
            f'SET closed = 1 '
            f'WHERE airport_id = "{icao_code}" '
            f'AND game_id = "{game_id}";')
-
-def close_continents_airports(game_id, continent):
+    return True
+def close_continents_airports(game, continent):
+    game_id = game.id
     airports = db.run(f"SELECT airport_id FROM airport_info "
                       f"LEFT JOIN airport ON airport.ident = airport_id "
                       f"WHERE airport.continent = '{continent}' "
@@ -88,23 +106,25 @@ def close_continents_airports(game_id, continent):
         return False
     else :
         print_all_icao_codes(game_id, continent)
+        count = db.run(f"SELECT COUNT(*) FROM airport_info "
+                       f"LEFT JOIN airport ON airport.ident = airport_id "
+                       f"WHERE continent = '{continent}' "
+                       f"AND infected = 0 "
+                       f"AND closed = 0 "
+                       f"AND game_id = {game_id};")[0][0]
+        print(f"Closing {count} airports will increase publicdissatisfaction by {int(6.5 * (count ** (1 / 1.65)))}")
         player_choice = input("Are you sure you want to close these airports (Highlighted in Purple)\n"
                               "YES (1) or NO (2):")
         while True :
             if player_choice == '1' :
-                count = db.run(f"SELECT COUNT(*) FROM airport_info "
-                               f"LEFT JOIN airport ON airport.ident = airport_id "
-                               f"WHERE continent = '{continent}' "
-                               f"AND infected = 0 "
-                               f"AND closed = 0 "
-                               f"AND game_id = {game_id};")[0][0]
-
                 for airport in airports :
                     db.run(f"UPDATE airport_info "
                            f"SET closed = 1 "
                            f"WHERE airport_id = '{airport[0]}' "
                            f"AND game_id = {game_id}")
                 print(f"{count} airports have been closed.")
+                game.public_dissatisfaction = min(100, game.public_dissatisfaction + int(6.5 * (count ** (1 / 1.65))))
+                game.infected_country += count
                 return True
             elif player_choice == '2' :
                 return False
