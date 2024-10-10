@@ -1,5 +1,3 @@
-import mariadb
-from geopy.distance import geodesic
 import tai
 import random
 import Yehor
@@ -8,9 +6,6 @@ import time
 import Colours
 import noah as nh
 import heli
-
-global is_playing
-is_playing = True
 
 class Game:
 
@@ -159,10 +154,8 @@ class Game:
                 heli.print_data(self.id)
                 user_choice_string = input("Your choice: ")
             elif user_choice_string == 'quit' :
-                global is_playing
-                is_playing = False
                 self.save()
-                return
+                return 'quit'
             elif not user_choice_string.isdigit():
                 print("Your answer should be number")
                 user_choice_string = input("Your choice: ")
@@ -353,8 +346,8 @@ def main():
                                                   f"AND game_id = '{game.id}'")
 
             ##------- Game choice -------##
-            game.make_choice()
-            if is_playing == False :
+            holder_value = game.make_choice()
+            if holder_value == 'quit' :
                 break
             game.infection_spread()
             ##------- Game choice -------##
