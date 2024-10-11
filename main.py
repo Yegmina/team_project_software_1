@@ -375,7 +375,7 @@ def main():
             if game.infected_population - holder_value:
                 print(f"The disease keeps spreading, infected population increased by {game.infected_population - holder_value} more.")
 
-            coeff = 3 * random.random()
+            coeff = 3 * random.randint(40,60)/100
             holder_value = game.public_dissatisfaction
             game.public_dissatisfaction = int(game.public_dissatisfaction + (coeff ** ((game.public_dissatisfaction+game.infected_population) / 20)))
             game.public_dissatisfaction = min(game.public_dissatisfaction, 100)
