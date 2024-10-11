@@ -112,7 +112,7 @@ def close_continents_airports(game, continent):
                        f"AND infected = 0 "
                        f"AND closed = 0 "
                        f"AND game_id = {game_id};")[0][0]
-        print(f"Closing {count} airports will increase publicdissatisfaction by {int(6.5 * (count ** (1 / 1.65)))}")
+        print(f"Closing {count} airports will increase public dissatisfaction by {int(6.5 * (count ** (1 / 1.65)))}")
         player_choice = input("Are you sure you want to close these airports (Highlighted in Purple)\n"
                               "YES (1) or NO (2):")
         while True :
