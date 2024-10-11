@@ -123,7 +123,7 @@ def print_data(game_id) :
     print(f"|{'MONEY': ^16}|{'INFECTED POPULATION': ^21}|{'PUBLIC DISSATISFACTION': ^22}|"
           f"{'RESEARCH PROGRESS': ^16}|{'INFECTION RATE': ^20}|")
 
-    print(f"|{'':-^16}+{'':-^21}+{'':-^22}+{'':-^17}|{'':-^20}|")
+    print(f"|{'':-^16}+{'':-^21}+{'':-^22}+{'':-^17}+{'':-^20}|")
 
     print(f"|{game_data[0][money]:^16}"
           f"|{game_data[0][infected_population] :^21}"

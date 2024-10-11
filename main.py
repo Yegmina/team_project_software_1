@@ -163,13 +163,12 @@ class Game:
             elif int(user_choice_string)==4 and self.game_turn >= min_game_turn:
 
                 nh.print_all_icao_codes(self.id, '')
-                local_icao=input("Write the ICAO code of airport that are you going to close or 'Done' to finish closing airports: ")
-                if local_icao == 'Done' :
-                    return
+                local_icao=input("Write the ICAO code of airport that are you going to close: ")
 
                 local_boolean=nh.check_and_close_airport(self, local_icao)
                 if local_boolean == True:
                     self.game_turn = self.game_turn+1
+                    return
 
                 elif local_boolean == False :
                     user_choice_string = '4'
@@ -178,9 +177,7 @@ class Game:
 
             elif int(user_choice_string)==5 and self.game_turn >= min_game_turn:
                 nh.print_all_icao_codes(self.id, '')
-                local_continent=input("Write the continent code that are you going to close or 'Done' to finishing closing continents: ")
-                if local_continent == 'Done' :
-                    return
+                local_continent=input("Write the continent code that are you going to close: ")
 
                 local_boolean = nh.close_continents_airports(self, local_continent)
                 if local_boolean == True :
@@ -214,6 +211,7 @@ class Game:
             print("The infection has spread globally. Game Over!")
             tai.over()
             self.game_over = True
+
         elif self.infected_population <= 0:
             print("Everyone is healed. ")
             tai.win()
@@ -368,6 +366,7 @@ def main():
             print()
             game.max_distance += random.randint(-10, 100)
 
+            game.money=game.money+int(random.randint(0, 1000)+(2 * (100 - game.public_dissatisfaction) / 100) * (100-game.infected_population)*100)
             constant_growth = 10
             holder_value = game.infected_population
             game.infected_population = game.infected_population + int(game.infected_country / 30 * constant_growth)
@@ -382,7 +381,6 @@ def main():
             if game.public_dissatisfaction - holder_value :
                 print(f"The people are not happy with your decisions. They are growing impatient. Public dissatisfaction grew {game.public_dissatisfaction - holder_value} more.")
 
-            game.money=game.money+random.randint(0, 1000)+(100-game.infected_population)*100
             ##------ Changing game vairables
 
             game.check_game_status()

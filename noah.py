@@ -40,6 +40,7 @@ def airport_spread(spreading_airport,game_name,infection_rate):
 
 def print_all_icao_codes(game_id, highlighted_continent):
 
+    print(f"The table is in the form of : ICAO code - Continent code")
     icao_code_list = db.run(f'SELECT airport_id, infected, closed, continent FROM airport_info '
                             f'LEFT JOIN airport ON airport.ident = airport_id '
                             f'WHERE game_id = "{game_id}";')
@@ -47,7 +48,6 @@ def print_all_icao_codes(game_id, highlighted_continent):
     for i in range(len(icao_code_list)) :
         airport_info = f"{icao_code_list[i][0]} : {icao_code_list[i][3]}"
         condition = (icao_code_list[i][3] == highlighted_continent
-                     and not icao_code_list[i][1] == 1
                      and not icao_code_list[i][2] == 1)
         output_string = (f"{(Colours.RED if icao_code_list[i][1] == 1 else Colours.GREEN)}"
                         f"{(Colours.STRIKE if icao_code_list[i][2] == 1 else '')}"
@@ -78,7 +78,7 @@ def check_and_close_airport(game, input_icao_code):
         else :
             print("\nThe airport you just entered has been closed. Please try another airport.")
     else:
-        print('Not a proper input. Please enter "Done" or an ICAO code listed above.')
+        print('Not a proper input. Please enter an ICAO code listed above.')
         return False
 
 
@@ -132,5 +132,3 @@ def close_continents_airports(game, continent):
             else :
                 print("Please enter 1 or 2.")
                 continue
-
-# print_all_icao_codes(86, 'EU')
