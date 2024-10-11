@@ -38,7 +38,7 @@ def new_game() :
                                                                 ##Checking if there's already been a
             continue                                            ##game with the inputted name
                                                                 ## IDEA : We could add an option for the player to choose
-        return name, 10000, 3, 7, 0, False, 1, 7, 8000, 1          ## play the profile with the existing name if the name were
+        return name, 10000, 3, 7, 0, False, 1, 7, 8000, 1       ## play the profile with the existing name if the name were
                                                                 ## to be a duplicate
 
         ##This returns a tuple to declare a new game.
@@ -92,7 +92,6 @@ def fetch_game() :
                 try :
                     c = int(input('YES (1) or NO (2): '))
                     if c == 1 :
-                        #LET THEM COOK
                         gsf = all_saved_games[game_option - 1]
                         return gsf[1], gsf[2], gsf[3], gsf[4], gsf[5], gsf[6], gsf[7], gsf[8], gsf[9], 0
 

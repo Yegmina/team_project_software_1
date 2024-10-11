@@ -44,6 +44,9 @@ def payment_choice(game, choice_tuple):
     # Ensure the player has enough money to make the choice
     if money_needed > game.money:
         print(Colours.BRIGHT_YELLOW + "Not enough money, so you skipped the choice this turn!" + Colours.RESET)
+        game.research_progress=game.research_progress+1
+        print(Colours.BLUE + f"Research progress changed by 1. Now it is {game.research_progress}" + Colours.RESET)
+        time.sleep(1)
 
         return
 

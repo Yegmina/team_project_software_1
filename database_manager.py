@@ -1,6 +1,7 @@
 import mysql.connector
 import mysql
 
+#<editor-fold desc = "MYSQL-cursor optimization">
 connection = mysql.connector.connect(
     user="yehort",
     password="root123",
@@ -9,23 +10,20 @@ connection = mysql.connector.connect(
     database="yehort",
     autocommit = True
 )
-
-#<editor-fold desc = "MYSQL-cursor optimization">
 cursor = connection.cursor()
-
 def run(s) :
     cursor.execute(s)
     try :
         return cursor.fetchall()
     except :
         return None
-
+#</editor-fold>
 
 #<editor-fold desc="Database manager v1.0">
 
 def saved_games_database() :
     run(f"CREATE TABLE IF NOT EXISTS `saved_games` ("                               ##The table saves all
-        f"  `id`                     INT(16) PRIMARY KEY AUTO_INCREMENT,"       ##of each game's variables
+        f"  `id`                     INT(16) PRIMARY KEY AUTO_INCREMENT,"           ##of each game's variables
         f"  `input_name`             VARCHAR(64),"
         f"  `money`                  INT(16),"                                      ##It also saves the
         f"  `infected_population`    INT(16),"                                      ##name in formatted version
