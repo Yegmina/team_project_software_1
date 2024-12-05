@@ -1,4 +1,3 @@
-import database_manager as db
 import Colours
 def start():
     print("WELCOME TO AIRPORT GAME!! (Press Enter to continue)")
@@ -19,9 +18,9 @@ def start():
                 print(f"RULES: Manage the airport, control the virus spread, and develop a cure.\n"
                       f"\n"
                       f"When closing an airport:\n"
-                      +Colours.GREEN+ f"Green " + Colours.RESET + f"means it is not infected\n"
-                      +Colours.RED + f"Red " + Colours.RESET + f"means the ariport is infected\n"
-                      +Colours.STRIKE + f"Strike " + Colours.RESET + f"through means it is closed\n")
+                      + Colours.GREEN + f"Green " + Colours.RESET + f"means it is not infected\n"
+                      + Colours.RED + f"Red " + Colours.RESET + f"means the ariport is infected\n"
+                      + Colours.STRIKE + f"Strike " + Colours.RESET + f"through means it is closed\n")
             elif Start_choice == 2:
                 print("Starting a New Game...")
                 return 'new'

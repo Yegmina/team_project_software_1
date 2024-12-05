@@ -22,12 +22,10 @@ def run_sql_from_file(sql_file_path: object = 'choices.sql') -> object:
 
 # Load choices directly from the database
 def load_choices_from_db():
-    query = "SELECT name, money_needed, infected_changing, dissatisfaction_changing, research_progress_changing, text, sql_query, infection_rate FROM choices;"
+    query = ("SELECT name, money_needed, infected_changing, dissatisfaction_changing, "
+             "research_progress_changing, text, sql_query, infection_rate "
+             "FROM choices;")
     return db.run(query)
-
-# Convert database result row to tuple (not necessary since SQL result is already a tuple)
-def convert_choice_to_tuple(db_choice_row):
-    return db_choice_row
 
 # Function to handle making a choice
 def payment_choice(game, choice_tuple):
@@ -38,7 +36,8 @@ def payment_choice(game, choice_tuple):
         if game.infected_population<80:
             print(f"Infected is now {int(game.infected_population)}")
         else:
-            print(Colours.RED + f"Attention!!! The world's population is almost all infected - {game.infected_population}" + Colours.RESET)
+            print(
+                Colours.RED + f"Attention!!! The world's population is almost all infected - {game.infected_population}" + Colours.RESET)
         time.sleep(1)
 
     # Ensure the player has enough money to make the choice
@@ -67,44 +66,42 @@ def payment_choice(game, choice_tuple):
             print(Colours.GREEN + f"The infection is spreading at an decreased rate" + Colours.RESET)
         time.sleep(1)
 
-    # Update public dissatisfaction
-    if game.public_dissatisfaction > 100:
-        game.public_dissatisfaction = 100
-
-    if game.public_dissatisfaction < 0:
-        game.public_dissatisfaction = 0
+    game.public_dissatisfaction = 100 if game.public_dissatisfaction > 100 else game.public_dissatisfaction
+    game.public_dissatisfaction = 0 if game.public_dissatisfaction < 0 else game.public_dissatisfaction
 
     if dissatisfaction_changing != 0:
         game.public_dissatisfaction += dissatisfaction_changing
-        print((Colours.RED if dissatisfaction_changing > 0 else Colours.GREEN) + f"Public dissatisfaction changed by {dissatisfaction_changing}. Now it is {game.public_dissatisfaction}" + Colours.RESET);
+        print((Colours.RED if dissatisfaction_changing > 0 else Colours.GREEN) +
+              f"Public dissatisfaction changed by {dissatisfaction_changing}. Now it is {game.public_dissatisfaction}" + Colours.RESET)
         time.sleep(1)
 
-    # Update research progress
-    if game.research_progress > 100:
-        game.research_progress = 100
-
-    if game.research_progress < 0:
-        game.research_progress = 0
+    game.research_progress = 100 if game.research_progress > 100 else game.research_progress
+    game.research_progress = 0 if game.research_progress < 0 else game.research_progress
 
     if research_progress_changing != 0:
         game.research_progress += research_progress_changing
-        print((Colours.BLUE if research_progress_changing > 0 else Colours.RED) + f"Research progress changed by {research_progress_changing}. Now it is {game.research_progress}" + Colours.RESET)
+        print((Colours.BLUE if research_progress_changing > 0 else Colours.RED) +
+              f"Research progress changed by {research_progress_changing}. Now it is {game.research_progress}" + Colours.RESET)
         time.sleep(1)
-
-    # Execute any additional SQL query provided by the choice
-    if sql_query:
-        game_id = game.id  # Use the game object's id directly
-        string_query = f"UPDATE airport_info {sql_query} WHERE game_id = {game_id}"
-        db.run(string_query)
 
     # Display the choice text
     if text:
         print(text)
 
+    # Execute any additional SQL query provided by the choice
+    if sql_query:
+        game_id = game.id
+        string_query = f"UPDATE airport_info {sql_query} WHERE game_id = {game_id}"
+        db.run(string_query)
 
     # Record the choice in the database (after processing the choice)
     choice_id = db.run(f"SELECT id FROM choices WHERE name = '{name}'")[0][0]
     db.run(f"INSERT INTO choices_made (game_id, choice_id) VALUES ({game.id}, {choice_id});")
+
+
+# Convert database result row to tuple (not necessary since SQL result is already a tuple)
+def convert_choice_to_tuple(db_choice_row):
+    return db_choice_row
 
 
 def get_airport_coordinates(icao_code):

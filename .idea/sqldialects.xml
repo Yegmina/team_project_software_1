@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/Yehor.py" dialect="MariaDB" />
-    <file url="file://$PROJECT_DIR$/choices.sql" dialect="MariaDB" />
-    <file url="file://$PROJECT_DIR$/database_manager.py" dialect="MariaDB" />
-    <file url="file://$PROJECT_DIR$/heli.py" dialect="MariaDB" />
-    <file url="file://$PROJECT_DIR$/main.py" dialect="MariaDB" />
-    <file url="file://$PROJECT_DIR$/testing.py" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/archive/Yehor.py" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/archive/choices.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/archive/database_manager.py" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/archive/heli.py" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/archive/main.py" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/archive/testing.py" dialect="MariaDB" />
   </component>
 </project>
