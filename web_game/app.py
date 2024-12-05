@@ -10,4 +10,4 @@ def home():
 
 # Run the Flask development server; line below needed in order not to run app.py when imporing to other scripts
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
