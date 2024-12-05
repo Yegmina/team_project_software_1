@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Details</title>
+
+</head>
+<body>
+    <div class="container">
+        <h1>Game Details</h1>
+
+        <table>
+            <tr>
+                <th>Attribute</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Game Name</td>
+                <td>{{ game.name }}</td>
+            </tr>
+            <tr>
+                <td>Money</td>
+                <td>{{ game.money }}</td>
+            </tr>
+            <tr>
+                <td>Infected Population</td>
+                <td>{{ game.infected_population }}</td>
+            </tr>
+            <tr>
+                <td>Public Dissatisfaction</td>
+                <td>{{ game.public_dissatisfaction }}</td>
+            </tr>
+            <tr>
+                <td>Research Progress</td>
+                <td>{{ game.research_progress }}</td>
+            </tr>
+            <tr>
+                <td>Game Turn</td>
+                <td>{{ game.game_turn }}</td>
+            </tr>
+            <tr>
+                <td>Infection Rate</td>
+                <td>{{ game.infection_rate }}</td>
+            </tr>
+            <tr>
+                <td>Max Distance</td>
+                <td>{{ game.max_distance }}</td>
+            </tr>
+            <tr>
+                <td>Game Over</td>
+                <td>{{ 'Yes' if game.game_over else 'No' }}</td>
+            </tr>
+        </table>
+
+        <div class="actions">
+            <a href="/">Back to Home</a>
+            <a href="/continue_game/{{ game.id }}">Continue Game</a>
+        </div>
+    </div>
+</body>
+</html>

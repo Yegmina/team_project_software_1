@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Game</title>
+
+</head>
+<body>
+    <div class="container">
+        <h1>Create a New Game</h1>
+        <form method="POST" action="/new_game">
+            <label for="name">Enter Game Name:</label>
+            <input type="text" id="name" name="name" placeholder="Game Name" required>
+            <input type="submit" value="Create Game">
+        </form>
+        <div class="back-link">
+            <a href="/">Back to Home</a>
+        </div>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>
