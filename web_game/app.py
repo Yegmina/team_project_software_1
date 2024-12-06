@@ -1,5 +1,5 @@
 
-from flask import Flask, request, jsonify, render_template, redirect, url_for
+from flask import Flask, request, jsonify, render_template, redirect, url_for, make_response
 from utils.functions import *  # Import all functions from functions.py
 import json
 
@@ -10,7 +10,7 @@ app = Flask(__name__)
 def index():
     """Home page showing game options."""
     games = get_all_games()
-    return render_template('index.html', games=games)
+    return render_template('index.html', games=json.dumps(games))
 
 
 @app.route('/new_game', methods=['GET', 'POST'])
@@ -31,7 +31,7 @@ def get_game_details(game_id):
     """Fetches game details."""
     response, status = fetch_game(game_id)
     if status == 200:
-        return render_template('game_details.html', game=response)
+        return render_template('game_details.html', game=json.dumps(response))
     return jsonify(response), status
 
 ## Dev-functions

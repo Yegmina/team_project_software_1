@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="{{ url_for('static', filename='js/game_details.js') }}" defer></script>
   <title>Game Details</title>
   <!-- Tai, u can modify styles and make it look better!
     U can work with it right here, but better put it in style.css or create one more .css file
@@ -73,42 +74,21 @@
 </head>
 
 <body>
-  <div class="container">
+  <div class="container" id="game_table">
     <h1>Game Details</h1>
-
+    <div id="game_details">{{ game }}</div>
     <table id="stats-table">
       <tr>
         <th style="font-size:25px; color:rgb(0, 157, 255)">Attribute</th>
         <th style="font-size:25px; color:rgb(0, 157, 255">Value</th>
       </tr>
     </table>
-    <script>
-      const game_data = JSON.parse(`{{game | tojson}}`);
-      const stats = document.querySelector("#stats-table");
-      for(const [key, value] of Object.entries(game_data)) {
-        let row = document.createElement('tr');
-        let name = document.createElement('th');
-        let data = document.createElement('th');
-        let key_string = "";
-        for(let i = 0; i < key.length; i++) {
-          if(key[i] === '_') key_string = key_string + ' ';
-          else key_string = key_string + key[i];
-        }
-        key_string = key_string.charAt(0).toUpperCase() + key_string.slice(1);
-        name.innerHTML = `${key_string}`;
-        data.innerHTML = value;
-
-        row.appendChild(name);
-        row.appendChild(data);
-
-        stats.appendChild(row);
-      }
-    </script>
 
     <div class="actions">
       <a href="/">Back to Home</a>
       <a href="/continue_game/{{ game.id }}">Continue Game</a>
     </div>
+
   </div>
 </body>
 

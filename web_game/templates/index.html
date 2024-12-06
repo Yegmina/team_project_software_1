@@ -98,23 +98,7 @@
   <h1>Game Dashboard</h1>
 
   <h2>Saved Games</h2>
-  <ul id="game-list"></ul>
-  <script>
-    const all_games = JSON.parse(`{{games | tojson}}`)
-    const list = document.querySelector("#game-list");
-    for(let game of all_games) {
-      let li = document.createElement('li');
-      let a = document.createElement('a');
-
-      a.innerText = game[1];
-      a.href = `fetch_game/${game[0]}`;
-      li.appendChild(a);
-
-      list.appendChild(li);
-    }
-    console.log(all_games);
-  </script>
-
+  <ul id="game-list">{{ games }}</ul>
   <a href="{{ url_for('create_new_game') }}">Create a New Game</a>
   <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/animation.js') }}" defer></script>
