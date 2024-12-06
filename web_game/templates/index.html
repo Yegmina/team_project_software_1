@@ -4,23 +4,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
-  <title>Flask app</title>
+  <title>Apocalypse Game</title>
 
   <style>
+    html {
+      height: 100%;
+    }
+
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4;
+      height: 100%;
+      /* background-color: #f4f4f4; */
+      background-image: url(../static/img/test4.jpg);
+      background-repeat: no-repeat;
+      background-position: top;
+      background-size: cover;
+      height: 90%;
+
     }
 
-    h1, h2 {
+    h1,
+    h2 {
       text-align: center;
-      color: #333;
+      color: #00ff95;
     }
 
     h1 {
@@ -46,7 +56,7 @@
     ul li a {
       font-size: 1.1rem;
       text-decoration: none;
-      color: #007bff;
+      color: #f3ad09ea;
       padding: 5px 10px;
       border-radius: 5px;
       transition: background-color 0.3s ease;
@@ -81,27 +91,31 @@
       color: #555;
       font-size: 1.2rem;
     }
-
   </style>
 </head>
 
 <body>
   <h1>Game Dashboard</h1>
 
-<h2>Saved Games</h2>
-<ul>
-    {% for game in games %}
-        <li>
-            <a href="{{ url_for('get_game_details', game_id=game[0]) }}">{{ game[1] }}</a>
-        </li>
-    {% endfor %}
-</ul>
+  <h2>Saved Games</h2>
+  <ul id="game-list"></ul>
+  <script>
+    const all_games = JSON.parse(`{{games | tojson}}`)
+    const list = document.querySelector("#game-list");
+    for(let game of all_games) {
+      let li = document.createElement('li');
+      let a = document.createElement('a');
 
-<a href="{{ url_for('create_new_game') }}">Create a New Game</a>
-  <div id="map"></div>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="../static/js/Polyline.encoded.js"></script>
+      a.innerText = game[1];
+      a.href = `fetch_game/${game[0]}`;
+      li.appendChild(a);
+
+      list.appendChild(li);
+    }
+    console.log(all_games);
+  </script>
+
+  <a href="{{ url_for('create_new_game') }}">Create a New Game</a>
   <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/animation.js') }}" defer></script>
 

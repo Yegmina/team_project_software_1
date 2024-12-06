@@ -1,6 +1,7 @@
 
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from utils.functions import *  # Import all functions from functions.py
+import json
 
 app = Flask(__name__)
 
@@ -32,6 +33,12 @@ def get_game_details(game_id):
     if status == 200:
         return render_template('game_details.html', game=response)
     return jsonify(response), status
+
+## Dev-functions
+@app.route('/dev/fetch_games/<int:id>', methods=['GET'])
+def dev_fetch_game(id):
+    data = fetch_game(id)
+    return data
 
 
 # Run the Flask development server; line below needed in order not to run app.py when imporing to other scripts
