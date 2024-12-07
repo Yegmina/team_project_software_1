@@ -2,7 +2,6 @@ import random
 
 from flask import Flask, request, jsonify, render_template, redirect, url_for, make_response
 from flask_cors import CORS
-from utils.gemini import GeminiModel
 
 from utils.functions import *  # Import all functions from functions.py
 import json
@@ -574,92 +573,31 @@ def api_infection_spread(game_id):
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
-
 @app.route('/api/games/<int:game_id>/random_event', methods=['POST'])
 def random_event(game_id):
     """
     Handles a random event in the game.
     """
     try:
-        # 60% probability of no event
+        # Handle 60% chance of no event
         if random.random() < 0.6:
             return jsonify({
                 "success": True,
                 "event": "Nothing special happened this time."
             }), 200
 
-        # Load Gemini model
-        gemini_model = GeminiModel()
+        # Call the function to handle random event logic
+        result = handle_random_event(game_id)
 
-        # Load the random event prompt from a YAML or hardcoded string
-        random_event_prompt = (
-            "Generate details for a single random event in a strategy game where the player manages global variables "
-            "like money, infected population, and public dissatisfaction. The event should include a title, a short "
-            "description, and changes to the variables (Money: ±X, Infected: ±X, Dissatisfaction: ±X). Provide only one "
-            "event per request. DO NOT provide any other information. Money is int from -1000 to 1000. Infected is int from -5 to 5, dissatisfaction is int from -5 to 5\n\n"
-            "Your answer MUST have this structure:\n\n"
-            "Title: {title}\n\n"
-            "Description: {description}\n\n"
-            "Money: {money}\n\n"
-            "Infected: {infected}\n\n"
-            "Dissatisfaction: {dissatisfaction}"
-            #"Below you can find some examples of random events. You MUST generate UNIQUE random events each time I ask about this even though question is the same." + str(get_random_events_examples())
-            # For now, lets not give examples to AI, let gemini think by itself without examples
-        )
+        # If the result contains an error, return it
+        if not result.get("success"):
+            return jsonify(result), 400
 
-        # Call Gemini to generate the random event
-        gemini_response = gemini_model.call_model(user_prompt=random_event_prompt)
-
-        # Parse Gemini response
-        lines = gemini_response.splitlines()
-        parsed_event = {}
-        for line in lines:
-            if line.startswith("Title: "):
-                parsed_event["title"] = line.replace("Title: ", "").strip()
-            elif line.startswith("Description: "):
-                parsed_event["description"] = line.replace("Description: ", "").strip()
-            elif line.startswith("Money: "):
-                parsed_event["money"] = int(line.replace("Money: ", "").strip())
-            elif line.startswith("Infected: "):
-                parsed_event["infected"] = int(line.replace("Infected: ", "").strip())
-            elif line.startswith("Dissatisfaction: "):
-                parsed_event["dissatisfaction"] = int(line.replace("Dissatisfaction: ", "").strip())
-
-        # Fetch current game state
-        game_query = f"SELECT money, infected_population, public_dissatisfaction FROM saved_games WHERE id = {game_id};"
-        game_state = run(game_query)
-        if not game_state:
-            return jsonify({"success": False, "message": "Game not found."}), 404
-
-        # Update game state based on the event
-        money, infected_population, public_dissatisfaction = game_state[0]
-        updated_money = max(0, money + parsed_event["money"])
-        updated_infected_population = max(0, infected_population + parsed_event["infected"])
-        updated_public_dissatisfaction = max(0, min(100, public_dissatisfaction + parsed_event["dissatisfaction"]))
-
-        # Save updated game state to DB
-        update_query = f"""
-            UPDATE saved_games
-            SET money = {updated_money}, 
-                infected_population = {updated_infected_population}, 
-                public_dissatisfaction = {updated_public_dissatisfaction}
-            WHERE id = {game_id};
-        """
-        run(update_query)
-
-        # Respond with the event details and updated variables
-        return jsonify({
-            "success": True,
-            "event": parsed_event,
-            "updated_game_state": {
-                "money": updated_money,
-                "infected_population": updated_infected_population,
-                "public_dissatisfaction": updated_public_dissatisfaction
-            }
-        }), 200
+        return jsonify(result), 200
 
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
+
 
 # Run the Flask development server; line below needed in order not to run app.py when imporing to other scripts
 if __name__ == "__main__":

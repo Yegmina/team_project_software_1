@@ -3,8 +3,7 @@
 """DB basic functions"""
 import mysql.connector
 import mysql
-import random
-import math
+from web_game.utils.ai.gemini import GeminiModel
 
 #<editor-fold desc = "MYSQL-cursor optimization">
 connection = mysql.connector.connect(
@@ -466,5 +465,90 @@ def get_random_events_examples():
 
     return lines
 
+def handle_random_event(game_id):
+    """
+    Handles the logic of generating and applying a random event using Gemini AI.
+    """
+    try:
+        # Load Gemini model
+        gemini_model = GeminiModel()
+
+        # Random event prompt
+        random_event_prompt = (
+            "Generate details for a single random event in a strategy game where the player manages global variables "
+            "like money, infected population, and public dissatisfaction. The event should include a title, a short "
+            "description, and changes to the variables (Money: ±X, Infected: ±X, Dissatisfaction: ±X). Provide only one "
+            "event per request. DO NOT provide any other information. Money is int from -1000 to 1000. Infected is int from -5 to 5, dissatisfaction is int from -5 to 5\n\n"
+            "Your answer MUST have this structure:\n\n"
+            "Title: {title}\n\n"
+            "Description: {description}\n\n"
+            "Money: {money}\n\n"
+            "Infected: {infected}\n\n"
+            "Dissatisfaction: {dissatisfaction}"
+        )
+
+        # Call Gemini model to generate the random event
+        gemini_response = gemini_model.call_model(user_prompt=random_event_prompt)
+
+        # Parse the Gemini response
+        parsed_event = parse_gemini_response(gemini_response)
+
+        # Fetch current game state
+        game_query = f"SELECT money, infected_population, public_dissatisfaction FROM saved_games WHERE id = {game_id};"
+        game_state = run(game_query)
+        if not game_state:
+            return {"success": False, "message": "Game not found."}
+
+        # Update game state based on the event
+        money, infected_population, public_dissatisfaction = game_state[0]
+        updated_money = max(0, money + parsed_event["money"])
+        updated_infected_population = max(0, infected_population + parsed_event["infected"])
+        updated_public_dissatisfaction = max(0, min(100, public_dissatisfaction + parsed_event["dissatisfaction"]))
+
+        # Save updated game state to the database
+        update_query = f"""
+            UPDATE saved_games
+            SET money = {updated_money}, 
+                infected_population = {updated_infected_population}, 
+                public_dissatisfaction = {updated_public_dissatisfaction}
+            WHERE id = {game_id};
+        """
+        run(update_query)
+
+        # Return the parsed event and updated game state
+        return {
+            "success": True,
+            "event": parsed_event,
+            "updated_game_state": {
+                "money": updated_money,
+                "infected_population": updated_infected_population,
+                "public_dissatisfaction": updated_public_dissatisfaction
+            }
+        }
+
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+
+def parse_gemini_response(response):
+    """
+    Parses the response from Gemini into a structured dictionary.
+    """
+    lines = response.splitlines()
+    parsed_event = {}
+
+    for line in lines:
+        if line.startswith("Title: "):
+            parsed_event["title"] = line.replace("Title: ", "").strip()
+        elif line.startswith("Description: "):
+            parsed_event["description"] = line.replace("Description: ", "").strip()
+        elif line.startswith("Money: "):
+            parsed_event["money"] = int(line.replace("Money: ", "").strip())
+        elif line.startswith("Infected: "):
+            parsed_event["infected"] = int(line.replace("Infected: ", "").strip())
+        elif line.startswith("Dissatisfaction: "):
+            parsed_event["dissatisfaction"] = int(line.replace("Dissatisfaction: ", "").strip())
+
+    return parsed_event
 
 
