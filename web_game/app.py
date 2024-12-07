@@ -450,6 +450,81 @@ def close_continent_airports():
 
 
 
+@app.route('/api/games/<int:game_id>/new_turn', methods=['POST'])
+def new_game_turn(game_id):
+    """
+    Advances the game to a new turn, updates game variables, and saves them to the database.
+    """
+    try:
+        # Fetch current game state
+        game_query = f"""
+            SELECT money, infected_population, public_dissatisfaction, research_progress, 
+                   game_turn, infection_rate, max_distance
+            FROM saved_games 
+            WHERE id = {game_id};
+        """
+        game_state = run(game_query)
+        if not game_state:
+            return jsonify({"success": False, "message": "Game not found."}), 404
+
+        # Unpack game state
+        money, infected_population, public_dissatisfaction, research_progress, \
+        game_turn, infection_rate, max_distance = game_state[0]
+
+        # Fetch infected airports count
+        infected_airports_query = f"""
+            SELECT COUNT(*) FROM airport_info 
+            WHERE infected = 1 AND game_id = {game_id};
+        """
+        infected_airports = run(infected_airports_query)[0][0]
+
+        # Apply formulas to update game variables
+        max_distance += random.randint(-10, 100)  # Adjust max distance randomly
+        constant_growth = 10
+        infected_population = infected_population + int(infected_airports / 30 * constant_growth)
+        infected_population = min(infected_population, infected_airports * 10 / 3)  # Cap infected population
+        coeff = 3 * random.random()
+        public_dissatisfaction = int(
+            public_dissatisfaction + (coeff ** ((public_dissatisfaction + infected_population) / 20))
+        )
+        public_dissatisfaction = min(public_dissatisfaction, 100)  # Cap dissatisfaction at 100
+        money = money + int(
+            random.randint(0, 1000) + (2 * (100 - public_dissatisfaction) / 100) * (100 - infected_population) * 100
+        )
+
+        # Increment game turn
+        game_turn += 1
+
+        # Update game state in the database
+        update_query = f"""
+            UPDATE saved_games 
+            SET money = {money}, 
+                infected_population = {infected_population}, 
+                public_dissatisfaction = {public_dissatisfaction}, 
+                max_distance = {max_distance}, 
+                game_turn = {game_turn}
+            WHERE id = {game_id};
+        """
+        run(update_query)
+
+        # Return updated game state
+        return jsonify({
+            "success": True,
+            "message": f"Advanced to turn {game_turn}.",
+            "updated_game_state": {
+                "game_turn": game_turn,
+                "money": money,
+                "infected_population": infected_population,
+                "public_dissatisfaction": public_dissatisfaction,
+                "max_distance": max_distance
+            }
+        }), 200
+
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+
+
 # Run the Flask development server; line below needed in order not to run app.py when imporing to other scripts
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=5000)  # Specify the host and port
