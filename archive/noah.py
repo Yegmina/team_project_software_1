@@ -95,6 +95,8 @@ def close_1_airport(game_id, icao_code):
            f'WHERE airport_id = "{icao_code}" '
            f'AND game_id = "{game_id}";')
     return True
+
+
 def close_continents_airports(game, continent):
     game_id = game.id
     airports = db.run(f"SELECT airport_id FROM airport_info "

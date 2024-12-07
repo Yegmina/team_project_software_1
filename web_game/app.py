@@ -364,6 +364,91 @@ def get_all_info_one_airport(airport_id):
         return jsonify({"success": False, "message": str(e)}), 500
 
 
+@app.route('/api/airports/close_continent', methods=['POST'])
+def close_continent_airports():
+    """
+    Closes all airports in a specific continent for a given game.
+    """
+    if not request.is_json:
+        return jsonify({"success": False, "message": "Content-Type must be application/json."}), 415
+
+    data = request.json
+    game_id = data.get("game_id")
+    continent = data.get("continent")
+
+    if not game_id or not continent:
+        return jsonify({"success": False, "message": "Game ID and Continent are required."}), 400
+
+    try:
+        # Fetch all airports in the specified continent for the game
+        airports_query = f"""
+            SELECT airport_id 
+            FROM airport_info 
+            LEFT JOIN airport ON airport.ident = airport_info.airport_id 
+            WHERE airport.continent = '{continent}' 
+            AND airport_info.game_id = {game_id};
+        """
+        airports = run(airports_query)
+
+        if not airports:
+            return jsonify(
+                {"success": False, "message": f"No airports found in continent {continent} for game {game_id}."}), 404
+
+        # Calculate the number of airports to close
+        open_airports_query = f"""
+            SELECT COUNT(*) 
+            FROM airport_info 
+            LEFT JOIN airport ON airport.ident = airport_info.airport_id 
+            WHERE airport.continent = '{continent}' 
+            AND airport_info.infected = 0 
+            AND airport_info.closed = 0 
+            AND airport_info.game_id = {game_id};
+        """
+        count = run(open_airports_query)[0][0]
+
+        if count == 0:
+            return jsonify({"success": False,
+                            "message": f"No open airports found in continent {continent} for game {game_id}."}), 404
+
+        # Calculate public dissatisfaction increase
+        dissatisfaction_increase = int(6.5 * (count ** (1 / 1.65)))
+
+        # Close all open airports in the continent
+        close_airports_query = f"""
+            UPDATE airport_info 
+            SET closed = 1 
+            WHERE airport_id IN (
+                SELECT airport_id 
+                FROM airport_info 
+                LEFT JOIN airport ON airport.ident = airport_info.airport_id 
+                WHERE airport.continent = '{continent}' 
+                AND airport_info.infected = 0 
+                AND airport_info.closed = 0 
+                AND airport_info.game_id = {game_id}
+            ) 
+            AND game_id = {game_id};
+        """
+        run(close_airports_query)
+
+        # Update game state
+        game_update_query = f"""
+            UPDATE saved_games 
+            SET public_dissatisfaction = LEAST(100, public_dissatisfaction + {dissatisfaction_increase}) 
+            WHERE id = {game_id};
+        """
+        run(game_update_query)
+
+        return jsonify({
+            "success": True,
+            "message": f"Closed {count} airports in continent {continent}.",
+            "dissatisfaction_increase": dissatisfaction_increase,
+            "closed_airports": count
+        }), 200
+
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+
 
 # Run the Flask development server; line below needed in order not to run app.py when imporing to other scripts
 if __name__ == "__main__":
