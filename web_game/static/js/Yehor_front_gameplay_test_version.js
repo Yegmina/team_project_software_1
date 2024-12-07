@@ -20,29 +20,39 @@ function renderChoices(choices) {
     choices.forEach(choice => {
         const choiceButton = document.createElement("button");
         choiceButton.innerText = `${choice.name} (Cost: ${choice.cost})`;
-        choiceButton.onclick = () => processChoice(choice.id);
+        choiceButton.dataset.choiceId = choice.id; // Set data attribute for easy access
+        choiceButton.addEventListener("click", async (event) => {
+            await processChoice(choice.id, event.target); // Pass the button as parameter
+        });
         targetOutput.appendChild(choiceButton);
     });
 }
 
-function processChoice(choiceId) {
+
+async function processChoice(choiceId, choiceButton) {
     const gameId = getCurrentGameId(); // Retrieve the current game ID
-    fetch(`/api/games/${gameId}/process_choice`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ choice_id: choiceId }),
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message);
-                updateGameState(data.updated_game_state); // Update the UI
-                triggerRandomEvent(gameId); // Trigger random events
-            } else {
-                alert(`Choice failed: ${data.message}`);
+    try {
+        const response = await fetch(`/api/games/${gameId}/process_choice`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ choice_id: choiceId }),
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            alert(data.message);
+            updateGameState(data.updated_game_state); // Update the UI
+            triggerRandomEvent(gameId); // Trigger random events
+            // Remove the clicked choice button from the UI
+            if (choiceButton) {
+                choiceButton.remove();
             }
-        })
-        .catch(err => console.error("Error processing choice:", err));
+        } else {
+            alert(`Choice failed: ${data.message}`);
+        }
+    } catch (err) {
+        console.error("Error processing choice:", err);
+    }
 }
 
 
