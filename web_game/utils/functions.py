@@ -3,6 +3,7 @@
 """DB basic functions"""
 import mysql.connector
 import mysql
+import random
 
 #<editor-fold desc = "MYSQL-cursor optimization">
 connection = mysql.connector.connect(
@@ -47,21 +48,69 @@ def saved_games_database():
 
 
 def new_game(name):
-    """Creates a new game with the given name."""
-    name_list = run(f"SELECT * FROM saved_games WHERE input_name = '{name}';")
+    """Creates a new game with the given name and sets up airport data."""
+    # Check if the name is provided
     if not name:
         return {"error": "Name cannot be empty!"}, 400
 
+    # Check if the game name already exists
+    name_list = run(f"SELECT * FROM saved_games WHERE input_name = '{name}';")
     if name_list:
         return {"error": "Profile already exists!"}, 400
 
+    # Insert the new game into the `saved_games` table
     run(f"""
         INSERT INTO saved_games (input_name, money, infected_population, 
                                   public_dissatisfaction, research_progress, 
                                   game_turn, infection_rate, max_distance) 
         VALUES ('{name}', 10000, 3, 7, 1, 1, 7, 8000); 
     """)
-    return {"message": "New game created successfully!", "game_name": name}, 201
+
+    # Fetch the newly created game ID
+    game_id = run(f"SELECT id FROM saved_games WHERE input_name = '{name}';")[0][0]
+
+    # Continent configuration: continents and the number of airports to select from each
+    continents = ('AF', 'AS', 'EU', 'NA', 'OC', 'SA')
+    countries_each_con = (7, 10, 5, 3, 1, 4)  # Number of airports to select per continent
+
+    game_airports = []  # To store selected airport identifiers
+    game_airports_countries = []  # To store selected countries
+
+    for index, continent in enumerate(continents):
+        # Fetch large airports in the current continent
+        airports = run(f"""
+            SELECT ident, iso_country FROM airport
+            WHERE type = 'large_airport' AND continent = '{continent}';
+        """)
+
+        # Randomly select airports based on the required count for the continent
+        for _ in range(countries_each_con[index]):
+            rand_index = random.randint(0, len(airports) - 1)
+            while (airports[rand_index][0] in game_airports or
+                   airports[rand_index][1] in game_airports_countries):
+                rand_index = random.randint(0, len(airports) - 1)
+
+            # Add selected airport and its country to the lists
+            game_airports.append(airports[rand_index][0])
+            game_airports_countries.append(airports[rand_index][1])
+
+    # Insert selected airports into the `airport_info` table for the current game
+    for airport in game_airports:
+        run(f"""
+            INSERT INTO airport_info (game_id, airport_id, infected, closed)
+            VALUES ({game_id}, '{airport}', 0, 0);
+        """)
+
+    # Randomly select one airport to be initially infected
+    first_infected_airport = random.randint(0, len(game_airports) - 1)
+    run(f"""
+        UPDATE airport_info
+        SET infected = 1
+        WHERE game_id = {game_id} AND airport_id = '{game_airports[first_infected_airport]}';
+    """)
+
+    # Return a success message
+    return {"message": "New game created successfully!", "game_name": name, "game_id": game_id}, 201
 
 
 def get_all_games():
