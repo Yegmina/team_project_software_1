@@ -24,5 +24,8 @@ async function show_game_details() {
         stats.appendChild(row);
     }
     document.querySelector("#game_table").removeChild(div);
+
+    let continue_game = document.querySelector("#continue");
+    continue_game.href = `/play/${game_data.id}`;
 }
 show_game_details();

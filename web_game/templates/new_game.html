@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="{{ url_for('static', filename='js/new_game.js') }}" defer></script>
   <title>Create New Game</title>
   <!-- Tai, u can modify styles and make it look better!
     U can work with it right here, but better put it in style.css or create one more .css file
@@ -13,7 +14,7 @@
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
-      display: flex;
+      /* display: flex; */
       justify-content: center;
       align-items: center;
       height: 100vh;
@@ -34,6 +35,9 @@
       border-radius: 8px;
       background-color: #fff;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin: auto;
+      margin-top: 20px;
+      margin-bottom: 20px;
     }
 
     h1 {
@@ -59,7 +63,7 @@
       border-radius: 5px;
     }
 
-    input[type="submit"] {
+    input[type="submit"], #button {
       padding: 10px;
       font-size: 1rem;
       color: white;
@@ -92,13 +96,30 @@
       font-size: 0.9rem;
       text-align: center;
     }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+
+    table th,
+    table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    table th {
+      background-color: #f2f2f2;
+    }
   </style>
 </head>
 
 <body>
   <div class="container">
     <h1>Create a New Game</h1>
-    <form method="POST" action="/new_game">
+    <form method="POST" action="/" id="name_input">
       <label for="name">Enter Game Name:</label>
       <input type="text" id="name" name="name" placeholder="Game Name" required>
       <input type="submit" value="Create Game">

@@ -76,17 +76,17 @@
 <body>
   <div class="container" id="game_table">
     <h1>Game Details</h1>
-    <div id="game_details">{{ game }}</div>
+    <div id="game_details" style="color:white">{{ game }}</div>
     <table id="stats-table">
       <tr>
         <th style="font-size:25px; color:rgb(0, 157, 255)">Attribute</th>
-        <th style="font-size:25px; color:rgb(0, 157, 255">Value</th>
+        <th style="font-size:25px; color:rgb(0, 157, 255)">Value</th>
       </tr>
     </table>
 
     <div class="actions">
       <a href="/">Back to Home</a>
-      <a href="/continue_game/{{ game.id }}">Continue Game</a>
+      <a id="continue">Continue Game</a>
     </div>
 
   </div>

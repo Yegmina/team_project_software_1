@@ -22,10 +22,11 @@ def index():
 def create_new_game():
     """Handles new game creation."""
     if request.method == 'POST':
-        name = request.form.get('name')
+        name = request.get_json()['name']
         response, status = new_game(name)
+        game_id = fetch_games_by_name(response['game_name'])[0]['id']
         if status == 201:
-            return redirect(url_for('index'))
+            return redirect(url_for('play', game_id=game_id))
         return render_template('new_game.html', error=response['error'])
 
     return render_template('new_game.html')
@@ -44,6 +45,17 @@ def get_game_details(game_id):
 def dev_fetch_game(id):
     data = fetch_game(id)
     return data
+
+@app.route('/dev/game_exists/<game_name>')
+def dev_game_exists(game_name):
+    data = game_exists(game_name)
+    return json.dumps(data)
+
+@app.route('/play/<game_id>')
+def play(game_id):
+    data = fetch_game(game_id)
+    return render_template('gameplay.html', game=json.dumps(data))
+
 
 @app.route('/api/games/search', methods=['GET'])
 def api_fetch_games_by_name():

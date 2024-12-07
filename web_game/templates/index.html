@@ -98,7 +98,7 @@
   <h1>Game Dashboard</h1>
 
   <h2>Saved Games</h2>
-  <ul id="game-list">{{ games }}</ul>
+  <ul id="game-list" style="color: rgba(0, 0, 0, 0)">{{ games }}</ul>
   <a href="{{ url_for('create_new_game') }}">Create a New Game</a>
   <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/animation.js') }}" defer></script>
