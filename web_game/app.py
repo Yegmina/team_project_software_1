@@ -574,7 +574,7 @@ def random_event(game_id):
             "Generate details for a single random event in a strategy game where the player manages global variables "
             "like money, infected population, and public dissatisfaction. The event should include a title, a short "
             "description, and changes to the variables (Money: ±X, Infected: ±X, Dissatisfaction: ±X). Provide only one "
-            "event per request. DO NOT provide any other information.\n\n"
+            "event per request. DO NOT provide any other information. Money is int from -1000 to 1000. Infected is int from -5 to 5, dissatisfaction is int from -5 to 5\n\n"
             "Your answer MUST have this structure:\n\n"
             "Title: {title}\n\n"
             "Description: {description}\n\n"

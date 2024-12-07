@@ -7,7 +7,7 @@ class GeminiModel:
         self.model_name = model_name
         
         # Hardcoded API Key
-        self.api_key = ""  # Replace with your actual API key
+        self.api_key = "AIzaSyB0Jc07ZesY9X5siHMwbGfbefOtE6q0C2g"  # Replace with your actual API key
         # you can use .env for this
         if not self.api_key:
             raise ValueError("API key not found.")

@@ -49,7 +49,7 @@ async function show_game(game_id) {
 
     let button = document.createElement('a');
     button.id = 'button';
-    button.href = `/continue_game/${game_id}`;
+    button.href = `/play/${game_id}`;
     button.innerText = `Play this game instead`
     button.style.textDecoration = 'none';
     button.style.alignSelf = 'center';
