@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choice Testing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .output {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Choice Testing</h1>
+    <p>Test various choice types by clicking the buttons below:</p>
+
+    <!-- Buttons for different types of choices -->
+    <button id="process-general-choice-btn">Process General Choice</button>
+    <button id="close-airport-btn">Close Specific Airport</button>
+    <button id="close-continent-btn">Close All Airports in Continent</button>
+    <button id="open-all-airports-btn">Open All Airports</button>
+
+    <div class="output" id="output">
+        <h3>Output:</h3>
+        <ul id="log"></ul>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const gameId = 130; // Example game ID
+
+            const logMessage = (message) => {
+                const logElement = document.getElementById("log");
+                const listItem = document.createElement("li");
+                listItem.textContent = message;
+                logElement.appendChild(listItem);
+            };
+
+            const processChoice = async (gameId, choiceId) => {
+                const url = `http://127.0.0.1:5000/api/games/${gameId}/process_choice`;
+
+                const payload = {
+                    choice_id: choiceId
+                };
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json().catch(() => {
+                        throw new Error("Non-JSON response received");
+                    });
+
+                    if (response.ok && result.success) {
+                        const successMsg = `Choice processed successfully: ${result.message}`;
+                        logMessage(successMsg);
+                        alert(successMsg);
+                    } else {
+                        const errorMsg = `Error processing choice: ${result.message}`;
+                        logMessage(errorMsg);
+                        alert(errorMsg);
+                    }
+                } catch (error) {
+                    const networkErrorMsg = `Network or server error: ${error}`;
+                    logMessage(networkErrorMsg);
+                    alert(networkErrorMsg);
+                }
+            };
+
+            const closeAirport = async (gameId, airportId) => {
+                const url = `http://127.0.0.1:5000/api/airports/close`;
+
+                const payload = {
+                    game_id: gameId,
+                    airport_id: airportId
+                };
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json().catch(() => {
+                        throw new Error("Non-JSON response received");
+                    });
+
+                    if (response.ok && result.success) {
+                        const successMsg = `Airport ${airportId} closed successfully: ${result.message}`;
+                        logMessage(successMsg);
+                        alert(successMsg);
+                    } else {
+                        const errorMsg = `Error closing airport: ${result.message}`;
+                        logMessage(errorMsg);
+                        alert(errorMsg);
+                    }
+                } catch (error) {
+                    const networkErrorMsg = `Network or server error: ${error}`;
+                    logMessage(networkErrorMsg);
+                    alert(networkErrorMsg);
+                }
+            };
+
+            // Event listener for processing a general choice
+            document.getElementById("process-general-choice-btn").addEventListener("click", () => {
+                const choiceId = prompt("Enter the general choice ID:");
+                if (choiceId) processChoice(gameId, parseInt(choiceId));
+            });
+
+            // Event listener for closing a specific airport
+            document.getElementById("close-airport-btn").addEventListener("click", () => {
+                const airportId = prompt("Enter the ICAO code of the airport to close:");
+                if (airportId) closeAirport(gameId, airportId);
+            });
+        });
+    </script>
+</body>
+</html>

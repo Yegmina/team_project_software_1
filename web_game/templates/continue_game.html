@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Continue Game</title>
+</head>
+<body>
+    {% if message %}
+        <p>{{ message }}</p>
+        <a href="{{ url_for('create_new_game') }}">Create New Game</a>
+    {% else %}
+        <h1>Select a game to continue</h1>
+        <ul>
+            {% for game in games %}
+                <li>
+                    <a href="{{ url_for('continue_game', game_id=game['id']) }}">{{ game['input_name'] }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>
