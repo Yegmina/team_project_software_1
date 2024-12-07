@@ -1,0 +1,219 @@
+Here is a batch of examples random events, create your own one:
+
+
+
+Title: Drought Crisis
+
+Description: A severe drought hits a major agricultural region, causing food shortages and increased public unrest.
+
+Money: -800
+
+Infected: +3
+
+Dissatisfaction: +4
+
+
+
+Title: Scientific Breakthrough
+
+Description: Scientists discover a new treatment for the virus, reducing its spread and calming public fears.
+
+Money: -200
+
+Infected: -5
+
+Dissatisfaction: -3
+
+
+
+Title: Cyberattack on Healthcare
+
+Description: A ransomware attack disables hospital systems, delaying treatments and heightening public frustration.
+
+Money: -500
+
+Infected: +2
+
+Dissatisfaction: +5
+
+
+
+Title: Charity Concert
+
+Description: A globally televised concert raises funds for healthcare, boosting morale and public trust.
+
+Money: +700
+
+Infected: 0
+
+Dissatisfaction: -2
+
+
+
+Title: Corruption Scandal
+
+Description: A high-ranking official is caught embezzling pandemic relief funds, sparking outrage.
+
+Money: -300
+
+Infected: 0
+
+Dissatisfaction: +4
+
+
+
+Title: Vaccine Distribution Success
+
+Description: An efficient vaccine rollout dramatically reduces infection rates and gains public approval.
+
+Money: -400
+
+Infected: -4
+
+Dissatisfaction: -5
+
+
+
+Title: Trade Route Collapse
+
+Description: A critical international trade route is blocked, leading to shortages and economic strain.
+
+Money: -600
+
+Infected: +1
+
+Dissatisfaction: +3
+
+
+
+Title: Community Garden Initiative
+
+Description: A grassroots movement starts community gardens, easing food shortages and uniting people.
+
+Money: +200
+
+Infected: 0
+
+Dissatisfaction: -2
+
+
+
+Title: Contaminated Water Supply
+
+Description: A water treatment plant malfunction leads to a surge in infections in a major city.
+
+Money: -300
+
+Infected: +4
+
+Dissatisfaction: +3
+
+
+
+Title: Peaceful Protest
+
+Description: A peaceful demonstration leads to productive dialogue, reducing dissatisfaction.
+
+Money: -100
+
+Infected: 0
+
+Dissatisfaction: -3
+
+
+
+Title: Black Market Bust
+
+Description: Authorities shut down a large black market for counterfeit medicines, causing disruption.
+
+Money: +400
+
+Infected: +1
+
+Dissatisfaction: +2
+
+
+
+Title: International Aid
+
+Description: A coalition of countries sends financial aid to support your pandemic response efforts.
+
+Money: +800
+
+Infected: -2
+
+Dissatisfaction: -1
+
+
+
+Title: Food Bank Overrun
+
+Description: Public food banks run out of supplies, increasing public anger.
+
+Money: -200
+
+Infected: 0
+
+Dissatisfaction: +3
+
+
+
+Title: Viral Misinformation Campaign
+
+Description: A wave of misinformation increases public distrust in pandemic measures.
+
+Money: 0
+
+Infected: +2
+
+Dissatisfaction: +4
+
+
+
+Title: Celebrity Donation
+
+Description: A major celebrity donates to the pandemic relief fund, boosting morale and resources.
+
+Money: +500
+
+Infected: 0
+
+Dissatisfaction: -1
+
+
+
+Title: Hospital Expansion
+
+Description: New hospitals are built, improving treatment capacity and lowering infection rates.
+
+Money: -600
+
+Infected: -3
+
+Dissatisfaction: -2
+
+
+
+Title: Worker Strike
+
+Description: Healthcare workers go on strike, disrupting critical services and increasing dissatisfaction.
+
+Money: -300
+
+Infected: +2
+
+Dissatisfaction: +5
+
+
+
+Title: Environmental Recovery
+
+Description: Decreased industrial activity during the pandemic leads to a notable environmental recovery, improving public mood.
+
+Money: 0
+
+Infected: 0
+
+Dissatisfaction: -3
+
+Create ONLY ONE unique per EACH request and give according to rules. Make sure that random events are VERY-VERY different each time I ask you about this.

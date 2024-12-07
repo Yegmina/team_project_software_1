@@ -2,7 +2,6 @@ import random
 
 from flask import Flask, request, jsonify, render_template, redirect, url_for, make_response
 from flask_cors import CORS
-from utils.gemini import GeminiModel
 
 from utils.functions import *  # Import all functions from functions.py
 import json
@@ -271,33 +270,55 @@ def close_airport():
 def get_all_airports(game_id):
     """
     Fetches a list of all airports for a specific game ID with their statuses and related information.
-    """
-    query = f"""
-        SELECT a.game_id, a.airport_id, a.infected, a.closed, g.money, g.public_dissatisfaction
-        FROM airport_info AS a
-        JOIN saved_games AS g ON a.game_id = g.id
-        WHERE a.game_id = {game_id};
+    Returns global game variables separately.
     """
     try:
-        airports = run(query)
+        # Fetch airport-specific data
+        airport_query = f"""
+            SELECT airport_id, infected, closed
+            FROM airport_info
+            WHERE game_id = {game_id};
+        """
+        airports = run(airport_query)
         if not airports:
             return jsonify({"success": False, "message": f"No airports found for game_id {game_id}."}), 404
 
-        result = [
+        # Fetch game-wide variables
+        game_query = f"""
+            SELECT money, public_dissatisfaction
+            FROM saved_games
+            WHERE id = {game_id};
+        """
+        game_data = run(game_query)
+        if not game_data:
+            return jsonify({"success": False, "message": f"Game data not found for game_id {game_id}."}), 404
+
+        # Unpack game data
+        money, public_dissatisfaction = game_data[0]
+
+        # Format airport data
+        airport_result = [
             {
-                "game_id": row[0],
-                "airport_id": row[1],
-                "infected": bool(row[2]),
-                "closed": bool(row[3]),
-                "money": row[4],
-                "public_dissatisfaction": row[5],
+                "airport_id": row[0],
+                "infected": bool(row[1]),
+                "closed": bool(row[2])
             }
             for row in airports
         ]
-        return jsonify({"success": True, "airports": result}), 200
+
+        # Return combined data
+        return jsonify({
+            "success": True,
+            "game_data": {
+                "money": money,
+                "public_dissatisfaction": public_dissatisfaction
+            },
+            "airports": airport_result
+        }), 200
 
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
+
 
 
 
@@ -532,22 +553,14 @@ def api_infection_spread(game_id):
     Spreads infection from infected airports to nearby airports for the specified game.
     """
     try:
-        # Fetch the infection rate for the specified game from the database
-        infection_rate_query = f"""
-            SELECT infection_rate 
-            FROM saved_games 
-            WHERE id = {game_id};
-        """
-        infection_rate_result = run(infection_rate_query)
+        # Call the infection spread handler
+        result = handle_infection_spread(game_id)
 
-        if not infection_rate_result:
-            return jsonify({"success": False, "message": f"Game ID {game_id} not found."}), 404
+        # Return the result from the handler
+        if not result.get("success"):
+            return jsonify(result), 400
 
-        infection_rate = infection_rate_result[0][0]
-
-        # Call the infection spread function
-        result = infection_spread(game_id, infection_rate)
-        return jsonify(result)
+        return jsonify(result), 200
 
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
@@ -559,83 +572,25 @@ def random_event(game_id):
     Handles a random event in the game.
     """
     try:
-        # 60% probability of no event
+        # Handle 60% chance of no event
         if random.random() < 0.6:
             return jsonify({
                 "success": True,
                 "event": "Nothing special happened this time."
             }), 200
 
-        # Load Gemini model
-        gemini_model = GeminiModel()
+        # Call the function to handle random event logic
+        result = handle_random_event(game_id)
 
-        # Load the random event prompt from a YAML or hardcoded string
-        random_event_prompt = (
-            "Generate details for a single random event in a strategy game where the player manages global variables "
-            "like money, infected population, and public dissatisfaction. The event should include a title, a short "
-            "description, and changes to the variables (Money: ±X, Infected: ±X, Dissatisfaction: ±X). Provide only one "
-            "event per request. DO NOT provide any other information.\n\n"
-            "Your answer MUST have this structure:\n\n"
-            "Title: {title}\n\n"
-            "Description: {description}\n\n"
-            "Money: {money}\n\n"
-            "Infected: {infected}\n\n"
-            "Dissatisfaction: {dissatisfaction}"
-        )
+        # If the result contains an error, return it
+        if not result.get("success"):
+            return jsonify(result), 400
 
-        # Call Gemini to generate the random event
-        gemini_response = gemini_model.call_model(user_prompt=random_event_prompt)
-
-        # Parse Gemini response
-        lines = gemini_response.splitlines()
-        parsed_event = {}
-        for line in lines:
-            if line.startswith("Title: "):
-                parsed_event["title"] = line.replace("Title: ", "").strip()
-            elif line.startswith("Description: "):
-                parsed_event["description"] = line.replace("Description: ", "").strip()
-            elif line.startswith("Money: "):
-                parsed_event["money"] = int(line.replace("Money: ", "").strip())
-            elif line.startswith("Infected: "):
-                parsed_event["infected"] = int(line.replace("Infected: ", "").strip())
-            elif line.startswith("Dissatisfaction: "):
-                parsed_event["dissatisfaction"] = int(line.replace("Dissatisfaction: ", "").strip())
-
-        # Fetch current game state
-        game_query = f"SELECT money, infected_population, public_dissatisfaction FROM saved_games WHERE id = {game_id};"
-        game_state = run(game_query)
-        if not game_state:
-            return jsonify({"success": False, "message": "Game not found."}), 404
-
-        # Update game state based on the event
-        money, infected_population, public_dissatisfaction = game_state[0]
-        updated_money = max(0, money + parsed_event["money"])
-        updated_infected_population = max(0, infected_population + parsed_event["infected"])
-        updated_public_dissatisfaction = max(0, min(100, public_dissatisfaction + parsed_event["dissatisfaction"]))
-
-        # Save updated game state to DB
-        update_query = f"""
-            UPDATE saved_games
-            SET money = {updated_money}, 
-                infected_population = {updated_infected_population}, 
-                public_dissatisfaction = {updated_public_dissatisfaction}
-            WHERE id = {game_id};
-        """
-        run(update_query)
-
-        # Respond with the event details and updated variables
-        return jsonify({
-            "success": True,
-            "event": parsed_event,
-            "updated_game_state": {
-                "money": updated_money,
-                "infected_population": updated_infected_population,
-                "public_dissatisfaction": updated_public_dissatisfaction
-            }
-        }), 200
+        return jsonify(result), 200
 
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
+
 
 # Run the Flask development server; line below needed in order not to run app.py when imporing to other scripts
 if __name__ == "__main__":

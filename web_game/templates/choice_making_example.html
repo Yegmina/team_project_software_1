@@ -34,8 +34,7 @@
     <button id="process-general-choice-btn">Process General Choice</button>
     <button id="close-airport-btn">Close Specific Airport</button>
     <button id="close-continent-btn">Close All Airports in Continent</button>
-    <button id="open-all-airports-btn">Open All Airports</button>
-    <button id="spread-infection-btn">Spread Infection</button> <!-- New Button -->
+
 
     <div class="output" id="output">
         <h3>Output:</h3>
@@ -203,17 +202,7 @@
                 if (airportId) closeAirport(gameId, airportId);
             });
 
-            // Event listener for closing all airports in a continent
-            document.getElementById("close-continent-btn").addEventListener("click", () => {
-                const continent = prompt("Enter the continent code (e.g., AS, EU, NA):");
-                if (continent) closeContinent(gameId, continent);
-            });
 
-            // Event listener for spreading infection
-            document.getElementById("spread-infection-btn").addEventListener("click", () => {
-                const infectionRate = prompt("Enter the infection rate (0-100):");
-                if (infectionRate) spreadInfection(gameId, parseInt(infectionRate));
-            });
         });
     </script>
 </body>

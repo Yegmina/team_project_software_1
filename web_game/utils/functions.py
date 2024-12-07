@@ -3,8 +3,7 @@
 """DB basic functions"""
 import mysql.connector
 import mysql
-import random
-import math
+from web_game.utils.ai.gemini import GeminiModel
 
 #<editor-fold desc = "MYSQL-cursor optimization">
 connection = mysql.connector.connect(
@@ -459,7 +458,252 @@ def close_airport_by_icao(game_id, icao_code):
 """
 """test below"""
 
+def get_random_events_examples():
+    """Retrieve random events from examples.txt from random_events"""
+    with open("./random_events/examples.txt", "r") as file:
+        lines=file.readlines()
+
+    return lines
+
+def handle_random_event(game_id):
+    """
+    Handles the logic of generating and applying a random event using Gemini AI.
+    """
+    try:
+        # Load Gemini model
+        gemini_model = GeminiModel()
+
+        # Random event prompt
+        random_event_prompt = (
+            "Generate details for a single random event in a strategy game where the player manages global variables "
+            "like money, infected population, and public dissatisfaction. The event should include a title, a short "
+            "description, and changes to the variables (Money: ±X, Infected: ±X, Dissatisfaction: ±X). Provide only one "
+            "event per request. DO NOT provide any other information. Money is int from -1000 to 1000. Infected is int from -5 to 5, dissatisfaction is int from -5 to 5\n\n"
+            "Your answer MUST have this structure:\n\n"
+            "Title: {title}\n\n"
+            "Description: {description}\n\n"
+            "Money: {money}\n\n"
+            "Infected: {infected}\n\n"
+            "Dissatisfaction: {dissatisfaction}"
+        )
+
+        # Call Gemini model to generate the random event
+        gemini_response = gemini_model.call_model(user_prompt=random_event_prompt)
+
+        # Parse the Gemini response
+        parsed_event = parse_gemini_response(gemini_response)
+
+        # Fetch current game state
+        game_query = f"SELECT money, infected_population, public_dissatisfaction FROM saved_games WHERE id = {game_id};"
+        game_state = run(game_query)
+        if not game_state:
+            return {"success": False, "message": "Game not found."}
+
+        # Update game state based on the event
+        money, infected_population, public_dissatisfaction = game_state[0]
+        updated_money = max(0, money + parsed_event["money"])
+        updated_infected_population = max(0, infected_population + parsed_event["infected"])
+        updated_public_dissatisfaction = max(0, min(100, public_dissatisfaction + parsed_event["dissatisfaction"]))
+
+        # Save updated game state to the database
+        update_query = f"""
+            UPDATE saved_games
+            SET money = {updated_money}, 
+                infected_population = {updated_infected_population}, 
+                public_dissatisfaction = {updated_public_dissatisfaction}
+            WHERE id = {game_id};
+        """
+        run(update_query)
+
+        # Return the parsed event and updated game state
+        return {
+            "success": True,
+            "event": parsed_event,
+            "updated_game_state": {
+                "money": updated_money,
+                "infected_population": updated_infected_population,
+                "public_dissatisfaction": updated_public_dissatisfaction
+            }
+        }
+
+    except Exception as e:
+        return {"success": False, "message": str(e)}
 
 
+def parse_gemini_response(response):
+    """
+    Parses the response from Gemini into a structured dictionary.
+    """
+    lines = response.splitlines()
+    parsed_event = {}
+
+    for line in lines:
+        if line.startswith("Title: "):
+            parsed_event["title"] = line.replace("Title: ", "").strip()
+        elif line.startswith("Description: "):
+            parsed_event["description"] = line.replace("Description: ", "").strip()
+        elif line.startswith("Money: "):
+            parsed_event["money"] = int(line.replace("Money: ", "").strip())
+        elif line.startswith("Infected: "):
+            parsed_event["infected"] = int(line.replace("Infected: ", "").strip())
+        elif line.startswith("Dissatisfaction: "):
+            parsed_event["dissatisfaction"] = int(line.replace("Dissatisfaction: ", "").strip())
+
+    return parsed_event
+
+
+def handle_infection_spread(game_id):
+    """
+    Handles the infection spread logic by fetching the infection rate and spreading the infection.
+    """
+    try:
+        # Fetch the infection rate for the game
+        infection_rate_query = f"""
+            SELECT infection_rate 
+            FROM saved_games 
+            WHERE id = {game_id};
+        """
+        infection_rate_result = run(infection_rate_query)
+
+        if not infection_rate_result:
+            return {"success": False, "message": f"Game ID {game_id} not found."}
+
+        infection_rate = infection_rate_result[0][0]
+
+        # Fetch a list of infected airports before the spread
+        previously_infected_query = f"""
+            SELECT airport_id
+            FROM airport_info
+            WHERE game_id = {game_id} AND infected = 1;
+        """
+        previously_infected = {row[0] for row in run(previously_infected_query)}
+
+        # Track flight paths during the infection spread
+        flight_paths = []
+        infection_spread(game_id, infection_rate, flight_paths)
+
+        # Fetch a list of all airports after the spread
+        all_airports_query = f"""
+            SELECT airport_id, infected, closed
+            FROM airport_info
+            WHERE game_id = {game_id};
+        """
+        all_airports = run(all_airports_query)
+
+        # Identify newly infected airports
+        newly_infected_query = f"""
+            SELECT airport_id
+            FROM airport_info
+            WHERE game_id = {game_id} AND infected = 1;
+        """
+        newly_infected = {row[0] for row in run(newly_infected_query)} - previously_infected
+
+        # Format the response
+        response = {
+            "success": True,
+            "message": f"Infection spread processed for game ID {game_id}.",
+            "newly_infected_airports": list(newly_infected),
+            "flight_paths": flight_paths,
+            "all_airports": [
+                {
+                    "airport_id": row[0],
+                    "infected": bool(row[1]),
+                    "closed": bool(row[2])
+                }
+                for row in all_airports
+            ]
+        }
+
+        return response
+
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+
+def infection_spread(game_id, infection_rate, flight_paths):
+    """
+    Spreads infection from infected airports to nearby airports for the specified game.
+    """
+    try:
+        # Fetch the list of currently infected and open airports for the game
+        infected_airport_list = run(f"""
+            SELECT airport_id 
+            FROM airport_info
+            WHERE game_id = {game_id} 
+            AND infected = 1 
+            AND closed = 0;
+        """)
+
+        if not infected_airport_list:
+            return {"success": False, "message": "No infected airports available for spreading."}
+
+        # Spread infection from each infected airport
+        for airport in infected_airport_list:
+            spreading_airport = airport[0]
+            airport_spread(spreading_airport, game_id, infection_rate, flight_paths)
+
+    except Exception as e:
+        print(f"Error in infection_spread: {e}")
+
+
+def airport_spread(spreading_airport, game_id, infection_rate, flight_paths):
+    """
+    Spreads infection from a single airport to nearby airports within flight range.
+    Tracks flight paths contributing to the spread.
+    """
+    try:
+        # Fetch max flight distance from the database
+        max_distance_query = f"""
+            SELECT max_distance
+            FROM saved_games
+            WHERE id = {game_id};
+        """
+        max_distance_result = run(max_distance_query)
+        if not max_distance_result:
+            raise ValueError(f"Max distance not found for game ID {game_id}.")
+        max_distance = max_distance_result[0][0]
+
+        # Check if the airport is infected
+        is_infected = run(f"""
+            SELECT infected 
+            FROM airport_info 
+            WHERE game_id = {game_id} AND airport_id = '{spreading_airport}';
+        """)[0][0]
+
+        if not is_infected:
+            return  # Skip if the airport is not infected
+
+        # Get coordinates of the spreading airport
+        spreading_airport_coords = get_airport_coordinates(spreading_airport)
+
+        # Fetch all airports in the game
+        airports_in_game = run(f"SELECT airport_id FROM airport_info WHERE game_id = {game_id};")
+
+        # Spread infection to nearby airports
+        for airport in airports_in_game:
+            target_airport = airport[0]
+            target_airport_coords = get_airport_coordinates(target_airport)
+
+            # Calculate distance between airports
+            distance = distance_between_two(spreading_airport_coords, target_airport_coords)
+
+            # Spread infection based on distance and infection rate
+            if distance < max_distance and random.randint(0, 100) < infection_rate:
+                # Update the target airport as infected
+                run(f"""
+                    UPDATE airport_info 
+                    SET infected = 1 
+                    WHERE game_id = {game_id} AND airport_id = '{target_airport}';
+                """)
+
+                # Record the flight path
+                flight_paths.append({
+                    "from": spreading_airport,
+                    "to": target_airport,
+                    "distance": distance
+                })
+
+    except Exception as e:
+        print(f"Error in airport_spread: {e}")
 
 
