@@ -141,7 +141,7 @@ def api_process_choice(game_id):
     updated_infection_rate = current_infection_rate + (infection_rate or 0)
     updated_public_dissatisfaction = max(0, min(100, public_dissatisfaction + (dissatisfaction_changing or 0)))
     updated_research_progress = max(0, min(100, research_progress + (research_progress_changing or 0)))
-    updated_game_turn = game_turn + 1 # IDK WHY BUT IT IS NOW UPGRADING SOMETIMES LOL
+    updated_game_turn = game_turn + 1 # IDK WHY BUT IT IS NOT UPGRADING SOMETIMES LOL
     updated_max_distance = max_distance + 10
 
     update_game_query = (
@@ -179,7 +179,7 @@ def api_process_choice(game_id):
 def close_airport():
     """
     Closes an airport and updates the game's money and public dissatisfaction.
-    Not sure about this function, maybe do not work
+    Ensures the airport exists and is open before closing it.
     """
     if not request.is_json:
         return jsonify({"success": False, "message": "Content-Type must be application/json."}), 415
@@ -187,13 +187,26 @@ def close_airport():
     data = request.json
     game_id = data.get("game_id")
     airport_id = data.get("airport_id")
-    money_cost = 5000  # Cost to close an airport, hardcoded
+    money_cost = 5000  # Cost to close an airport
     dissatisfaction_increase = 10  # Public dissatisfaction increase for closing an airport
 
     if not game_id or not airport_id:
         return jsonify({"success": False, "message": "Game ID and Airport ID are required."}), 400
 
     try:
+        # Check if the airport exists and is open
+        airport_check_query = f"""
+            SELECT closed FROM airport_info
+            WHERE game_id = {game_id} AND airport_id = '{airport_id}';
+        """
+        airport_state = run(airport_check_query)
+        if not airport_state:
+            return jsonify({"success": False, "message": f"Airport {airport_id} not found for game ID {game_id}."}), 404
+
+        is_closed = airport_state[0][0]
+        if is_closed:
+            return jsonify({"success": False, "message": f"Airport {airport_id} is already closed."}), 400
+
         # Fetch current game state
         game_query = f"SELECT money, public_dissatisfaction FROM saved_games WHERE id = {game_id};"
         game_state = run(game_query)
@@ -214,6 +227,15 @@ def close_airport():
         """
         run(update_airport_query)
 
+        # Verify the airport is now closed
+        verify_closure_query = f"""
+            SELECT closed FROM airport_info
+            WHERE game_id = {game_id} AND airport_id = '{airport_id}';
+        """
+        updated_state = run(verify_closure_query)
+        if not updated_state or updated_state[0][0] != 1:
+            return jsonify({"success": False, "message": f"Failed to close airport {airport_id}."}), 500
+
         # Update game state
         updated_money = money - money_cost
         updated_dissatisfaction = min(100, public_dissatisfaction + dissatisfaction_increase)
@@ -226,7 +248,12 @@ def close_airport():
 
         return jsonify({
             "success": True,
-            "message": f"Airport {airport_id} has been closed.",
+            "message": f"Airport {airport_id} has been successfully closed.",
+            "airport_state": {
+                "game_id": game_id,
+                "airport_id": airport_id,
+                "closed": True
+            },
             "updated_game_state": {
                 "money": updated_money,
                 "public_dissatisfaction": updated_dissatisfaction,
@@ -235,6 +262,7 @@ def close_airport():
 
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
+
 
 
 @app.route('/api/airports/<int:game_id>', methods=['GET'])
