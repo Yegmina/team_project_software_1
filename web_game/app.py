@@ -271,33 +271,55 @@ def close_airport():
 def get_all_airports(game_id):
     """
     Fetches a list of all airports for a specific game ID with their statuses and related information.
-    """
-    query = f"""
-        SELECT a.game_id, a.airport_id, a.infected, a.closed, g.money, g.public_dissatisfaction
-        FROM airport_info AS a
-        JOIN saved_games AS g ON a.game_id = g.id
-        WHERE a.game_id = {game_id};
+    Returns global game variables separately.
     """
     try:
-        airports = run(query)
+        # Fetch airport-specific data
+        airport_query = f"""
+            SELECT airport_id, infected, closed
+            FROM airport_info
+            WHERE game_id = {game_id};
+        """
+        airports = run(airport_query)
         if not airports:
             return jsonify({"success": False, "message": f"No airports found for game_id {game_id}."}), 404
 
-        result = [
+        # Fetch game-wide variables
+        game_query = f"""
+            SELECT money, public_dissatisfaction
+            FROM saved_games
+            WHERE id = {game_id};
+        """
+        game_data = run(game_query)
+        if not game_data:
+            return jsonify({"success": False, "message": f"Game data not found for game_id {game_id}."}), 404
+
+        # Unpack game data
+        money, public_dissatisfaction = game_data[0]
+
+        # Format airport data
+        airport_result = [
             {
-                "game_id": row[0],
-                "airport_id": row[1],
-                "infected": bool(row[2]),
-                "closed": bool(row[3]),
-                "money": row[4],
-                "public_dissatisfaction": row[5],
+                "airport_id": row[0],
+                "infected": bool(row[1]),
+                "closed": bool(row[2])
             }
             for row in airports
         ]
-        return jsonify({"success": True, "airports": result}), 200
+
+        # Return combined data
+        return jsonify({
+            "success": True,
+            "game_data": {
+                "money": money,
+                "public_dissatisfaction": public_dissatisfaction
+            },
+            "airports": airport_result
+        }), 200
 
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
+
 
 
 
