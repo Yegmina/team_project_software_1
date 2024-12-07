@@ -459,7 +459,12 @@ def close_airport_by_icao(game_id, icao_code):
 """
 """test below"""
 
+def get_random_events_examples():
+    """Retrieve random events from examples.txt from random_events"""
+    with open("./random_events/examples.txt", "r") as file:
+        lines=file.readlines()
 
+    return lines
 
 
 

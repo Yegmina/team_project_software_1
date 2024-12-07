@@ -603,6 +603,8 @@ def random_event(game_id):
             "Money: {money}\n\n"
             "Infected: {infected}\n\n"
             "Dissatisfaction: {dissatisfaction}"
+            #"Below you can find some examples of random events. You MUST generate UNIQUE random events each time I ask about this even though question is the same." + str(get_random_events_examples())
+            # For now, lets not give examples to AI, let gemini think by itself without examples
         )
 
         # Call Gemini to generate the random event
