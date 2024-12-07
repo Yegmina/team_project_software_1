@@ -6,6 +6,7 @@ from flask_cors import CORS
 from utils.functions import *  # Import all functions from functions.py
 import json
 
+
 app = Flask(__name__)
 # Enable CORS for all routes
 CORS(app)
@@ -523,6 +524,32 @@ def new_game_turn(game_id):
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
+
+@app.route('/api/games/<int:game_id>/infection_spread', methods=['POST'])
+def api_infection_spread(game_id):
+    """
+    Spreads infection from infected airports to nearby airports for the specified game.
+    """
+    try:
+        # Fetch the infection rate for the specified game from the database
+        infection_rate_query = f"""
+            SELECT infection_rate 
+            FROM saved_games 
+            WHERE id = {game_id};
+        """
+        infection_rate_result = run(infection_rate_query)
+
+        if not infection_rate_result:
+            return jsonify({"success": False, "message": f"Game ID {game_id} not found."}), 404
+
+        infection_rate = infection_rate_result[0][0]
+
+        # Call the infection spread function
+        result = infection_spread(game_id, infection_rate)
+        return jsonify(result)
+
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
 
 
 # Run the Flask development server; line below needed in order not to run app.py when imporing to other scripts

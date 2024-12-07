@@ -4,6 +4,7 @@
 import mysql.connector
 import mysql
 import random
+import math
 
 #<editor-fold desc = "MYSQL-cursor optimization">
 connection = mysql.connector.connect(
@@ -337,6 +338,120 @@ def payment_choice(game_id, choice_id):
     run(record_choice_query)
 
     return {"success": True, "message": text or "Choice executed successfully."}
+
+
+import math
+import random
+
+def infection_spread(game_id, infection_rate):
+    """
+    Spreads infection from infected airports to nearby airports for the specified game.
+    """
+    try:
+        # Fetch the list of currently infected and open airports for the game
+        infected_airport_list = run(f"""
+            SELECT airport_id 
+            FROM airport_info
+            WHERE game_id = {game_id} 
+            AND infected = 1 
+            AND closed = 0;
+        """)
+
+        if not infected_airport_list:
+            return {"success": False, "message": "No infected airports available for spreading."}
+
+        # Spread infection from each infected airport
+        for airport in infected_airport_list:
+            spreading_airport = airport[0]
+            airport_spread(spreading_airport, game_id, infection_rate)
+
+        return {"success": True, "message": f"Infection spread processed for game ID {game_id}."}
+
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+
+def airport_spread(spreading_airport, game_id, infection_rate):
+    """
+    Spreads infection from a single airport to nearby airports within flight range.
+    """
+    try:
+        # Flight range in kilometers
+        plane_flight_distance = 2000
+
+        # Check if the airport is infected
+        is_infected = run(f"""
+            SELECT infected 
+            FROM airport_info 
+            WHERE game_id = {game_id} AND airport_id = '{spreading_airport}';
+        """)[0][0]
+
+        if not is_infected:
+            return  # Skip if the airport is not infected
+
+        # Get coordinates of the spreading airport
+        spreading_airport_coords = get_airport_coordinates(spreading_airport)
+
+        # Fetch all airports in the game
+        airports_in_game = run(f"SELECT airport_id FROM airport_info WHERE game_id = {game_id};")
+
+        # Spread infection to nearby airports
+        for airport in airports_in_game:
+            target_airport = airport[0]
+            target_airport_coords = get_airport_coordinates(target_airport)
+
+            # Calculate distance between airports
+            distance = distance_between_two(spreading_airport_coords, target_airport_coords)
+
+            # Spread infection based on distance and infection rate
+            if distance < plane_flight_distance and random.randint(0, 100) < infection_rate:
+                run(f"""
+                    UPDATE airport_info 
+                    SET infected = 1 
+                    WHERE game_id = {game_id} AND airport_id = '{target_airport}';
+                """)
+
+    except Exception as e:
+        print(f"Error in airport_spread: {e}")
+
+
+def get_airport_coordinates(airport_id):
+    """
+    Fetches the latitude and longitude of an airport by its ID.
+    """
+    coords = run(f"""
+        SELECT latitude_deg, longitude_deg 
+        FROM airport 
+        WHERE ident = '{airport_id}';
+    """)
+    if coords:
+        return coords[0]
+    return None
+
+
+def distance_between_two(coord1, coord2):
+    """
+    Calculates the distance in kilometers between two sets of coordinates using the haversine formula.
+    """
+    if not coord1 or not coord2:
+        return float('inf')  # Return infinity if coordinates are invalid
+
+    # Unpack coordinates
+    lat1, lon1 = coord1
+    lat2, lon2 = coord2
+
+    # Convert degrees to radians
+    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+
+    # Haversine formula
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = math.sin(dlat / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    # Radius of Earth in kilometers
+    R = 6371
+    return R * c
 
 """
 def close_airport_by_icao(game_id, icao_code):
