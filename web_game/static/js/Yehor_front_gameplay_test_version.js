@@ -1,22 +1,27 @@
 // .then will be switched to async, onclinc to event
 
 //CHOICE MAKING
-function fetchChoices(gameId) {
-    fetch(`/api/games/${gameId}/make_choice`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                renderChoices(data.choices);
-            } else {
-                console.error("Failed to fetch choices:", data.error);
-            }
-        })
-        .catch(err => console.error("Error fetching choices:", err));
+async function fetchChoices(gameId) {
+    try {
+        const response = await fetch(`/api/games/${gameId}/make_choice`);
+        const data = await response.json();
+
+        if (data.success) {
+            // Select up to 5 choices randomly from the available choices
+            const selectedChoices = data.choices.sort(() => 0.5 - Math.random()).slice(0, 5);
+            renderChoices(selectedChoices);
+        } else {
+            console.error("Failed to fetch choices:", data.error);
+        }
+    } catch (err) {
+        console.error("Error fetching choices:", err);
+    }
 }
 
 function renderChoices(choices) {
     const targetOutput = document.getElementById("target-output");
     targetOutput.innerHTML = ""; // Clear previous choices
+
     choices.forEach(choice => {
         const choiceButton = document.createElement("button");
         choiceButton.innerText = `${choice.name} (Cost: ${choice.cost})`;
@@ -58,18 +63,21 @@ async function processChoice(choiceId, choiceButton) {
 
 
 // NEW TURN
-function advanceTurn(gameId) {
-    fetch(`/api/games/${gameId}/new_turn`, { method: "POST" })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                updateGameState(data.updated_game_state); // Update the UI
-                triggerRandomEvent(gameId); // Trigger random events
-            } else {
-                alert("Failed to advance turn: " + data.message);
-            }
-        })
-        .catch(err => console.error("Error advancing turn:", err));
+async function advanceTurn(gameId) {
+    try {
+        const response = await fetch(`/api/games/${gameId}/new_turn`, { method: "POST" });
+        const data = await response.json();
+
+        if (data.success) {
+            updateGameState(data.updated_game_state); // Update the UI
+            triggerRandomEvent(gameId); // Trigger random events
+            await fetchChoices(gameId); // Regenerate the list of choices
+        } else {
+            alert("Failed to advance turn: " + data.message);
+        }
+    } catch (err) {
+        console.error("Error advancing turn:", err);
+    }
 }
 
 
