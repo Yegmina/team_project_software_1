@@ -578,8 +578,9 @@ def handle_infection_spread(game_id):
         """
         previously_infected = {row[0] for row in run(previously_infected_query)}
 
-        # Call the infection spread logic
-        infection_spread(game_id, infection_rate)
+        # Track flight paths during the infection spread
+        flight_paths = []
+        infection_spread(game_id, infection_rate, flight_paths)
 
         # Fetch a list of all airports after the spread
         all_airports_query = f"""
@@ -602,6 +603,7 @@ def handle_infection_spread(game_id):
             "success": True,
             "message": f"Infection spread processed for game ID {game_id}.",
             "newly_infected_airports": list(newly_infected),
+            "flight_paths": flight_paths,
             "all_airports": [
                 {
                     "airport_id": row[0],
@@ -617,5 +619,83 @@ def handle_infection_spread(game_id):
     except Exception as e:
         return {"success": False, "message": str(e)}
 
+
+def infection_spread(game_id, infection_rate, flight_paths):
+    """
+    Spreads infection from infected airports to nearby airports for the specified game.
+    """
+    try:
+        # Fetch the list of currently infected and open airports for the game
+        infected_airport_list = run(f"""
+            SELECT airport_id 
+            FROM airport_info
+            WHERE game_id = {game_id} 
+            AND infected = 1 
+            AND closed = 0;
+        """)
+
+        if not infected_airport_list:
+            return {"success": False, "message": "No infected airports available for spreading."}
+
+        # Spread infection from each infected airport
+        for airport in infected_airport_list:
+            spreading_airport = airport[0]
+            airport_spread(spreading_airport, game_id, infection_rate, flight_paths)
+
+    except Exception as e:
+        print(f"Error in infection_spread: {e}")
+
+
+def airport_spread(spreading_airport, game_id, infection_rate, flight_paths):
+    """
+    Spreads infection from a single airport to nearby airports within flight range.
+    Tracks flight paths contributing to the spread.
+    """
+    try:
+        # Flight range in kilometers
+        plane_flight_distance = 2000
+
+        # Check if the airport is infected
+        is_infected = run(f"""
+            SELECT infected 
+            FROM airport_info 
+            WHERE game_id = {game_id} AND airport_id = '{spreading_airport}';
+        """)[0][0]
+
+        if not is_infected:
+            return  # Skip if the airport is not infected
+
+        # Get coordinates of the spreading airport
+        spreading_airport_coords = get_airport_coordinates(spreading_airport)
+
+        # Fetch all airports in the game
+        airports_in_game = run(f"SELECT airport_id FROM airport_info WHERE game_id = {game_id};")
+
+        # Spread infection to nearby airports
+        for airport in airports_in_game:
+            target_airport = airport[0]
+            target_airport_coords = get_airport_coordinates(target_airport)
+
+            # Calculate distance between airports
+            distance = distance_between_two(spreading_airport_coords, target_airport_coords)
+
+            # Spread infection based on distance and infection rate
+            if distance < plane_flight_distance and random.randint(0, 100) < infection_rate:
+                # Update the target airport as infected
+                run(f"""
+                    UPDATE airport_info 
+                    SET infected = 1 
+                    WHERE game_id = {game_id} AND airport_id = '{target_airport}';
+                """)
+
+                # Record the flight path
+                flight_paths.append({
+                    "from": spreading_airport,
+                    "to": target_airport,
+                    "distance": distance
+                })
+
+    except Exception as e:
+        print(f"Error in airport_spread: {e}")
 
 
