@@ -570,8 +570,49 @@ def handle_infection_spread(game_id):
 
         infection_rate = infection_rate_result[0][0]
 
+        # Fetch a list of infected airports before the spread
+        previously_infected_query = f"""
+            SELECT airport_id
+            FROM airport_info
+            WHERE game_id = {game_id} AND infected = 1;
+        """
+        previously_infected = {row[0] for row in run(previously_infected_query)}
+
         # Call the infection spread logic
-        return infection_spread(game_id, infection_rate)
+        infection_spread(game_id, infection_rate)
+
+        # Fetch a list of all airports after the spread
+        all_airports_query = f"""
+            SELECT airport_id, infected, closed
+            FROM airport_info
+            WHERE game_id = {game_id};
+        """
+        all_airports = run(all_airports_query)
+
+        # Identify newly infected airports
+        newly_infected_query = f"""
+            SELECT airport_id
+            FROM airport_info
+            WHERE game_id = {game_id} AND infected = 1;
+        """
+        newly_infected = {row[0] for row in run(newly_infected_query)} - previously_infected
+
+        # Format the response
+        response = {
+            "success": True,
+            "message": f"Infection spread processed for game ID {game_id}.",
+            "newly_infected_airports": list(newly_infected),
+            "all_airports": [
+                {
+                    "airport_id": row[0],
+                    "infected": bool(row[1]),
+                    "closed": bool(row[2])
+                }
+                for row in all_airports
+            ]
+        }
+
+        return response
 
     except Exception as e:
         return {"success": False, "message": str(e)}
