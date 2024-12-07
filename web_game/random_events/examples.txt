@@ -1,0 +1,569 @@
+Here is a batch of examples random events, create your own one:
+
+
+
+Title: Drought Crisis
+
+Description: A severe drought hits a major agricultural region, causing food shortages and increased public unrest.
+
+Money: -800
+
+Infected: +3
+
+Dissatisfaction: +4
+
+
+
+Title: Scientific Breakthrough
+
+Description: Scientists discover a new treatment for the virus, reducing its spread and calming public fears.
+
+Money: -200
+
+Infected: -5
+
+Dissatisfaction: -3
+
+
+
+Title: Cyberattack on Healthcare
+
+Description: A ransomware attack disables hospital systems, delaying treatments and heightening public frustration.
+
+Money: -500
+
+Infected: +2
+
+Dissatisfaction: +5
+
+
+
+Title: Charity Concert
+
+Description: A globally televised concert raises funds for healthcare, boosting morale and public trust.
+
+Money: +700
+
+Infected: 0
+
+Dissatisfaction: -2
+
+
+
+Title: Corruption Scandal
+
+Description: A high-ranking official is caught embezzling pandemic relief funds, sparking outrage.
+
+Money: -300
+
+Infected: 0
+
+Dissatisfaction: +4
+
+
+
+Title: Vaccine Distribution Success
+
+Description: An efficient vaccine rollout dramatically reduces infection rates and gains public approval.
+
+Money: -400
+
+Infected: -4
+
+Dissatisfaction: -5
+
+
+
+Title: Trade Route Collapse
+
+Description: A critical international trade route is blocked, leading to shortages and economic strain.
+
+Money: -600
+
+Infected: +1
+
+Dissatisfaction: +3
+
+
+
+Title: Community Garden Initiative
+
+Description: A grassroots movement starts community gardens, easing food shortages and uniting people.
+
+Money: +200
+
+Infected: 0
+
+Dissatisfaction: -2
+
+
+
+Title: Contaminated Water Supply
+
+Description: A water treatment plant malfunction leads to a surge in infections in a major city.
+
+Money: -300
+
+Infected: +4
+
+Dissatisfaction: +3
+
+
+
+Title: Peaceful Protest
+
+Description: A peaceful demonstration leads to productive dialogue, reducing dissatisfaction.
+
+Money: -100
+
+Infected: 0
+
+Dissatisfaction: -3
+
+
+
+Title: Black Market Bust
+
+Description: Authorities shut down a large black market for counterfeit medicines, causing disruption.
+
+Money: +400
+
+Infected: +1
+
+Dissatisfaction: +2
+
+
+
+Title: International Aid
+
+Description: A coalition of countries sends financial aid to support your pandemic response efforts.
+
+Money: +800
+
+Infected: -2
+
+Dissatisfaction: -1
+
+
+
+Title: Food Bank Overrun
+
+Description: Public food banks run out of supplies, increasing public anger.
+
+Money: -200
+
+Infected: 0
+
+Dissatisfaction: +3
+
+
+
+Title: Viral Misinformation Campaign
+
+Description: A wave of misinformation increases public distrust in pandemic measures.
+
+Money: 0
+
+Infected: +2
+
+Dissatisfaction: +4
+
+
+
+Title: Celebrity Donation
+
+Description: A major celebrity donates to the pandemic relief fund, boosting morale and resources.
+
+Money: +500
+
+Infected: 0
+
+Dissatisfaction: -1
+
+
+
+Title: Hospital Expansion
+
+Description: New hospitals are built, improving treatment capacity and lowering infection rates.
+
+Money: -600
+
+Infected: -3
+
+Dissatisfaction: -2
+
+
+
+Title: Worker Strike
+
+Description: Healthcare workers go on strike, disrupting critical services and increasing dissatisfaction.
+
+Money: -300
+
+Infected: +2
+
+Dissatisfaction: +5
+
+
+
+Title: Environmental Recovery
+
+Description: Decreased industrial activity during the pandemic leads to a notable environmental recovery, improving public mood.
+
+Money: 0
+
+Infected: 0
+
+Dissatisfaction: -3
+
+
+
+Title: Medical Supply Theft
+
+Description: A shipment of medical supplies is stolen, creating shortages and public anger.
+
+Money: -400
+
+Infected: +1
+
+Dissatisfaction: +4
+
+
+
+Title: Economic Stimulus Package
+
+Description: A large economic stimulus package is announced, alleviating financial pressure on citizens.
+
+Money: -1000
+
+Infected: 0
+
+Dissatisfaction: -3
+
+
+
+Title: Unapproved Treatment
+
+Description: A widely used unapproved treatment worsens health outcomes, causing more infections.
+
+Money: +100
+
+Infected: +3
+
+Dissatisfaction: +2
+
+
+
+Title: Public Volunteer Surge
+
+Description: An overwhelming number of public volunteers help support healthcare services, improving outcomes.
+
+Money: +300
+
+Infected: -2
+
+Dissatisfaction: -4
+
+
+
+Title: Border Dispute
+
+Description: A neighboring country closes its borders over infection concerns, impacting trade and diplomacy.
+
+Money: -500
+
+Infected: +1
+
+Dissatisfaction: +3
+
+
+
+Title: Inspirational Leadership Speech
+
+Description: A powerful speech by a leader restores public confidence and reduces unrest.
+
+Money: 0
+
+Infected: 0
+
+Dissatisfaction: -2
+
+
+
+Title: Wildfire Crisis
+
+Description: Wildfires spread in rural areas, displacing citizens and straining resources.
+
+Money: -700
+
+Infected: +2
+
+Dissatisfaction: +4
+
+
+
+Title: Tech Innovation
+
+Description: A tech company develops a new tool to track and reduce virus spread effectively.
+
+Money: +200
+
+Infected: -3
+
+Dissatisfaction: -2
+
+
+
+Title: Fake Vaccine Scandal
+
+Description: Counterfeit vaccines are discovered, leading to widespread outrage and mistrust.
+
+Money: -200
+
+Infected: +2
+
+Dissatisfaction: +5
+
+
+
+Title: Religious Gathering
+
+Description: A large religious gathering causes a spike in infections but boosts community solidarity.
+
+Money: +100
+
+Infected: +3
+
+Dissatisfaction: -2
+
+
+
+Title: Rainy Season Relief
+
+Description: Heavy rains eliminate mosquito breeding grounds, reducing infection rates.
+
+Money: 0
+
+Infected: -2
+
+Dissatisfaction: 0
+
+
+
+Title: Emergency Tax
+
+Description: A temporary tax is implemented to fund pandemic relief, angering the public.
+
+Money: +800
+
+Infected: 0
+
+Dissatisfaction: +3
+
+
+
+Title: Community Quarrel
+
+Description: Conflicts between community leaders disrupt local pandemic measures.
+
+Money: -200
+
+Infected: +1
+
+Dissatisfaction: +2
+
+
+
+Title: Vaccine Shortage
+
+Description: A delay in vaccine production causes increased infections and public frustration.
+
+Money: -500
+
+Infected: +4
+
+Dissatisfaction: +3
+
+
+
+Title: Youth-led Clean-up
+
+Description: A youth initiative organizes neighborhood clean-ups, reducing infection risks and inspiring hope.
+
+Money: 0
+
+Infected: -1
+
+Dissatisfaction: -2
+
+
+
+Title: Luxury Tax Relief
+
+Description: Tax breaks for luxury goods are introduced, angering citizens over perceived inequality.
+
+Money: +600
+
+Infected: 0
+
+Dissatisfaction: +4
+
+
+
+Title: Research Setback
+
+Description: A major vaccine trial fails, setting back progress and increasing public frustration.
+
+Money: -400
+
+Infected: +2
+
+Dissatisfaction: +5
+
+
+
+Title: Winter Surge
+
+Description: A harsh winter causes a spike in infections due to poor living conditions.
+
+Money: 0
+
+Infected: +3
+
+Dissatisfaction: +1
+
+
+
+Title: Global Concerted Effort
+
+Description: Nations unite for coordinated pandemic measures, boosting global morale.
+
+Money: +200
+
+Infected: -2
+
+Dissatisfaction: -3
+
+
+
+Title: Controversial Curfew
+
+Description: A strict curfew reduces infections but angers the population.
+
+Money: -100
+
+Infected: -3
+
+Dissatisfaction: +2
+
+
+
+Title: Social Media Campaign
+
+Description: An engaging campaign reduces misinformation and promotes health measures.
+
+Money: -200
+
+Infected: -1
+
+Dissatisfaction: -3
+
+
+
+Title: Migrant Crisis
+
+Description: A sudden influx of migrants increases strain on healthcare systems.
+
+Money: -300
+
+Infected: +2
+
+Dissatisfaction: +4
+
+
+
+Title: Rural Outreach
+
+Description: Efforts to provide rural communities with resources improve infection rates and morale.
+
+Money: -400
+
+Infected: -3
+
+Dissatisfaction: -2
+
+
+
+Title: Tax Fraud Scandal
+
+Description: A corporate tax evasion scandal reduces public trust in economic leadership.
+
+Money: -500
+
+Infected: 0
+
+Dissatisfaction: +4
+
+
+
+Title: Celebrity Scandal
+
+Description: A celebrity flouting pandemic rules causes public anger and media frenzy.
+
+Money: 0
+
+Infected: 0
+
+Dissatisfaction: +3
+
+
+
+Title: Vaccine Booster Campaign
+
+Description: A new booster program reduces infections and restores public confidence.
+
+Money: -300
+
+Infected: -3
+
+Dissatisfaction: -3
+
+
+
+Title: Hospital Cybersecurity Upgrade
+
+Description: Investments in cybersecurity prevent potential attacks on healthcare systems.
+
+Money: -400
+
+Infected: -1
+
+Dissatisfaction: -2
+
+
+
+Title: Sports Season Cancelled
+
+Description: The cancellation of a beloved sports season causes public disappointment.
+
+Money: 0
+
+Infected: -2
+
+Dissatisfaction: +2
+
+
+
+Title: Desert Bloom Phenomenon
+
+Description: A rare natural event lifts public spirits, temporarily distracting from crises.
+
+Money: 0
+
+Infected: 0
+
+Dissatisfaction: -3
+
+
+
+Create ONLY ONE and give according to rules
