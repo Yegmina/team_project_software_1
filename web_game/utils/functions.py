@@ -552,3 +552,29 @@ def parse_gemini_response(response):
     return parsed_event
 
 
+def handle_infection_spread(game_id):
+    """
+    Handles the infection spread logic by fetching the infection rate and spreading the infection.
+    """
+    try:
+        # Fetch the infection rate for the game
+        infection_rate_query = f"""
+            SELECT infection_rate 
+            FROM saved_games 
+            WHERE id = {game_id};
+        """
+        infection_rate_result = run(infection_rate_query)
+
+        if not infection_rate_result:
+            return {"success": False, "message": f"Game ID {game_id} not found."}
+
+        infection_rate = infection_rate_result[0][0]
+
+        # Call the infection spread logic
+        return infection_spread(game_id, infection_rate)
+
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+
+
