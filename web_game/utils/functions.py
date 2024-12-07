@@ -120,21 +120,51 @@ def get_all_games():
 
 def fetch_game(game_id):
     """Fetches a specific game by ID."""
-    game_data = run(f"SELECT * FROM saved_games WHERE id = {game_id};")
-    if not game_data:
-        return {"error": "Game not found!"}, 404
+    try:
+        # Debugging: Log the game_id being fetched
+        print(f"Fetching game with ID: {game_id}")
 
-    return {
-        "id": game_data[0][0],
-        "name": game_data[0][1],
-        "money": game_data[0][2],
-        "infected_population": game_data[0][3],
-        "public_dissatisfaction": game_data[0][4],
-        "research_progress": game_data[0][5],
-        "game_turn": game_data[0][6],
-        "infection_rate": game_data[0][7],
-        "max_distance": game_data[0][8],
-    }, 200
+        # Execute the query with explicit column selection
+        query = f"""
+            SELECT 
+                id, 
+                input_name, 
+                money, 
+                infected_population, 
+                public_dissatisfaction, 
+                research_progress, 
+                game_turn, 
+                infection_rate, 
+                max_distance 
+            FROM saved_games 
+            WHERE id = {game_id};
+        """
+        game_data = run(query)
+
+        if not game_data:
+            print(f"No game found with ID: {game_id}")  # Debugging
+            return {"error": "Game not found!"}, 404
+
+        # Debugging: Log the fetched data
+        print(f"Fetched data: {game_data}")
+
+        # Return the parsed game data
+        return {
+            "id": game_data[0][0],
+            "name": game_data[0][1],
+            "money": game_data[0][2],
+            "infected_population": game_data[0][3],
+            "public_dissatisfaction": game_data[0][4],
+            "research_progress": game_data[0][5],
+            "game_turn": game_data[0][6],  # Ensure correct field
+            "infection_rate": game_data[0][7],
+            "max_distance": game_data[0][8],
+        }, 200
+    except Exception as e:
+        # Log and handle any exceptions
+        print(f"Error fetching game: {e}")
+        return {"error": str(e)}, 500
+
 
 def fetch_games_by_name(input_name):
     """Fetches games with a matching name."""
