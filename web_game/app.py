@@ -299,6 +299,69 @@ def get_all_airports(game_id):
 
 
 
+@app.route('/api/airports/info/<string:airport_id>', methods=['GET'])
+def get_all_info_one_airport(airport_id):
+    """
+    Fetches detailed information about an airport, including:
+    - Data from the `airport` table
+    - Data from the `airport_info` table for its involvement in games
+    """
+    try:
+        # Fetch information from the `airport` table
+        airport_query = f"""
+            SELECT id, ident, type, name, latitude_deg, longitude_deg, elevation_ft,
+                   continent, iso_country, iso_region, municipality, scheduled_service,
+                   gps_code, iata_code, local_code, home_link, wikipedia_link, keywords
+            FROM airport
+            WHERE ident = '{airport_id}';
+        """
+        airport_data = run(airport_query)
+        if not airport_data:
+            return jsonify({"success": False, "message": f"Airport {airport_id} not found in airport table."}), 404
+
+        # Unpack airport data
+        airport_info = {
+            "id": airport_data[0][0],
+            "ident": airport_data[0][1],
+            "type": airport_data[0][2],
+            "name": airport_data[0][3],
+            "latitude_deg": airport_data[0][4],
+            "longitude_deg": airport_data[0][5],
+            "elevation_ft": airport_data[0][6],
+            "continent": airport_data[0][7],
+            "iso_country": airport_data[0][8],
+            "iso_region": airport_data[0][9],
+            "municipality": airport_data[0][10],
+            "scheduled_service": airport_data[0][11],
+            "gps_code": airport_data[0][12],
+            "iata_code": airport_data[0][13],
+            "local_code": airport_data[0][14],
+            "home_link": airport_data[0][15],
+            "wikipedia_link": airport_data[0][16],
+            "keywords": airport_data[0][17],
+        }
+
+        # Fetch game-related data from the `airport_info` table
+        game_query = f"""
+            SELECT game_id, infected, closed
+            FROM airport_info
+            WHERE airport_id = '{airport_id}';
+        """
+        game_data = run(game_query)
+        if not game_data:
+            return jsonify({"success": True, "airport": airport_info, "game_info": []}), 200
+
+        # Format game-related data
+        game_info = [
+            {"game_id": row[0], "infected": bool(row[1]), "closed": bool(row[2])}
+            for row in game_data
+        ]
+
+        # Combine both data sets into the response
+        return jsonify({"success": True, "airport": airport_info, "game_info": game_info}), 200
+
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
 
 
 

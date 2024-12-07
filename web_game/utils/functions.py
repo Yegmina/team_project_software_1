@@ -308,12 +308,10 @@ def payment_choice(game_id, choice_id):
 
     return {"success": True, "message": text or "Choice executed successfully."}
 
-
+"""
 def close_airport_by_icao(game_id, icao_code):
-    """Closes an airport by its ICAO code."""
-    """probably not in use"""
     run(f"UPDATE airport_info SET closed = 1 WHERE game_id = {game_id} AND airport_id = '{icao_code}';")
-
+"""
 """test below"""
 
 
