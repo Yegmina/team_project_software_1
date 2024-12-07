@@ -13,7 +13,35 @@
 
 <body>
 
-  <div id="map"></div>
+  <div id="middle_content">
+    <div id="map"></div>
+    <div id="game-info">
+      <p>Game turn
+      Airports infected
+      Money
+      </p>
+    </div>
+  </div>
+
+  <div id="dis_cure">
+  <div class="dis-progress-bar">
+    <div id="dis-progress" class="dis-progress"></div>
+    <center>Public Dissatisfaction</center>
+  </div>
+
+  <div class="cure-progress-bar">
+
+    <div id="cure-progress" class="cure-progress"></div>
+    <center>Cure Progress</center>
+  </div>
+  </div>
+
+  <div style="display: flex">
+  <div class="inf-progress-bar">
+        <div id="inf-progress" class="inf-progress"></div>
+        <center>Infected population</center>
+  </div>
+  </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="../static/js/Polyline.encoded.js"></script>
