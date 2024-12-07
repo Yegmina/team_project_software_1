@@ -652,8 +652,16 @@ def airport_spread(spreading_airport, game_id, infection_rate, flight_paths):
     Tracks flight paths contributing to the spread.
     """
     try:
-        # Flight range in kilometers
-        plane_flight_distance = 2000
+        # Fetch max flight distance from the database
+        max_distance_query = f"""
+            SELECT max_distance
+            FROM saved_games
+            WHERE id = {game_id};
+        """
+        max_distance_result = run(max_distance_query)
+        if not max_distance_result:
+            raise ValueError(f"Max distance not found for game ID {game_id}.")
+        max_distance = max_distance_result[0][0]
 
         # Check if the airport is infected
         is_infected = run(f"""
@@ -680,7 +688,7 @@ def airport_spread(spreading_airport, game_id, infection_rate, flight_paths):
             distance = distance_between_two(spreading_airport_coords, target_airport_coords)
 
             # Spread infection based on distance and infection rate
-            if distance < plane_flight_distance and random.randint(0, 100) < infection_rate:
+            if distance < max_distance and random.randint(0, 100) < infection_rate:
                 # Update the target airport as infected
                 run(f"""
                     UPDATE airport_info 
