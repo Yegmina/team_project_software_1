@@ -241,7 +241,6 @@ async function place_markers(){
     let all_airports = await fetch(`/api/airports/${game_id}`)
     all_airports = await all_airports.json()
     const markers=L.featureGroup().addTo(map)
-    console.log("hello")
     console.log(all_airports)
 
     for(let i = 0;i<all_airports.airports.length;i++){
