@@ -193,3 +193,7 @@ p {
         }
     }
 }
+
+.huechange {
+    filter: hue-rotate(50deg);
+}
