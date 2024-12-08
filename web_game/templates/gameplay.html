@@ -14,48 +14,61 @@
 <body>
 
   <div id="middle_content">
-    <div id="map"></div>
+    <div id="map-container">
+      <div id="map"></div>
+    </div>
     <div id="game-info">
-      <p>Game turn
-      Airports infected
-      Money
-      </p>
+      <p>Turn: </p>
+      <p>Money: </p>
+      <p>Airports infected: </p>
+    </div>
+    <div id="game-stats">
+      <p id="game-turn">Something</p>
+      <p id="game-money">Something else</p>
+      <p id="game-inf-airports">Something more</p>
     </div>
   </div>
 
   <div id="dis_cure">
-  <div class="dis-progress-bar">
-    <div id="dis-progress" class="dis-progress"></div>
-    <center>Public Dissatisfaction</center>
-  </div>
+    <div class="dis-progress-bar">
+      <div id="dis-progress" class="dis-progress"></div>
+      <center>Public Dissatisfaction</center>
+    </div>
 
-  <div class="cure-progress-bar">
+    <div class="cure-progress-bar">
 
-    <div id="cure-progress" class="cure-progress"></div>
-    <center>Cure Progress</center>
-  </div>
+      <div id="cure-progress" class="cure-progress"></div>
+      <center>Cure Progress</center>
+    </div>
   </div>
 
   <div style="display: flex">
-  <div class="inf-progress-bar">
-        <div id="inf-progress" class="inf-progress"></div>
-        <center>Infected population</center>
+    <div class="inf-progress-bar">
+      <div id="inf-progress" class="inf-progress"></div>
+      <center>Infected population</center>
+    </div>
   </div>
+  <div id="sneaky-data"> {{ game }} </div>
+  <div id="panel" class="panel">
+    <div class="panel-content">
+      <h3>Choose wisely, because the fate of every human being is in the palm of your hands</h3>
+      <div class="item-list"></div>
+    </div>
   </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="../static/js/Polyline.encoded.js"></script>
   <script src="../static/js/gameplay.js"></script>
-    <script src="../static/js/Yehor_front_gameplay_test_version.js"></script>
+  <!-- <script src="../static/js/Yehor_front_gameplay_test_version.js"></script> -->
 
 
-  <div id="target-output"></div>
-<div id="actions">
+  <!-- <div id="target-output"></div> -->
+  <!-- <div id="actions">
     <button id="new-turn-btn">Advance Turn</button>
     <button id="spread-infection-btn">Spread Infection</button>
     <button id="random-event-btn">Trigger Random Event</button>
-</div>
-
+  </div> -->
 </body>
 
 </html>

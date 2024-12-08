@@ -192,5 +192,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 function getCurrentGameId(){
-  return 149
+//   return 149
 }

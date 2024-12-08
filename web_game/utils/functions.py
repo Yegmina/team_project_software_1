@@ -3,7 +3,7 @@
 """DB basic functions"""
 import mysql.connector
 import mysql
-from web_game.utils.ai.gemini import GeminiModel
+from utils.ai.gemini import GeminiModel
 
 #<editor-fold desc = "MYSQL-cursor optimization">
 connection = mysql.connector.connect(

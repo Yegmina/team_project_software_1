@@ -41,16 +41,22 @@ def get_game_details(game_id):
         return render_template('game_details.html', game=json.dumps(response))
     return jsonify(response), status
 
-## Dev-functions
+
+## All dev and API functions
+## Used to get data from the game to pass to JavaScript for 
+## processing
+
 @app.route('/dev/fetch_games/<int:id>', methods=['GET'])
 def dev_fetch_game(id):
     data = fetch_game(id)
     return data
 
+
 @app.route('/dev/game_exists/<game_name>')
 def dev_game_exists(game_name):
     data = game_exists(game_name)
     return json.dumps(data)
+
 
 @app.route('/play/<game_id>')
 def play(game_id):
@@ -88,7 +94,8 @@ def api_make_choice(game_id):
     except Exception as e:
         return jsonify({"error": str(e), "success": False}), 500
 
-@app.route('/api/games/<int:game_id>/process_choice', methods=['POST'])
+
+@app.route('/api/games/<game_id>/process_choice', methods=['POST'])
 def api_process_choice(game_id):
     """
     Processes a player's choice by checking if it's valid, applying changes
@@ -175,6 +182,7 @@ def api_process_choice(game_id):
             "max_distance": updated_max_distance,
         }
     }), 200
+
 
 @app.route('/api/airports/close', methods=['POST'])
 def close_airport():
@@ -265,7 +273,6 @@ def close_airport():
         return jsonify({"success": False, "message": str(e)}), 500
 
 
-
 @app.route('/api/airports/<int:game_id>', methods=['GET'])
 def get_all_airports(game_id):
     """
@@ -318,8 +325,6 @@ def get_all_airports(game_id):
 
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
-
-
 
 
 @app.route('/api/airports/info/<string:airport_id>', methods=['GET'])
@@ -472,7 +477,6 @@ def close_continent_airports():
         return jsonify({"success": False, "message": str(e)}), 500
 
 
-
 @app.route('/api/games/<int:game_id>/new_turn', methods=['POST'])
 def new_game_turn(game_id):
     """
@@ -539,7 +543,9 @@ def new_game_turn(game_id):
                 "money": money,
                 "infected_population": infected_population,
                 "public_dissatisfaction": public_dissatisfaction,
-                "max_distance": max_distance
+                "max_distance": max_distance,
+                "research_progress": research_progress,
+                "infection_rate": infection_rate,
             }
         }), 200
 

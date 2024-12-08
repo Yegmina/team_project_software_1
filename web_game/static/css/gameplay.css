@@ -1,17 +1,52 @@
 body {
     margin: auto;
-    padding-top: 10rem;
-}
-#map {
-    height: 70vh;
-    width : 80%;
-    margin: auto;
+    padding-top: 5rem;
 }
 
-#middle_content{
-    display:flex;
+#map-container {
+    width: 100%;
+    border: rgb(229, 13, 13);
+    border-width: 10px 10px 10px 10px;
+    border-style: solid;
+    width: 70%;
+    margin-left: 10%;
+    margin-right: 5%;
+}
+
+#map {
+    height: 70vh;
+    width: 100%;
+    margin: auto;
+    z-index: 0;
+    /* margin-left: 10%; */
+}
+
+#middle_content {
+    display: flex;
     padding: 10px;
     align-content: center;
+}
+
+#game-info {
+    width: 15%;
+
+    p {
+        font-size: 18px;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        margin-bottom: 10px;
+        text-align: left;
+    }
+}
+
+#game-stats {
+    width: 15%;
+
+    p {
+        font-size: 18px;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        margin-bottom: 10px;
+        text-align: right;
+    }
 }
 
 .inf-progress-bar {
@@ -25,15 +60,15 @@ body {
     margin-left: 80px;
     margin-right: 80px;
     border: 10px black;
-    position:relative;
+    position: relative;
 }
 
 .inf-progress {
-    width: 50%;
+    width: 0%;
     height: 100%;
     background-color: #4caf50;
     transition: width 0.3s ease;
-    position:relative;
+    position: relative;
 }
 
 .inf-progress-bar center {
@@ -46,7 +81,7 @@ body {
 }
 
 p {
-    width:100%;
+    width: 100%;
     padding: 2px;
     margin: 0;
     margin-top: auto;
@@ -54,7 +89,7 @@ p {
     text-align: center;
 }
 
-.dis-progress-bar{
+.dis-progress-bar {
     width: 50%;
     background-color: #f0f0f0;
     height: 30px;
@@ -63,26 +98,26 @@ p {
     display: flex;
     align-content: center;
     margin-left: 80px;
-    position:relative;
+    position: relative;
 
 }
 
 .dis-progress {
-    width: 50%;
+    width: 0;
     height: 100%;
     background-color: #4caf50;
     transition: width 0.3s ease;
-    position:relative;
+    position: relative;
 
 }
 
 .dis-progress-bar center {
-  position:absolute;
-  left:0;
-  right:0;
-  top:5px;
-  bottom:5px;
-  margin:auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 5px;
+    bottom: 5px;
+    margin: auto;
 }
 
 .cure-progress-bar {
@@ -94,27 +129,67 @@ p {
     display: flex;
     align-content: center;
     margin-right: 80px;
-    position:relative;
+    position: relative;
 
 }
 
 .cure-progress-bar center {
-  position:absolute;
-  left:0;
-  right:0;
-  top:5px;
-  bottom:5px;
-  margin:auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 5px;
+    bottom: 5px;
+    margin: auto;
 }
 
 .cure-progress {
-    width: 50%;
+    width: 0%;
     height: 100%;
     background-color: #4caf50;
     transition: width 0.3s ease;
-    position:relative;
+    position: relative;
 }
 
-#dis_cure{
+#dis_cure {
     display: flex;
+}
+
+#sneaky-data {
+    height: 100rem;
+    margin: 100rem;
+}
+
+.panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.51);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.panel-content {
+    background: rgb(255, 255, 255);
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    .item-list {
+        display: flex;
+        flex-wrap: wrap;
+    };
+    h3 {
+        margin: auto;
+        font-size: 30px;
+    };
+    .item-list {
+        article {
+            margin : 1%;
+            height : 16rem;
+            border-radius : 8px;
+            border: gray;
+        }
+    }
 }
