@@ -18,7 +18,7 @@ L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/
     maxZoom: 2.0,
 }).addTo(map);
 
-// Something else
+// Game Variable
 
 let body = document.querySelector("body");
 let game_data_holder = document.querySelector("#sneaky-data");
@@ -321,6 +321,30 @@ async function gameLoop() {
 gameInitialize();
 gameLoop()
 // start_game();
+
+async function place_markers(){
+    let all_airports = await fetch(`/api/airports/${game_id}`)
+    all_airports = await all_airports.json()
+    const markers=L.featureGroup().addTo(map)
+    console.log(all_airports)
+
+    for(let i = 0;i<all_airports.airports.length;i++){
+        let icao = all_airports.airports[i].airport_id
+        let airport_info = await fetch(`/api/airports/info/${icao}`)
+        airport_info = await airport_info.json()
+        let log = airport_info.airport.longitude_deg
+        let lat = airport_info.airport.latitude_deg
+        const marker=L.marker([lat, log]).addTo(map)
+        marker._icon.classList.add("huechange");
+        markers.addLayer(marker)
+        map.setView([lat, log])
+    }
+}
+
+
+
+place_markers()
+
 
 /* 
 story / dev commentary or something (just a feature)
