@@ -127,6 +127,8 @@ async function renderChoice() {
             panel.style.display = 'flex';
             let itemList = document.querySelector(".item-list")
             itemList.innerHTML = '';
+            let warning = document.querySelector("#possible-warning");
+            warning.innerText = '';
             for (let choice of filtered_choices) {
                 let article = document.createElement('article');
                 let h2 = document.createElement('h2');
@@ -306,6 +308,7 @@ async function gameLoop() {
     */
 
     while(1===1) {
+
         await renderChoice()
             .then(getUserChoice)
             // .then(random_event)
