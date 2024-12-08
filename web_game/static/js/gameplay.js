@@ -28,6 +28,33 @@ console.log(game_id);
 
 body.removeChild(game_data_holder);
 
+async function gameInitialize() {
+    update_new_game_stats(game_data[0]);
+    update_progress_bars(game_data[0]);
+    console.log(game_data[0]);
+    const other_choices = document.querySelector("#other-choices");
+    const skip_turn = document.createElement('button');
+    skip_turn.id = "skip-turn";
+
+    skip_turn.innerText = 'Skip this turn (Do nothing)';
+    other_choices.appendChild(skip_turn);
+
+    skip_turn.addEventListener("mouseover", () => {
+        skip_turn.style.borderColor = `red`;
+    })
+    skip_turn.addEventListener("mouseout", () => {
+        skip_turn.style.borderColor = `black`;
+    })
+    skip_turn.addEventListener("mousedown", () => {
+        skip_turn.style.backgroundColor = `gray`;
+    })
+    skip_turn.addEventListener("mouseup", () => {
+        skip_turn.style.backgroundColor = `white`;
+    })
+
+
+}
+
 function story() {
     return;
 }
@@ -71,7 +98,7 @@ function filterChoice(all_choices) {
     return filtered_choices;
 }
 
-async function makeChoice() {
+async function renderChoice() {
     /* 
     In order for the player to make choice, we need:
     1. Load all existing choices that the player haven't made
@@ -80,63 +107,113 @@ async function makeChoice() {
     pop ups and let the player choose)
     4. Return the formatted data of the choice as the return value
     */
-
     // Step 1
-    const all_choices = await fetchChoice();
-
-    // Step 2
-    const filtered_choices = filterChoice(all_choices);
-    for (let item of filtered_choices) {
-        console.log(item);
-    }
-
-    // Step 3
-    // document.querySelector(`
-    //     .leaflet-tile-pane
-    // `).style.opacity = 0.5
-
-    const panel = document.querySelector('#panel');
-    panel.style.display = 'flex';
-    let itemList = document.querySelector(".item-list")
-    itemList.innerHTML = '';
-    for (let choice of filtered_choices) {
-        let article = document.createElement('article');
-        let h2 = document.createElement('h2');
-        let p = document.createElement('p');
-
-        h2.innerText = choice.name;
-        p.innerText = choice.cost;
-
-        article.style = `
-            width: ${(100 - filtered_choices.length * 2) / filtered_choices.length}%;
-            margin : 1%;
-            height : 16rem;
-            border-radius : 8px;
-            border: gray;
-        `;
-        article.appendChild(h2);
-        article.appendChild(p);
-        article.addEventListener('click', () => {
-
-            // dev note : process_choice : `/api/games/game_id/process_choice`, method POST
-            if (choice.cost <= game_data[0].money) {
-                console.log(`You chose the choice of id: ${choice.id}: ${choice.name} || Costed : ${choice.cost}`)
-                panel.style.display = 'none';
-                document.querySelector(`
-                    .leaflet-tile-pane
-                `).style.opacity = 1;
-
-                game_execute(choice); // Execute Choice
+    return new Promise(async function(resolve) {
+        setTimeout(async function() {
+            console.log("RENDER CHOICE FUNCTION INITIATED");
+            const all_choices = await fetchChoice();
+            // Step 2
+            const filtered_choices = filterChoice(all_choices);
+            for (let item of filtered_choices) {
+                console.log(item);
             }
-            else {
-                console.log("haha loser");
+
+            // Step 3
+            // document.querySelector(`
+            //     .leaflet-tile-pane
+            // `).style.opacity = 0.5
+
+            const panel = document.querySelector('#panel');
+            panel.style.display = 'flex';
+            let itemList = document.querySelector(".item-list")
+            itemList.innerHTML = '';
+            for (let choice of filtered_choices) {
+                let article = document.createElement('article');
+                let h2 = document.createElement('h2');
+                let p = document.createElement('p');
+
+                article.choice_id = choice.id;
+
+                h2.innerText = choice.name;
+                p.innerText = `Cost: ${choice.cost} moni`;
+
+                article.style = `
+                    width: ${(90 - filtered_choices.length * 2) / filtered_choices.length}%;
+                    margin : 1%;
+                    height : 16rem;
+                    border-radius : 8px;
+                    border: solid green;
+                `;
+                article.appendChild(h2);
+                article.appendChild(p);
+
+                itemList.appendChild(article);
             }
-            /* Player chose the choice --> Action phase  */
+
+            resolve(filtered_choices);
+            // dev note: ADD CHOICE OF DOING NOTHING AS A SMALL BUTTON
         })
-        itemList.appendChild(article);
-    }
-
-    // dev note: ADD CHOICE OF DOING NOTHING AS A SMALL BUTTON
+    })
+}
+async function getUserChoice() {
+    return new Promise(async function (resolve) {
+        setTimeout(async function() {
+            console.log("GET USER CHOICE FUNCTION INITIATED");
+            const all_choices_on_panel = document.querySelectorAll('article');
+            for (let choice of all_choices_on_panel) {
+                // Choice :: Article 
+                choice.addEventListener('mouseover', () => {
+                    choice.style.border = `solid red`;
+                })
+                choice.addEventListener('mouseout', () => {
+                    choice.style.border = 'solid green';
+                })
+                choice.addEventListener('mousedown', () => {
+                    choice.style.backgroundColor = 'gray';
+                })
+                choice.addEventListener('mouseup', () => {
+                    choice.style.backgroundColor = 'white';
+                })
+                choice.addEventListener('click', async () => {
+                    let choice_id = choice.choice_id;
+                    let success = false;
+                    let retries = 5;
+                    while (!success && retries--) {
+                        try {
+                            let response = await fetch(`/api/games/${game_id}/process_choice`, {
+                                method: 'POST',
+                                body: JSON.stringify({
+                                    "choice_id": choice_id,
+                                }),
+                                headers: {
+                                    "Content-Type": "application/json",
+                                }
+                            })
+                            response = await response.json();
+                            success = response.success;
+                            if (success) {
+                                document.querySelector('#panel').style.display = 'none';
+                                console.log(response.message);
+                                console.log(`User chose: ${choice_id}.`);
+                                resolve(`{"status": "User chose ${choice_id}", "value": 100}`)
+                            }
+                            else if(!success) {
+                                document.querySelector('#possible-warning').innerText = response.message;
+                            }
+                        } catch (err) {
+                            document.querySelector('#possible-warning').innerText = err;
+                        }
+                    }
+                })
+            }
+            let skip_turn = document.querySelector("#skip-turn")
+            skip_turn.addEventListener("click", () => {
+                let panel = document.querySelector('#panel');
+                panel.style.display = 'none';
+                resolve(`{"status": "Turn skipped", "value": 101}`)
+            })
+        })
+    })
 }
 
 async function game_execute(choice) {
@@ -153,12 +230,13 @@ async function game_execute(choice) {
             let response = await fetch(`/api/games/${game_id}/process_choice`, {
                 method: 'POST',
                 body: JSON.stringify({
-                    'choice_id': choice.id,
+                    "choice_id": choice.id,
                 }),
                 headers: {
                     "Content-Type": 'application/json',
                 }
-            })
+            });
+            response = await response.json();
             console.log(response.message);
             success = response.success;
         } catch (err) {
@@ -167,25 +245,33 @@ async function game_execute(choice) {
     }
 }
 
-async function next_turn() {
-    let success = false;
-    let retries = 5;
-    while (!success && retries--) {
-        try {
-            let response = await fetch(`/api/games/${game_id}/new_turn`, {
-                method: 'POST',
-            })
-            response = await response.json()
-            console.log(response);
-            success = response.success;
 
-            const current_game_stats = response.updated_game_state;
-            update_new_game_stats(current_game_stats);
-            update_progress_bars(current_game_stats)
-        } catch (err) {
-            console.log("Error while computing next game turn's variables:", err);
-        }
-    }
+
+async function next_turn() {
+    return new Promise(async function(resolve) {
+        setTimeout(async function() {
+            let success = false;
+            let retries = 5;
+            while (!success && retries--) {
+                try {
+                    let response = await fetch(`/api/games/${game_id}/new_turn`, {
+                        method: 'POST',
+                    })
+                    response = await response.json()
+                    console.log(response);
+                    success = response.success;
+
+                    const current_game_stats = await response.updated_game_state;
+                    await update_new_game_stats(current_game_stats);
+                    await update_progress_bars(current_game_stats);
+
+                    resolve(`{"status": "Turn advanced successfully", "value": 100}`)
+                } catch (err) {
+                    console.log("Error while computing next game turn's variables:", err);
+                }
+            }
+        })
+    })
 }
 
 async function update_new_game_stats(stats) {
@@ -218,24 +304,23 @@ async function gameLoop() {
     - Passive phase : The GeminiAI will decide if this round will occur a
     random events or not and said event will be generated by the AI.
     */
-    console.log(game_data[0]);
-    let game_turn = document.querySelector("#game-turn")
-    let game_money = document.querySelector("#game-money")
-    let game_inf_airports = document.querySelector("#game-inf-airports");
-    game_turn.innerText = game_data[0].game_turn;
-    game_money.innerText = game_data[0].money;
-    game_inf_airports.innerText = 3;
-    await makeChoice(); // Choices phase
-    await next_turn();
-}
 
-gameLoop();
-
-async function start_game() {
     while(1===1) {
-        await gameLoop();
+        await renderChoice()
+            .then(getUserChoice)
+            // .then(random_event)
+            .then(next_turn);
     }
+
+
+    // let all_choices = await renderChoice(); // Choices phase
+    // let user_choice = await getUserChoice()
+
 }
+
+gameInitialize();
+gameLoop()
+// start_game();
 
 /* 
 story / dev commentary or something (just a feature)
