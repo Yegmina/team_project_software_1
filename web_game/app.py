@@ -74,8 +74,11 @@ def dev_game_exists(game_name):
 
 @app.route('/play/<game_id>')
 def play(game_id):
-    data = fetch_game(game_id)
-    return render_template('gameplay.html', game=json.dumps(data))
+    try:
+        data = fetch_game(game_id)
+        return render_template('gameplay.html', game=json.dumps(data))
+    except Exception as e:
+        return jsonify({"error in /play": str(e)}, 500)
 
 
 @app.route('/api/games/search', methods=['GET'])
