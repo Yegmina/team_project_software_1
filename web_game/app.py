@@ -65,8 +65,11 @@ def dev_fetch_game(id):
 
 @app.route('/dev/game_exists/<game_name>')
 def dev_game_exists(game_name):
-    data = game_exists(game_name)
-    return json.dumps(data)
+    try:
+        data = game_exists(game_name)
+        return json.dumps(data)
+    except Exception as e:
+        return jsonify({"error in /dev/game_exists": str(e)}, 500)
 
 
 @app.route('/play/<game_id>')
