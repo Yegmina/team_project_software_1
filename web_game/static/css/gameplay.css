@@ -1,6 +1,7 @@
 body {
     margin: auto;
     padding-top: 5rem;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 #map-container {

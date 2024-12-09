@@ -12,7 +12,8 @@ connection = mysql.connector.connect(
     host="mysql.metropolia.fi",
     port=3306,
     database="yehort",
-    autocommit = True
+    autocommit = True,
+    connection_timeout = 3,
 )
 
 cursor = connection.cursor()

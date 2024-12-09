@@ -1,6 +1,6 @@
 import random
 
-from flask import Flask, request, jsonify, render_template, redirect, url_for, make_response
+from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_cors import CORS
 
 from utils.functions import *  # Import all functions from functions.py
@@ -520,7 +520,7 @@ def new_game_turn(game_id):
         )
 
         # Increment game turn
-        game_turn += 1
+        # game_turn += 1
 
         # Update game state in the database
         update_query = f"""
@@ -528,8 +528,7 @@ def new_game_turn(game_id):
             SET money = {money}, 
                 infected_population = {infected_population}, 
                 public_dissatisfaction = {public_dissatisfaction}, 
-                max_distance = {max_distance}, 
-                game_turn = {game_turn}
+                max_distance = {max_distance}
             WHERE id = {game_id};
         """
         run(update_query)
