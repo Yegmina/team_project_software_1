@@ -42,11 +42,13 @@ def create_new_game():
 @app.route('/fetch_game/<int:game_id>', methods=['GET'])
 def get_game_details(game_id):
     """Fetches game details."""
-    response, status = fetch_game(game_id)
-    if status == 200:
-        return render_template('game_details.html', game=json.dumps(response))
-    return jsonify(response), status
-
+    try:
+        response, status = fetch_game(game_id)
+        if status == 200:
+            return render_template('game_details.html', game=json.dumps(response))
+        return jsonify(response), status
+    except Exception as e:
+        return jsonify({"error in /fetch_game": str(e)}, 500)
 
 ## All dev and API functions
 ## Used to get data from the game to pass to JavaScript for 
