@@ -84,13 +84,16 @@ def play(game_id):
 @app.route('/api/games/search', methods=['GET'])
 def api_fetch_games_by_name():
     """API endpoint to search games by name."""
-    input_name = request.args.get('name')
-    if not input_name:
-        return jsonify({"status": "error", "message": "Name parameter is required"}), 400
-    games = fetch_games_by_name(input_name)
-    if not games:
-        return jsonify({"status": "error", "message": "No games found"}), 404
-    return jsonify({"status": "success", "games": games}), 200
+    try:
+        input_name = request.args.get('name')
+        if not input_name:
+            return jsonify({"status": "error", "message": "Name parameter is required"}), 400
+        games = fetch_games_by_name(input_name)
+        if not games:
+            return jsonify({"status": "error", "message": "No games found"}), 404
+        return jsonify({"status": "success", "games": games}), 200
+    except Exception as e:
+        return jsonify({"error in /api/games/search": str(e)}, 500)
 
 
 @app.route('/api/games/<int:game_id>/check_status', methods=['GET'])
