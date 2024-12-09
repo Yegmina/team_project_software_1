@@ -56,8 +56,11 @@ def get_game_details(game_id):
 
 @app.route('/dev/fetch_games/<int:id>', methods=['GET'])
 def dev_fetch_game(id):
-    data = fetch_game(id)
-    return data
+    try:
+        data = fetch_game(id)
+        return data
+    except Exception as e:
+        return jsonify({"error in /dev/fetch_games": str(e)}, 500)
 
 
 @app.route('/dev/game_exists/<game_name>')
