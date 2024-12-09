@@ -25,15 +25,18 @@ def index():
 @app.route('/new_game', methods=['GET', 'POST'])
 def create_new_game():
     """Handles new game creation."""
-    if request.method == 'POST':
-        name = request.get_json()['name']
-        response, status = new_game(name)
-        game_id = fetch_games_by_name(response['game_name'])[0]['id']
-        if status == 201:
-            return redirect(url_for('play', game_id=game_id))
-        return render_template('new_game.html', error=response['error'])
+    try:
+        if request.method == 'POST':
+            name = request.get_json()['name']
+            response, status = new_game(name)
+            game_id = fetch_games_by_name(response['game_name'])[0]['id']
+            if status == 201:
+                return redirect(url_for('play', game_id=game_id))
+            return render_template('new_game.html', error=response['error'])
 
-    return render_template('new_game.html')
+        return render_template('new_game.html')
+    except Exception as e:
+        return jsonify({"error in /new_game": str(e)}, 500)
 
 
 @app.route('/fetch_game/<int:game_id>', methods=['GET'])
