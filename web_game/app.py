@@ -15,8 +15,11 @@ CORS(app)
 @app.route('/')
 def index():
     """Home page showing game options."""
-    games = get_all_games()
-    return render_template('index.html', games=json.dumps(games))
+    try:
+        games = get_all_games()
+        return render_template('index.html', games=json.dumps(games))
+    except Exception as e:
+        return jsonify({"error": str(e)}, 500)
 
 
 @app.route('/new_game', methods=['GET', 'POST'])
