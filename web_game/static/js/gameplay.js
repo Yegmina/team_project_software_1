@@ -321,7 +321,8 @@ async function gameLoop() {
     await place_markers()
     await gameInitialize();
 
-    while(1===1) {
+    while (true) {
+
         await renderChoice()
             .then(getUserChoice)
             // .then(random_event)
@@ -333,6 +334,10 @@ async function gameLoop() {
     // let user_choice = await getUserChoice()
 
 }
+place_markers()
+gameInitialize();
+gameLoop()
+// start_game();
 
 async function place_markers(){
     let retries = 3, seconds = 1;
