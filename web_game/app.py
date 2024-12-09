@@ -99,11 +99,14 @@ def api_fetch_games_by_name():
 @app.route('/api/games/<int:game_id>/check_status', methods=['GET'])
 def api_check_game_status(game_id):
     """API endpoint to check the game status and update 'game_over' if needed."""
-    status, is_game_over = check_and_update_game_status(game_id)
-    if "error" in status:
-        return jsonify({"status": "error", "message": status["error"]}), 404
+    try:
+        status, is_game_over = check_and_update_game_status(game_id)
+        if "error" in status:
+            return jsonify({"status": "error", "message": status["error"]}), 404
 
-    return jsonify({"status": "success", "game_over": is_game_over, "message": status["message"]}), 200
+        return jsonify({"status": "success", "game_over": is_game_over, "message": status["message"]}), 200
+    except Exception as e:
+        return jsonify({"error in /api/games/<int:game_id>/check_status": str(e)}, 500)
 
 
 @app.route('/api/games/<int:game_id>/make_choice', methods=['GET'])
