@@ -27,31 +27,78 @@ const game_id = game_data[0].id;
 console.log(game_id);
 
 body.removeChild(game_data_holder);
+//
+
+// Utilities
+const timer = ms => new Promise(res => setTimeout(res, ms));
+// 
 
 async function gameInitialize() {
-    update_new_game_stats(game_data[0]);
-    update_progress_bars(game_data[0]);
-    console.log(game_data[0]);
-    const other_choices = document.querySelector("#other-choices");
-    const skip_turn = document.createElement('button');
-    skip_turn.id = "skip-turn";
+    console.log(`Game Initalize`)
+    return new Promise(async function (resolve) {
+        setTimeout(async function () {
+            update_new_game_stats(game_data[0]);
+            update_progress_bars(game_data[0]);
+            console.log(game_data[0]);
+            const other_choices = document.querySelector("#other-choices");
+            const skip_turn = document.createElement('button');
 
-    skip_turn.innerText = 'Skip this turn (Do nothing)';
-    other_choices.appendChild(skip_turn);
+            // Skip turn button
+            skip_turn.id = "skip-turn";
 
-    skip_turn.addEventListener("mouseover", () => {
-        skip_turn.style.borderColor = `red`;
-    })
-    skip_turn.addEventListener("mouseout", () => {
-        skip_turn.style.borderColor = `black`;
-    })
-    skip_turn.addEventListener("mousedown", () => {
-        skip_turn.style.backgroundColor = `gray`;
-    })
-    skip_turn.addEventListener("mouseup", () => {
-        skip_turn.style.backgroundColor = `white`;
-    })
+            skip_turn.innerText = 'Skip this turn (Do nothing)';
+            other_choices.appendChild(skip_turn);
 
+            skip_turn.addEventListener("mouseover", () => {
+                skip_turn.style.borderColor = `red`;
+            })
+            skip_turn.addEventListener("mouseout", () => {
+                skip_turn.style.borderColor = `black`;
+            })
+            skip_turn.addEventListener("mousedown", () => {
+                skip_turn.style.backgroundColor = `gray`;
+            })
+            skip_turn.addEventListener("mouseup", () => {
+                skip_turn.style.backgroundColor = `white`;
+            })
+            // End skip turn button
+
+
+            // Minimize button
+            const panel_minimize = document.querySelector("#panel-minimize");
+            const minimize_btn = document.createElement("button");
+
+            panel_minimize.appendChild(minimize_btn);
+
+            minimize_btn.innerText = `--`
+            minimize_btn.addEventListener('click', async () => {
+                document.querySelector('#panel').style.display = 'none';
+            })
+            // End minimize button
+
+            // Panel reopen button
+            const open_choice_panel = document.querySelector("#open-choice-panel");
+            const reopen_btn = document.createElement("button");
+
+            open_choice_panel.appendChild(reopen_btn);
+            open_choice_panel.style = `
+                display: flex;
+                align-content: center;
+                justify-content: center;
+            `
+
+            reopen_btn.innerText = `Available options`;
+            reopen_btn.style = `
+                height: 100px;
+                align-self: center;
+            `
+            reopen_btn.addEventListener('click', async () => {
+                document.querySelector("#panel").style.display = 'flex';
+            })
+
+            resolve();
+        })
+    })
 
 }
 
@@ -65,20 +112,32 @@ async function fetchChoice() {
     that the player haven't made. (Dunno why should this be but
     it's a feature nonetheless) ;)
      */
-
-    let success = false;
-    let retries = 5;
-    while (!success && retries--) {
-        try {
-            var all_available_choices = await fetch(`/api/games/${game_id}/make_choice`);
-            all_available_choices = await all_available_choices.json()
-            success = all_available_choices.success;
-        } catch (error) {
-            console.error(`Error fetching game with /api/games/game_id/make_choice: ${error}`);
-            setTimeout(1000);
-        }
-    }
-    return all_available_choices.choices;
+    return new Promise(async function (resolve) {
+        setTimeout(async function () {
+            let success = false;
+            let retries = 5, wait_length = 500;
+            while (!success && retries--) {
+                try {
+                    var all_available_choices = await fetch(`/api/games/${game_id}/make_choice`);
+                    all_available_choices = await all_available_choices.json()
+                    success = all_available_choices.success;
+                    if (success) {
+                        console.log("Successfully executed make_choice api");
+                        break;
+                    }
+                } catch (error) {
+                    console.error(`Error fetching game with /api/games/game_id/make_choice: ${error}`);
+                } finally {
+                    if (!success) {
+                        wait_length *= 2;
+                        console.log(`Trying fetching from /api/games/${game_id}/make_choice again in ${wait_length / 1000} seconds.`)
+                        await timer(wait_length);
+                    }
+                }
+            }
+            resolve(all_available_choices.choices);
+        })
+    })
 }
 
 function filterChoice(all_choices) {
@@ -109,20 +168,17 @@ async function renderChoice() {
     4. Return the formatted data of the choice as the return value
     */
     // Step 1
-    return new Promise(async function(resolve) {
-        setTimeout(async function() {
+    return new Promise(async function (resolve) {
+        setTimeout(async function () {
             console.log("RENDER CHOICE FUNCTION INITIATED");
             let retries = 3, seconds = 1;
-            while(retries--) {
+            while (retries--) {
                 try {
                     var all_choices = await fetchChoice();
-                } catch(err) {
+                } catch (err) {
                     console.log(`fetchChoice() failed to fetch data: ${err}.`)
                     console.log(`Retrying after ${seconds} seconds.`)
-                    setTimeout(seconds * 1000);
-                    seconds *= 2;
                 }
-
             }
             // Step 2
             const filtered_choices = filterChoice(all_choices);
@@ -171,7 +227,7 @@ async function renderChoice() {
 }
 async function getUserChoice() {
     return new Promise(async function (resolve) {
-        setTimeout(async function() {
+        setTimeout(async function () {
             console.log("GET USER CHOICE FUNCTION INITIATED");
             const all_choices_on_panel = document.querySelectorAll('article');
             for (let choice of all_choices_on_panel) {
@@ -191,10 +247,10 @@ async function getUserChoice() {
                 choice.addEventListener('click', async () => {
                     let choice_id = choice.choice_id;
                     let success = false;
-                    let retries = 5;
+                    let retries = 5, wait_length = 500;
                     while (!success && retries--) {
                         try {
-                            let response = await fetch(`/api/games/${game_id}/process_choice`, {
+                            var response = await fetch(`/api/games/${game_id}/process_choice`, {
                                 method: 'POST',
                                 body: JSON.stringify({
                                     "choice_id": choice_id,
@@ -211,11 +267,17 @@ async function getUserChoice() {
                                 console.log(`User chose: ${choice_id}.`);
                                 resolve(`{"status": "User chose ${choice_id}", "value": 100}`)
                             }
-                            else if(!success) {
+                            else if (!success) {
                                 document.querySelector('#possible-warning').innerText = response.message;
                             }
                         } catch (err) {
                             document.querySelector('#possible-warning').innerText = err;
+                        } finally {
+                            if (!success && !(response.err == 400)) {
+                                wait_length *= 2;
+                                console.log(`Trying /api/games/${game_id}/process_choice again in ${wait_length / 1000} seconds.`)
+                                await timer(wait_length);
+                            }
                         }
                     }
                 })
@@ -235,40 +297,45 @@ async function game_execute(choice) {
     console.log(choice);
     let success = false;
     let retries = 5;
-    while (!success && retries--) {
-        try {
-            // HERE IS THE BEAST THAT'S BEEN BUGGING ME I DON'T KNOW WHY
-            // THIS LINK DOESN'T WORK BUT AHDHWAWDHAHWDHAWDHAWHDHH IT JUST DOESN'T
-            // WANT TO WORK
-            console.log(choice.id);
-            let response = await fetch(`/api/games/${game_id}/process_choice`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    "choice_id": choice.id,
-                }),
-                headers: {
-                    "Content-Type": 'application/json',
+    return new Promise(async function (resolve) {
+        setTimeout(async function () {
+            while (!success && retries--) {
+                try {
+                    // HERE IS THE BEAST THAT'S BEEN BUGGING ME I DON'T KNOW WHY
+                    // THIS LINK DOESN'T WORK BUT AHDHWAWDHAHWDHAWDHAWHDHH IT JUST DOESN'T
+                    // WANT TO WORK
+                    console.log(choice.id);
+                    var response = await fetch(`/api/games/${game_id}/process_choice`, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            "choice_id": choice.id,
+                        }),
+                        headers: {
+                            "Content-Type": 'application/json',
+                        }
+                    });
+                    response = await response.json();
+                    console.log(response.message);
+                    success = response.success;
+                } catch (err) {
+                    console.log(`Error while process choice of game from /api/games/${game_id}/process_choice`, err);
                 }
-            });
-            response = await response.json();
-            console.log(response.message);
-            success = response.success;
-        } catch (err) {
-            console.log("Error while process choice of game:", err);
-        }
-    }
+            }
+            resolve(response);
+        })
+    })
 }
 
 
 
 async function next_turn() {
-    return new Promise(async function(resolve) {
-        setTimeout(async function() {
+    return new Promise(async function (resolve) {
+        setTimeout(async function () {
             let success = false;
-            let retries = 5;
+            let retries = 5, wait_length = 500;
             while (!success && retries--) {
                 try {
-                    let response = await fetch(`/api/games/${game_id}/new_turn`, {
+                    var response = await fetch(`/api/games/${game_id}/new_turn`, {
                         method: 'POST',
                     })
                     response = await response.json()
@@ -277,24 +344,72 @@ async function next_turn() {
 
                     const current_game_stats = await response.updated_game_state;
                     await update_new_game_stats(current_game_stats);
-                    await update_progress_bars(current_game_stats);
+                    update_progress_bars(current_game_stats);
 
                     resolve(`{"status": "Turn advanced successfully", "value": 100}`)
                 } catch (err) {
                     console.log("Error while computing next game turn's variables:", err);
+                } finally {
+                    if (!success) {
+                        wait_length *= 2;
+                        console.log(`Trying fetching from /api/games/${game_id}/new_turn in ${wait_length / 1000} seconds.`)
+                        await timer(wait_length);
+                    }
                 }
             }
+            resolve();
         })
     })
 }
 
 async function update_new_game_stats(stats) {
-    let game_turn = document.querySelector("#game-turn")
-    let game_money = document.querySelector("#game-money")
-    let game_inf_airports = document.querySelector("#game-inf-airports");
-    game_turn.innerText = stats.game_turn;
-    game_money.innerText = stats.money;
-    game_inf_airports.innerText = 3; // NEED UPDATES - weird sql i don't wanna touch it
+    return new Promise(async function (resolve) {
+        setTimeout(async function () {
+            let game_turn = document.querySelector("#game-turn")
+            let game_money = document.querySelector("#game-money")
+            let game_inf_airports = document.querySelector("#game-inf-airports");
+
+
+
+            game_turn.innerText = stats.game_turn;
+            game_money.innerText = stats.money;
+
+
+            let retries = 3, success = false, wait_length = 500;
+
+            let game_inf_airports_num = 0;
+
+
+            while (!success && retries--) {
+                try {
+                    let game_airports_info = await fetch(`/api/airports/${game_id}`);
+                    game_airports_info = await game_airports_info.json();
+                    success = game_airports_info.success;
+                    if (success) {
+                        game_inf_airports = game_airports_info.airports;
+                        for (let airport of game_inf_airports) {
+                            if (airport.infected) {
+                                game_inf_airports_num++;
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.log(`ERROR while fetching from /api/airports/${game_id}: ${err}`);
+
+                } finally {
+                    if (!success) {
+                        wait_length *= 2;
+                        console.log(`Trying fetching from /api/airports/${game_id} again in ${wait_length / 1000} seconds.`);
+                        await timer(wait_length);
+                    }
+                }
+            }
+
+            game_inf_airports.innerText = game_inf_airports_num;
+
+            resolve();
+        })
+    })
 }
 
 async function update_progress_bars(stats) {
@@ -307,6 +422,66 @@ async function update_progress_bars(stats) {
     const inf_progress = document.querySelector("#inf-progress");
     inf_progress.style.width = stats.infected_population + '%';
 }
+// start_game();
+
+async function place_markers() {
+    console.log(`Place_markers`);
+    return new Promise(async function (resolve) {
+        setTimeout(async function () {
+
+            let retries = 5, seconds = 500;
+            let success = false;
+            while (!success && retries--) {
+                try {
+                    var all_airports = await fetch(`/api/airports/${game_id}`)
+                    all_airports = await all_airports.json()
+                    success = all_airports.success;
+                } catch (err) {
+                    console.log(`Fetching airports info from game ${game_id} failed: ${err}.`)
+                } finally {
+                    if (!success) {
+                        seconds *= 2;
+                        console.log(`Trying to fetch from /api/airports/${game_id} again in ${seconds / 1000}`);
+                        await timer(seconds);
+                    }
+                }
+            }
+            console.log(`Fetched airports ${all_airports.success ? 'successfully' : 'failed'}`)
+            const markers = L.featureGroup().addTo(map)
+            console.log(all_airports)
+
+            for (let i = 0; i < all_airports.airports.length; i++) {
+                let icao = all_airports.airports[i].airport_id
+
+                let retries = 3, seconds = 1, success = false;
+                while (!success && retries--) {
+                    try {
+                        var airport_info = await fetch(`/api/airports/info/${icao}`)
+                        airport_info = await airport_info.json()
+                        success = airport_info.success;
+                    } catch (err) {
+                        console.log(`Fetch airport ${icao} data failed: ${err}`);
+                        console.log(`Trying again after ${seconds}.`)
+                    } finally {
+                        if (!success) {
+                            console.log(`Trying to fetch from /api/airports/info/${icao} again in ${seconds} seconds.`);
+                            await timer(seconds);
+                            seconds *= 2;
+                        }
+                    }
+                }
+                let log = airport_info.airport.longitude_deg
+                let lat = airport_info.airport.latitude_deg
+                const marker = L.marker([lat, log]).addTo(map)
+                marker._icon.classList.add("huechange");
+                markers.addLayer(marker)
+                map.setView([lat, log])
+            }
+            resolve();
+        })
+    })
+}
+
 
 async function gameLoop() {
     /* 
@@ -318,6 +493,7 @@ async function gameLoop() {
     - Passive phase : The GeminiAI will decide if this round will occur a
     random events or not and said event will be generated by the AI.
     */
+    console.log("Now inside GameLoop");
     await place_markers()
     await gameInitialize();
 
@@ -334,56 +510,9 @@ async function gameLoop() {
     // let user_choice = await getUserChoice()
 
 }
-place_markers()
-gameInitialize();
+
+
 gameLoop()
-// start_game();
-
-async function place_markers(){
-    let retries = 3, seconds = 1;
-    while(retries--) {
-        try {
-            var all_airports = await fetch(`/api/airports/${game_id}`)
-        } catch(err) {
-            console.log(`Fetching airports info from game ${game_id} failed: ${err}.` )
-            console.log(`Trying again after ${seconds}`);
-            setTimeout(seconds*1000);
-            seconds *= 2;
-        }
-    }
-    all_airports = await all_airports.json()
-    console.log(`Fetched airports ${all_airports.success ? 'successfully' : 'failed'}`)
-    const markers=L.featureGroup().addTo(map)
-    console.log(all_airports)
-
-    for(let i = 0;i<all_airports.airports.length;i++){
-        let icao = all_airports.airports[i].airport_id
-        
-        let retries = 3, seconds = 1;
-        while(retries--) {
-            try {
-                var airport_info = await fetch(`/api/airports/info/${icao}`)
-            } catch(err) {
-                console.log(`Fetch airport ${icao} data failed: ${err}`);
-                console.log(`Trying again after ${seconds}.`)
-                setTimeout(seconds * 1000);
-                seconds *= 2;
-            }
-        }
-        airport_info = await airport_info.json()
-        let log = airport_info.airport.longitude_deg
-        let lat = airport_info.airport.latitude_deg
-        const marker=L.marker([lat, log]).addTo(map)
-        marker._icon.classList.add("huechange");
-        markers.addLayer(marker)
-        map.setView([lat, log])
-    }
-}
-gameLoop()
-// start_game();
-
-
-
 
 
 

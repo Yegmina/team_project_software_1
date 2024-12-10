@@ -126,20 +126,20 @@ def api_process_choice(game_id):
     """
     try:
         if not request.is_json:
-            return jsonify({"success": False, "message": "Content-Type must be application/json."}), 415
+            return jsonify({"success": False, "message": "Content-Type must be application/json.", "err": 415}), 415
 
         data = request.json
         if not data:
-            return jsonify({"success": False, "message": "Request body is required."}), 400
+            return jsonify({"success": False, "message": "Request body is required.", "err": 400}), 400
 
         choice_id = data.get("choice_id")
         if not choice_id:
-            return jsonify({"success": False, "message": "Choice ID is required."}), 400
+            return jsonify({"success": False, "message": "Choice ID is required.", "err": 400}), 400
 
         already_made_query = f"SELECT 1 FROM choices_made WHERE game_id = {game_id} AND choice_id = {choice_id};"
         already_made = run(already_made_query)
         if already_made:
-            return jsonify({"success": False, "message": "Choice has already been made."}), 400
+            return jsonify({"success": False, "message": "Choice has already been made.", "err": 400}), 400
 
         choice_query = (
             f"SELECT money_needed, infected_changing, infection_rate, dissatisfaction_changing, "
@@ -148,7 +148,7 @@ def api_process_choice(game_id):
         )
         choice = run(choice_query)
         if not choice:
-            return jsonify({"success": False, "message": "Invalid choice ID."}), 404
+            return jsonify({"success": False, "message": "Invalid choice ID.", "err": 404}), 404
 
         money_needed, infected_changing, infection_rate, dissatisfaction_changing, \
         research_progress_changing, text, sql_query = choice[0]
@@ -160,28 +160,31 @@ def api_process_choice(game_id):
         )
         game_state = run(game_query)
         if not game_state:
-            return jsonify({"success": False, "message": "Game not found."}), 404
+            return jsonify({"success": False, "message": "Game not found.", "err": 404}), 404
 
         money, infected_population, public_dissatisfaction, research_progress, \
         current_infection_rate, game_turn, max_distance = game_state[0]
 
         if money_needed > money:
-            return jsonify({"success": False, "message": "Not enough money to make this choice."}), 400
+            return jsonify({"success": False, "message": "Not enough money to make this choice.", "err": 400}), 400
 
         updated_money = money - money_needed
         updated_infected_population = max(0, infected_population + (infected_changing or 0))
         updated_infection_rate = current_infection_rate + (infection_rate or 0)
         updated_public_dissatisfaction = max(0, min(100, public_dissatisfaction + (dissatisfaction_changing or 0)))
         updated_research_progress = max(0, min(100, research_progress + (research_progress_changing or 0)))
-        updated_game_turn = game_turn + 1 # IDK WHY BUT IT IS NOT UPGRADING SOMETIMES LOL
+        # updated_game_turn = game_turn + 1 # IDK WHY BUT IT IS NOT UPGRADING SOMETIMES LOL
         updated_max_distance = max_distance + 10
+        
+        # Front-end Kien here : game_turn should only increases in the new_turn function
+        # So I blurred this line out
 
         update_game_query = (
             f"UPDATE saved_games "
             f"SET money = {updated_money}, infected_population = {updated_infected_population}, "
             f"public_dissatisfaction = {updated_public_dissatisfaction}, "
             f"research_progress = {updated_research_progress}, infection_rate = {updated_infection_rate}, "
-            f"game_turn = {updated_game_turn}, max_distance = {updated_max_distance} "
+            f"max_distance = {updated_max_distance} "
             f"WHERE id = {game_id};"
         )
         print("Executing Update Query:", update_game_query)  # Debugging
@@ -202,7 +205,6 @@ def api_process_choice(game_id):
                 "public_dissatisfaction": updated_public_dissatisfaction,
                 "research_progress": updated_research_progress,
                 "infection_rate": updated_infection_rate,
-                "game_turn": updated_game_turn,
                 "max_distance": updated_max_distance,
             }
         }), 200
@@ -546,7 +548,7 @@ def new_game_turn(game_id):
         )
 
         # Increment game turn
-        # game_turn += 1
+        game_turn += 1
 
         # Update game state in the database
         update_query = f"""
@@ -554,7 +556,8 @@ def new_game_turn(game_id):
             SET money = {money}, 
                 infected_population = {infected_population}, 
                 public_dissatisfaction = {public_dissatisfaction}, 
-                max_distance = {max_distance}
+                max_distance = {max_distance},
+                game_turn = {game_turn}
             WHERE id = {game_id};
         """
         run(update_query)

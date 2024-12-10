@@ -206,7 +206,13 @@ p {
         border: solid black;
         font-size: 20px;
     }
-}
+    #possible-warning {
+        color: red;
+    }
+    #panel-minimize {
+        text-shadow: black;
+    }
+ }
 
 .huechange {
     filter: hue-rotate(60deg);
