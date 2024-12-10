@@ -24,7 +24,8 @@ let body = document.querySelector("body");
 let game_data_holder = document.querySelector("#sneaky-data");
 let game_data = JSON.parse(game_data_holder.innerText);
 const game_id = game_data[0].id;
-let all_airports
+
+let all_airports = [];
 console.log(game_id);
 
 body.removeChild(game_data_holder);
@@ -38,8 +39,6 @@ async function gameInitialize() {
     console.log(`Game Initalize`)
     return new Promise(async function (resolve) {
         setTimeout(async function () {
-            update_new_game_stats(game_data[0]);
-            update_progress_bars(game_data[0]);
             console.log(game_data[0]);
             const other_choices = document.querySelector("#other-choices");
             const skip_turn = document.createElement('button');
@@ -64,19 +63,24 @@ async function gameInitialize() {
             })
             // End skip turn button
 
-            //Start Static Airport data
-            let retries = 5, seconds = 500;
+            // All airports fetch
+            let retries = 5, seconds = 3000;
             let success = false;
             while (!success && retries--) {
                 try {
                     all_airports = await fetch(`/api/airports/${game_id}`)
                     all_airports = await all_airports.json()
+                    console.log(`THIS IS all_airports = []`);
+                    console.log(all_airports);
                     success = all_airports.success;
+                    if(success) {
+                        console.log(`Fetched airports successfully.`);
+                        break;
+                    }
                 } catch (err) {
                     console.log(`Fetching airports info from game ${game_id} failed: ${err}.`)
                 } finally {
                     if (!success) {
-                        seconds *= 2;
                         console.log(`Trying to fetch from /api/airports/${game_id} again in ${seconds / 1000}`);
                         await timer(seconds);
                     }
@@ -84,8 +88,11 @@ async function gameInitialize() {
             }
             console.log(`Fetched airports ${all_airports.success ? 'successfully' : 'failed'}`)
             console.log(all_airports)
+            // End all airports fetch
+        
+            await update_new_game_stats(game_data[0]);
+            await update_progress_bars(game_data[0]);
 
-            //End Static Airport data
 
             // Minimize button
             const panel_minimize = document.querySelector("#panel-minimize");
@@ -138,7 +145,7 @@ async function fetchChoice() {
     return new Promise(async function (resolve) {
         setTimeout(async function () {
             let success = false;
-            let retries = 5, wait_length = 500;
+            let retries = 5, wait_length = 3000;
             while (!success && retries--) {
                 try {
                     var all_available_choices = await fetch(`/api/games/${game_id}/make_choice`);
@@ -152,7 +159,6 @@ async function fetchChoice() {
                     console.error(`Error fetching game with /api/games/game_id/make_choice: ${error}`);
                 } finally {
                     if (!success) {
-                        wait_length *= 2;
                         console.log(`Trying fetching from /api/games/${game_id}/make_choice again in ${wait_length / 1000} seconds.`)
                         await timer(wait_length);
                     }
@@ -242,7 +248,7 @@ async function renderChoice() {
 
                 itemList.appendChild(article);
             }
-
+            await timer(2000);
             resolve(filtered_choices);
             // dev note: ADD CHOICE OF DOING NOTHING AS A SMALL BUTTON
         })
@@ -270,7 +276,7 @@ async function getUserChoice() {
                 choice.addEventListener('click', async () => {
                     let choice_id = choice.choice_id;
                     let success = false;
-                    let retries = 5, wait_length = 500;
+                    let retries = 5, wait_length = 3000;
                     while (!success && retries--) {
                         try {
                             var response = await fetch(`/api/games/${game_id}/process_choice`, {
@@ -297,7 +303,6 @@ async function getUserChoice() {
                             document.querySelector('#possible-warning').innerText = err;
                         } finally {
                             if (!success && !(response.err == 400)) {
-                                wait_length *= 2;
                                 console.log(`Trying /api/games/${game_id}/process_choice again in ${wait_length / 1000} seconds.`)
                                 await timer(wait_length);
                             }
@@ -311,51 +316,80 @@ async function getUserChoice() {
                 panel.style.display = 'none';
                 resolve(`{"status": "Turn skipped", "value": 101}`)
             })
+            await timer(2000);
         })
     })
 }
 
-async function game_execute(choice) {
-    console.log("This indicates that the function is being called: ", choice);
-    console.log(choice);
-    let success = false;
-    let retries = 5;
+async function spreadDisease() {
     return new Promise(async function (resolve) {
         setTimeout(async function () {
+            let retries = 3, seconds = 3000;
+            let success = false;
             while (!success && retries--) {
                 try {
-                    // HERE IS THE BEAST THAT'S BEEN BUGGING ME I DON'T KNOW WHY
-                    // THIS LINK DOESN'T WORK BUT AHDHWAWDHAHWDHAWDHAWHDHH IT JUST DOESN'T
-                    // WANT TO WORK
-                    console.log(choice.id);
-                    var response = await fetch(`/api/games/${game_id}/process_choice`, {
+                    var response = await fetch(`/api/games/${game_id}/infection_spread`, {
                         method: 'POST',
-                        body: JSON.stringify({
-                            "choice_id": choice.id,
-                        }),
-                        headers: {
-                            "Content-Type": 'application/json',
-                        }
-                    });
-                    response = await response.json();
-                    console.log(response.message);
-                    success = response.success;
+                        body: {},
+                        headers: {},
+                    })
+
+                    response = await response.json()
+                    success = response.success
+
+                    if (success) {
+                        console.log(`Disease spreaded`);
+                    }
                 } catch (err) {
-                    console.log(`Error while process choice of game from /api/games/${game_id}/process_choice`, err);
+                    console.log(`Error spreading the disease: ${err}.`);
+                } finally {
+                    if (!success) {
+                        console.log(`Trying infection_spread again after ${seconds / 1000} seconds.`);
+                        await timer(seconds);
+                    }
                 }
             }
-            resolve(response);
+            await timer(2000);
+            resolve();
         })
     })
 }
 
+async function end_game() {
+    return new Promise(async function (resolve) {
+        setTimeout(async function () {
+            let retries = 5, wait_length = 3000;
+            let success = false;
+            while (!success) {
+                try {
+                    var response = await fetch(`/api/games/${game_id}/check_status`);
+                    response = await response.json();
 
+                    success = (response.status == 'success') ? true : false;
+
+                    if (success) {
+                        console.log(`Succesfully fetched from /api/games/game_id/check_status`);
+                        let game_over = response.game_over;
+                        return resolve([game_over, response.message]);
+                    }
+                } catch (err) {
+                    console.log(`Check game_status for game ${game_id} failed: ${err}`);
+                } finally {
+                    if (!success) {
+                        console.log(`Retrying after ${wait_length / 1000} seconds.`);
+                        await timer(wait_length);
+                    }
+                }
+            }
+        })
+    })
+}
 
 async function next_turn() {
     return new Promise(async function (resolve) {
         setTimeout(async function () {
             let success = false;
-            let retries = 5, wait_length = 500;
+            let retries = 5, wait_length = 3000;
             while (!success && retries--) {
                 try {
                     var response = await fetch(`/api/games/${game_id}/new_turn`, {
@@ -365,42 +399,44 @@ async function next_turn() {
                     console.log(response);
                     success = response.success;
 
-                    const current_game_stats = await response.updated_game_state;
-                    await update_new_game_stats(current_game_stats);
-                    update_progress_bars(current_game_stats);
-
+                    if (success) {
+                        const current_game_stats = await response.updated_game_state;
+                        await update_new_game_stats(current_game_stats);
+                        await update_progress_bars(current_game_stats);
+                    }
+                    console.log("TURN ADVANCED SUCCESSFULLY");
                     resolve(`{"status": "Turn advanced successfully", "value": 100}`)
                 } catch (err) {
                     console.log("Error while computing next game turn's variables:", err);
                 } finally {
                     if (!success) {
-                        wait_length *= 2;
                         console.log(`Trying fetching from /api/games/${game_id}/new_turn in ${wait_length / 1000} seconds.`)
                         await timer(wait_length);
                     }
                 }
             }
+            console.log(`--------------------------------------------------------`)
             resolve();
         })
     })
 }
 
 async function update_new_game_stats(stats) {
+    console.log("UPDATING GAME STATS...")
     return new Promise(async function (resolve) {
         setTimeout(async function () {
-            let game_turn = document.querySelector("#game-turn")
-            let game_money = document.querySelector("#game-money")
-            let game_inf_airports = document.querySelector("#game-inf-airports");
-
+            const game_turn = document.querySelector("#game-turn")
+            const game_money = document.querySelector("#game-money")
+            const game_inf_airports = document.querySelector("#game-inf-airports");
 
 
             game_turn.innerText = stats.game_turn;
             game_money.innerText = stats.money;
 
 
-            let retries = 3, success = false, wait_length = 500;
+            let retries = 3, success = false, wait_length = 3000;
 
-            let game_inf_airports_num = 0;
+            var game_inf_airports_num = 0;
 
 
             while (!success && retries--) {
@@ -409,10 +445,16 @@ async function update_new_game_stats(stats) {
                     game_airports_info = await game_airports_info.json();
                     success = game_airports_info.success;
                     if (success) {
-                        game_inf_airports = game_airports_info.airports;
-                        for (let airport of game_inf_airports) {
-                            if (airport.infected) {
+                        let game_airports_list = game_airports_info.airports;
+                        console.log(game_airports_list);
+                        for (let i = 0; i < game_airports_list.length; i++) {
+                            if (game_airports_list[i].infected === true) {
+                                console.log(`AIRPORT ${i} is infected`)
                                 game_inf_airports_num++;
+                                all_airports.airports[i].infected = true;
+                            }
+                            if(game_airports_list[i].closed === true) {
+                                all_airports.airports[i].closed = true;
                             }
                         }
                     }
@@ -421,29 +463,34 @@ async function update_new_game_stats(stats) {
 
                 } finally {
                     if (!success) {
-                        wait_length *= 2;
                         console.log(`Trying fetching from /api/airports/${game_id} again in ${wait_length / 1000} seconds.`);
                         await timer(wait_length);
+                    } else {
+                        game_inf_airports.innerText = game_inf_airports_num;
+                        break;
                     }
                 }
             }
-
-            game_inf_airports.innerText = game_inf_airports_num;
-
             resolve();
         })
     })
 }
 
 async function update_progress_bars(stats) {
-    const dis_progress = document.querySelector("#dis-progress");
-    dis_progress.style.width = stats.public_dissatisfaction + '%';
+    console.log(`UPDATING PROGRESS BARS`);
+    return new Promise(async function (resolve) {
+        setTimeout(async function () {
+            const dis_progress = document.querySelector("#dis-progress");
+            dis_progress.style.width = stats.public_dissatisfaction + '%';
 
-    const cure_progress = document.querySelector("#cure-progress");
-    cure_progress.style.width = stats.research_progress + '%';
+            const cure_progress = document.querySelector("#cure-progress");
+            cure_progress.style.width = stats.research_progress + '%';
 
-    const inf_progress = document.querySelector("#inf-progress");
-    inf_progress.style.width = stats.infected_population + '%';
+            const inf_progress = document.querySelector("#inf-progress");
+            inf_progress.style.width = stats.infected_population + '%';
+        })
+        resolve();
+    })
 }
 // start_game();
 
@@ -452,10 +499,11 @@ async function place_markers() {
     return new Promise(async function (resolve) {
         setTimeout(async function () {
             const markers = L.featureGroup().addTo(map)
+
             for (let i = 0; i < all_airports.airports.length; i++) {
                 let icao = all_airports.airports[i].airport_id
 
-                let retries = 3, seconds = 1, success = false;
+                let retries = 3, seconds = 3000, success = false;
                 while (!success && retries--) {
                     try {
                         var airport_info = await fetch(`/api/airports/info/${icao}`)
@@ -467,16 +515,15 @@ async function place_markers() {
                         console.log(`Trying again after ${seconds}.`)
                     } finally {
                         if (!success) {
-                            console.log(`Trying to fetch from /api/airports/info/${icao} again in ${seconds} seconds.`);
+                            console.log(`Trying to fetch from /api/airports/info/${icao} again in ${seconds / 1000} seconds.`);
                             await timer(seconds);
-                            seconds *= 2;
                         }
                     }
                 }
                 let log = airport_info.airport.longitude_deg
                 let lat = airport_info.airport.latitude_deg
                 const marker = L.marker([lat, log]).addTo(map)
-                marker._icon.classList.add("huechange" + `${i}`);
+                marker._icon.classList.add(`huechange${i}`);
                 markers.addLayer(marker)
                 map.setView([lat, log])
 
@@ -488,20 +535,32 @@ async function place_markers() {
     })
 }
 
-function recolor_map_pins(isInfected) {
-  // Get all elements with the class 'huechange'
-  let pins = document.getElementsByClassName('huechange');
+async function recolor_map_pins() {
+    console.log("RECOLORING...");
+    return new Promise(async function(resolve) {
+        console.log(all_airports);
+        setTimeout(async function() {
 
-  // Check if there are any elements
-  if (pins.length === 0) {
-    console.warn("No pins found with the class 'huechange'.");
-    return;
-  }
+            for(let i = 0; i < all_airports.airports.length; i++) {
+                // Get all elements with the class 'huechange'
+                let pin = document.getElementsByClassName(`huechange${i}`)[0];
+                let airport_infected = all_airports.airports[i].infected;
+                let airport_closed = all_airports.airports[i].closed;
+                if(airport_infected || airport_closed) console.log(`Airport ${i} is now --- Infected: ${airport_infected} --- Closed: ${airport_closed}`)
+                // Check if there are any elements
 
-  // Apply the appropriate filter based on infection status
-  for (let pin of pins) {
-    pin.style.filter = isInfected ? 'hue-rotate(210deg)' : 'hue-rotate(60deg)';
-  }
+                // Apply the appropriate filter based on infection status
+                if(!airport_infected && !airport_closed) {
+                    pin.style.filter = 'hue-rotate(300deg)'; //green
+                } else if(airport_closed) {
+                    pin.style.filter = 'hue-rotate(180deg)'; //red
+                } else if(airport_infected) {
+                    pin.style.filter = 'hue-rotate(122deg)'; //yellow
+                }
+            }
+        })
+        resolve();
+    })
 }
 
 async function gameLoop() {
@@ -516,22 +575,31 @@ async function gameLoop() {
     */
     console.log("Now inside GameLoop");
     await gameInitialize();
-    await timer(1000);
     await place_markers();
-    recolor_map_pins(true)
+    await recolor_map_pins();
 
     while (true) {
 
         await renderChoice()
             .then(getUserChoice)
-            // .then(random_event)
-            .then(next_turn);
+            .then(spreadDisease)
+        //  .then(randomEvent)
+            .then(recolor_map_pins);
+
+        let game_over = await end_game();
+        console.log(game_over);
+        if (game_over[0]) {
+            alert(game_over[1]);
+            window.location.href = '/';
+            break;
+        }
+
+        await next_turn();
     }
 
 
     // let all_choices = await renderChoice(); // Choices phase
     // let user_choice = await getUserChoice()
-
 }
 
 

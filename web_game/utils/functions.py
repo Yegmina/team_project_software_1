@@ -371,48 +371,48 @@ def infection_spread(game_id, infection_rate):
         return {"success": False, "message": str(e)}
 
 
-def airport_spread(spreading_airport, game_id, infection_rate):
-    """
-    Spreads infection from a single airport to nearby airports within flight range.
-    """
-    try:
-        # Flight range in kilometers
-        plane_flight_distance = 2000
+# def airport_spread(spreading_airport, game_id, infection_rate):
+#     """
+#     Spreads infection from a single airport to nearby airports within flight range.
+#     """
+#     try:
+#         # Flight range in kilometers
+#         plane_flight_distance = 2000
 
-        # Check if the airport is infected
-        is_infected = run(f"""
-            SELECT infected 
-            FROM airport_info 
-            WHERE game_id = {game_id} AND airport_id = '{spreading_airport}';
-        """)[0][0]
+#         # Check if the airport is infected
+#         is_infected = run(f"""
+#             SELECT infected 
+#             FROM airport_info 
+#             WHERE game_id = {game_id} AND airport_id = '{spreading_airport}';
+#         """)[0][0]
 
-        if not is_infected:
-            return  # Skip if the airport is not infected
+#         if not is_infected:
+#             return  # Skip if the airport is not infected
 
-        # Get coordinates of the spreading airport
-        spreading_airport_coords = get_airport_coordinates(spreading_airport)
+#         # Get coordinates of the spreading airport
+#         spreading_airport_coords = get_airport_coordinates(spreading_airport)
 
-        # Fetch all airports in the game
-        airports_in_game = run(f"SELECT airport_id FROM airport_info WHERE game_id = {game_id};")
+#         # Fetch all airports in the game
+#         airports_in_game = run(f"SELECT airport_id FROM airport_info WHERE game_id = {game_id};")
 
-        # Spread infection to nearby airports
-        for airport in airports_in_game:
-            target_airport = airport[0]
-            target_airport_coords = get_airport_coordinates(target_airport)
+#         # Spread infection to nearby airports
+#         for airport in airports_in_game:
+#             target_airport = airport[0]
+#             target_airport_coords = get_airport_coordinates(target_airport)
 
-            # Calculate distance between airports
-            distance = distance_between_two(spreading_airport_coords, target_airport_coords)
+#             # Calculate distance between airports
+#             distance = distance_between_two(spreading_airport_coords, target_airport_coords)
 
-            # Spread infection based on distance and infection rate
-            if distance < plane_flight_distance and random.randint(0, 100) < infection_rate:
-                run(f"""
-                    UPDATE airport_info 
-                    SET infected = 1 
-                    WHERE game_id = {game_id} AND airport_id = '{target_airport}';
-                """)
+#             # Spread infection based on distance and infection rate
+#             if distance < plane_flight_distance and random.randint(0, 100) < infection_rate:
+#                 run(f"""
+#                     UPDATE airport_info 
+#                     SET infected = 1 
+#                     WHERE game_id = {game_id} AND airport_id = '{target_airport}';
+#                 """)
 
-    except Exception as e:
-        print(f"Error in airport_spread: {e}")
+#     except Exception as e:
+#         print(f"Error in airport_spread: {e}")
 
 
 def get_airport_coordinates(airport_id):
