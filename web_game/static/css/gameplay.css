@@ -62,14 +62,13 @@ body {
     display: flex;
     margin-left: 80px;
     margin-right: 80px;
-    border: 10px black;
     position: relative;
 }
 
 .inf-progress {
     width: 0%;
     height: 100%;
-    background-color: #4caf50;
+    background-color: darkred;
     transition: width 0.3s ease;
     position: relative;
 }
@@ -102,14 +101,13 @@ p {
     align-content: center;
     margin-left: 80px;
     position: relative;
-
 }
 
 .dis-progress {
     width: 0;
     height: 100%;
     transition: width 0.3s ease;
-    background-color: #4caf50;
+    background-color: darkorange;
     position: relative;
 
 }
@@ -133,7 +131,6 @@ p {
     align-content: center;
     margin-right: 80px;
     position: relative;
-
 }
 
 .cure-progress-bar center {
@@ -148,7 +145,7 @@ p {
 .cure-progress {
     width: 0%;
     height: 100%;
-    background-color: #4caf50;
+    background-color: #007bff;
     transition: width 0.3s ease;
     position: relative;
 }
