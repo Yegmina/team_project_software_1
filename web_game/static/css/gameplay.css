@@ -213,7 +213,3 @@ p {
         text-shadow: black;
     }
  }
-
-.huechange {
-    filter: hue-rotate(60deg);
-}
