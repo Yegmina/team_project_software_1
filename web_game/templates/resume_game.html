@@ -110,10 +110,7 @@
 <body>
   <div class="container">
     <h1>Game Dashboard</h1>
-    <ul id="game-list">
-      <li><a href="{{ url_for('create_new_game') }}">Create New Game</a></li>
-      <li><a href="{{ url_for('resume_game') }}">Resume Game</a></li>
-    </ul>
+    <ul id="game-list">{{ games }}</ul>
   </div>
   <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/animation.js') }}" defer></script>

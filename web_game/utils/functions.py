@@ -7,13 +7,13 @@ from utils.ai.gemini import GeminiModel
 
 #<editor-fold desc = "MYSQL-cursor optimization">
 connection = mysql.connector.connect(
-    user="yehort",
-    password="root123",
-    host="mysql.metropolia.fi",
+    user="root",
+    password="root",
+    host="127.0.0.1",
     port=3306,
-    database="yehort",
+    database="flight_game",
     autocommit = True,
-    connection_timeout = 3,
+    connection_timeout = 0.1,
 )
 
 cursor = connection.cursor()

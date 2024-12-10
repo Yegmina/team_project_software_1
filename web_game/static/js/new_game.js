@@ -51,15 +51,6 @@ async function show_game(game_id) {
     button.id = 'button';
     button.href = `/play/${game_id}`;
     button.innerText = `Play this game instead`
-    button.style.textDecoration = 'none';
-    button.style.alignSelf = 'center';
-    button.addEventListener('mouseover', () => {
-        button.style.backgroundColor = "#0056b3";
-    })
-    button.addEventListener('mouseout', () => {
-        button.style.backgroundColor = `#007bff`;
-    })
-
     div.appendChild(table);
     div.appendChild(button);
     body.appendChild(div);

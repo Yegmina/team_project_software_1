@@ -36,6 +36,7 @@ body {
         font-family: Verdana, Geneva, Tahoma, sans-serif;
         margin-bottom: 10px;
         text-align: left;
+        color: white;
     }
 }
 
@@ -47,6 +48,7 @@ body {
         font-family: Verdana, Geneva, Tahoma, sans-serif;
         margin-bottom: 10px;
         text-align: right;
+        color: white;
     }
 }
 

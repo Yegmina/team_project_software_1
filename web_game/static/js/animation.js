@@ -1,1 +1,0 @@
-alert("animation_script_connected")

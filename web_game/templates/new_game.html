@@ -6,89 +6,126 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="{{ url_for('static', filename='js/new_game.js') }}" defer></script>
   <title>Create New Game</title>
-  <!-- Tai, u can modify styles and make it look better!
-    U can work with it right here, but better put it in style.css or create one more .css file
-    Also, would be nice to add animations etc
-    -->
   <style>
+    /* Reset CSS */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      /* display: flex; */
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      /* background-color: #f4f4f4; */
-      height: 100%;
-      
+      font-family: 'Arial', sans-serif;
       background-image: url(../static/img/test4.jpg);
       background-repeat: no-repeat;
-      background-position: top;
       background-size: cover;
-      height: 90%;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
     }
 
     .container {
-      width: 400px;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      background-color: #fff;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      margin: auto;
-      margin-top: 20px;
-      margin-bottom: 20px;
+      width: 90%;
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 30px 40px;
+      box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      animation: slideIn 1s ease-out;
     }
 
     h1 {
-      text-align: center;
-      color: #333;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #00c6ff;
+      text-shadow: 0px 0px 10px rgba(0, 198, 255, 0.7);
     }
 
     form {
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      align-items: center;
+      gap: 20px;
     }
 
     label {
-      font-size: 1rem;
-      color: #555;
+      font-size: 1.2rem;
+      color: #fff;
     }
 
     input[type="text"] {
       padding: 10px;
       font-size: 1rem;
-      border: 1px solid #ccc;
+      border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 5px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      width: 100%; /* Đảm bảo input kéo dài toàn khung */
+      max-width: 400px;
     }
 
-    input[type="submit"], #button {
-      padding: 10px;
-      font-size: 1rem;
-      color: white;
-      background-color: #007bff;
+    input[type="text"]::placeholder {
+      color: #ddd;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    input[type="submit"],
+    .back-link, #button {
+      padding: 12px 20px;
+      font-size: 1.2rem;
+      color: #fff;
+      text-decoration: none;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
       border: none;
       border-radius: 5px;
       cursor: pointer;
-    }
-
-    input[type="submit"]:hover {
-      background-color: #0056b3;
-    }
-
-    .back-link {
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
       text-align: center;
-      margin-top: 10px;
+      display: inline-block;
+      width: 200px; /* Đảm bảo kích thước nút bằng nhau */
+      line-height: 1.5;
     }
 
-    .back-link a {
-      text-decoration: none;
-      color: #007bff;
+    #button {
+      width: 400px;
     }
 
-    .back-link a:hover {
-      text-decoration: underline;
+    input[type="submit"]:hover,
+    .back-link:hover, 
+    #button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0px 5px 20px rgba(0, 198, 255, 0.6);
+    }
+
+    input[type="submit"]::before,
+    .back-link::before,
+    #button::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: all 0.4s ease;
+      transform: skewX(-20deg);
+    }
+
+    input[type="submit"]:hover::before,
+    .back-link:hover::before,
+    #button:hover::before {
+      left: 100%;
     }
 
     .error {
@@ -97,21 +134,15 @@
       text-align: center;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-    }
-
-    table th,
-    table td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
-    }
-
-    table th {
-      background-color: #f2f2f2;
+    @keyframes slideIn {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
   </style>
 </head>
@@ -122,11 +153,11 @@
     <form method="POST" action="/" id="name_input">
       <label for="name">Enter Game Name:</label>
       <input type="text" id="name" name="name" placeholder="Game Name" required>
-      <input type="submit" value="Create Game">
+      <div class="buttons">
+        <input type="submit" value="Create Game">
+        <a class="back-link" href="/">Back</a>
+      </div>
     </form>
-    <div class="back-link">
-      <a href="/">Back to Home</a>
-    </div>
     {% if error %}
     <p class="error">{{ error }}</p>
     {% endif %}

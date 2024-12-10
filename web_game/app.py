@@ -39,6 +39,14 @@ def create_new_game():
         return jsonify({"error in /new_game": str(e)}, 500)
 
 
+@app.route('/resume_game', methods=['GET'])
+def resume_game():
+    try:
+        games = get_all_games()
+        return render_template('resume_game.html', games=json.dumps(games))
+    except Exception as e:
+        return jsonify({"error in /new_game": str(e)}, 500)
+
 @app.route('/fetch_game/<int:game_id>', methods=['GET'])
 def get_game_details(game_id):
     """Fetches game details."""
@@ -113,6 +121,7 @@ def api_check_game_status(game_id):
 def api_make_choice(game_id):
     try:
         available_choices = get_available_choices(game_id)
+        print(available_choices)
         return jsonify({"choices": available_choices, "success": True}), 200
     except Exception as e:
         return jsonify({"error": str(e), "success": False}), 500
