@@ -480,8 +480,8 @@ async function place_markers() {
                 markers.addLayer(marker)
                 map.setView([lat, log])
 
-                const placeName=document.createElement("h3")
-                placeName.innerText = airport_info.airports[i]
+                //const placeName=document.createElement("h3")
+                //placeName.innerText = airport_info.airports[i]
             }
             resolve();
         })
