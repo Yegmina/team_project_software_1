@@ -556,7 +556,7 @@ async function recolor_map_pins() {
                 let pin = document.getElementsByClassName(`huechange${i}`)[0];
                 let airport_infected = all_airports.airports[i].infected;
                 let airport_closed = all_airports.airports[i].closed;
-                if(airport_infected || airport_closed) console.log(`Airport ${i} is now --- Infected: ${airport_infected} --- Closed: ${airport_closed}`)
+                // if(airport_infected || airport_closed) console.log(`Airport ${i} is now --- Infected: ${airport_infected} --- Closed: ${airport_closed}`)
                 // Check if there are any elements
 
                 // Apply the appropriate filter based on infection status
@@ -590,11 +590,11 @@ async function gameLoop() {
 
     while (true) {
 
+        await recolor_map_pins();
         await renderChoice()
             .then(getUserChoice)
             .then(spreadDisease)
         //  .then(randomEvent)
-            .then(recolor_map_pins);
 
         let game_over = await end_game();
         console.log(game_over);
