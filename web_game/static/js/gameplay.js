@@ -498,7 +498,7 @@ function recolor_map_pins(isInfected) {
 
   // Apply the appropriate filter based on infection status
   for (let pin of pins) {
-    pin.style.filter = isInfected ? 'hue-rotate(220deg)' : 'hue-rotate(60deg)';
+    pin.style.filter = isInfected ? 'hue-rotate(210deg)' : 'hue-rotate(60deg)';
   }
 }
 
