@@ -619,8 +619,10 @@ def random_event(game_id):
         if random.random() < 0.6:
             return jsonify({
                 "success": True,
-                "event": "Nothing special happened this time."
-            }), 200
+                "event": {
+                    "description": "Nothing special happened this time.",
+                }
+            }), 201
 
         # Call the function to handle random event logic
         result = handle_random_event(game_id)

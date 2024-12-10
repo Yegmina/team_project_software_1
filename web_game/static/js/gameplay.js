@@ -73,7 +73,7 @@ async function gameInitialize() {
                     console.log(`THIS IS all_airports = []`);
                     console.log(all_airports);
                     success = all_airports.success;
-                    if(success) {
+                    if (success) {
                         console.log(`Fetched airports successfully.`);
                         break;
                     }
@@ -89,7 +89,7 @@ async function gameInitialize() {
             console.log(`Fetched airports ${all_airports.success ? 'successfully' : 'failed'}`)
             console.log(all_airports)
             // End all airports fetch
-        
+
             await update_new_game_stats(game_data[0]);
             await update_progress_bars(game_data[0]);
 
@@ -122,6 +122,24 @@ async function gameInitialize() {
                 height: 100px;
                 align-self: center;
             `
+            reopen_btn.addEventListener('mouseover', () => {
+                reopen_btn.style.backgroundColor = '#ddd';
+                reopen_btn.style.cursor = 'pointer';
+            });
+
+            reopen_btn.addEventListener('mouseout', () => {
+                reopen_btn.style.backgroundColor = '';
+                reopen_btn.style.cursor = 'default';
+            });
+
+            reopen_btn.addEventListener('mousedown', () => {
+                reopen_btn.style.transform = 'scale(0.95)'; 
+            });
+
+            reopen_btn.addEventListener('mouseup', () => {
+                reopen_btn.style.transform = 'scale(1)';
+            });
+
             reopen_btn.addEventListener('click', async () => {
                 document.querySelector("#panel").style.display = 'flex';
             })
@@ -222,6 +240,10 @@ async function renderChoice() {
 
             const panel = document.querySelector('#panel');
             panel.style.display = 'flex';
+            setTimeout(() => {
+                panel.style.opacity = '1';
+            }, 3)
+
             let itemList = document.querySelector(".item-list")
             itemList.innerHTML = '';
             let warning = document.querySelector("#possible-warning");
@@ -254,6 +276,7 @@ async function renderChoice() {
         })
     })
 }
+
 async function getUserChoice() {
     return new Promise(async function (resolve) {
         setTimeout(async function () {
@@ -291,7 +314,14 @@ async function getUserChoice() {
                             response = await response.json();
                             success = response.success;
                             if (success) {
-                                document.querySelector('#panel').style.display = 'none';
+                                let panel = document.querySelector('#panel')
+                                setTimeout(() => {
+                                    panel.style.opacity = '0';
+                                    setTimeout(() => {
+                                        panel.style.display = 'none';
+                                    }, 2)
+                                }, 10)
+
                                 console.log(response.message);
                                 console.log(`User chose: ${choice_id}.`);
                                 resolve(`{"status": "User chose ${choice_id}", "value": 100}`)
@@ -313,7 +343,14 @@ async function getUserChoice() {
             let skip_turn = document.querySelector("#skip-turn")
             skip_turn.addEventListener("click", () => {
                 let panel = document.querySelector('#panel');
-                panel.style.display = 'none';
+                setTimeout(() => {
+                    panel.style.opacity = '0';
+
+                    setTimeout(() => {
+                        panel.style.display = 'none';
+                    }, 1)
+                }, 10)
+
                 resolve(`{"status": "Turn skipped", "value": 101}`)
             })
             await timer(2000);
@@ -453,7 +490,7 @@ async function update_new_game_stats(stats) {
                                 game_inf_airports_num++;
                                 all_airports.airports[i].infected = true;
                             }
-                            if(game_airports_list[i].closed === true) {
+                            if (game_airports_list[i].closed === true) {
                                 all_airports.airports[i].closed = true;
                             }
                         }
@@ -494,6 +531,45 @@ async function update_progress_bars(stats) {
 }
 // start_game();
 
+// The popup function
+function popup(s) {
+    const popupDiv = document.createElement('div');
+
+    popupDiv.textContent = s;
+
+    Object.assign(popupDiv.style, {
+        position: 'fixed',
+        top: '20%', 
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        padding: '20px',
+        backgroundColor: '#333',
+        color: '#fff',
+        borderRadius: '8px',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        textAlign: 'center',
+        opacity: '0',
+        transition: 'opacity 1s ease-in-out, transform 1s ease-in-out',
+        zIndex: '1000'
+    });
+
+    document.body.appendChild(popupDiv);
+
+    setTimeout(() => {
+        popupDiv.style.opacity = '1';
+        popupDiv.style.transform = 'translate(-50%, -60%)'; 
+    }, 10); 
+
+    setTimeout(() => {
+        popupDiv.style.opacity = '0';
+        popupDiv.style.transform = 'translate(-50%, -70%)'; 
+
+        setTimeout(() => {
+            popupDiv.remove();
+        }, 1000);
+    }, 3000);
+}
+
 async function place_markers() {
     console.log(`Place_markers`);
     return new Promise(async function (resolve) {
@@ -528,13 +604,13 @@ async function place_markers() {
                 map.setView([lat, log])
 
                 //makes pins clickable
-                const placeName=document.createElement("h3")
+                const placeName = document.createElement("h3")
                 placeName.innerText = airport_info.airport.name
 
                 const placeIcao = document.createElement('p')
                 placeIcao.innerText = icao
 
-                const article=document.createElement("article")
+                const article = document.createElement("article")
 
                 article.appendChild(placeName)
                 article.appendChild(placeIcao)
@@ -547,11 +623,11 @@ async function place_markers() {
 
 async function recolor_map_pins() {
     console.log("RECOLORING...");
-    return new Promise(async function(resolve) {
+    return new Promise(async function (resolve) {
         console.log(all_airports);
-        setTimeout(async function() {
+        setTimeout(async function () {
 
-            for(let i = 0; i < all_airports.airports.length; i++) {
+            for (let i = 0; i < all_airports.airports.length; i++) {
                 // Get all elements with the class 'huechange'
                 let pin = document.getElementsByClassName(`huechange${i}`)[0];
                 let airport_infected = all_airports.airports[i].infected;
@@ -560,16 +636,61 @@ async function recolor_map_pins() {
                 // Check if there are any elements
 
                 // Apply the appropriate filter based on infection status
-                if(!airport_infected && !airport_closed) {
+                if (!airport_infected && !airport_closed) {
                     pin.style.filter = 'hue-rotate(300deg)'; //green
-                } else if(airport_closed) {
+                } else if (airport_closed) {
                     pin.style.filter = 'hue-rotate(180deg)'; //red
-                } else if(airport_infected) {
+                } else if (airport_infected) {
                     pin.style.filter = 'hue-rotate(122deg)'; //yellow
                 }
             }
         })
         resolve();
+    })
+}
+
+async function randomEvent() {
+    return new Promise(async function (resolve) {
+        setTimeout(async function () {
+            let retries = 5, seconds = 2000;
+            try {
+                let success = false;
+                while (!success && retries--) {
+                    let response = await fetch(`/api/games/${game_id}/random_event`, {
+                        method: 'POST',
+                        body: {},
+                        headers: {}
+                    })
+
+                    let status = response.status;
+                    response = await response.json();
+                    success = response.success;
+
+                    console.log(status, success, response)
+
+                    if (status === 201) {
+                        // alert(response.event.description)
+                        popup(response.event.description)
+                        // popup(`Lucky for you, nothing happened.`)
+                    }
+                    if (status === 500 || status === 400) {
+                        console.log(`Random event failed: ${response.message}`);
+                    }
+                    if (status === 200 && !success) {
+                        console.log("RANDOM EVENTN'T")
+                        resolve();
+                    } else if (status === 200 && success) {
+                        // alert(response.event.description)
+                        popup(response.event.description);
+                        resolve();
+                    }
+                }
+            } catch (err) {
+                console.log(err);
+                await timer(seconds);
+            }
+            resolve();
+        })
     })
 }
 
@@ -589,12 +710,13 @@ async function gameLoop() {
     await recolor_map_pins();
 
     while (true) {
-
+        await timer(3000);
         await recolor_map_pins();
         await renderChoice()
             .then(getUserChoice)
+            .then(randomEvent)
             .then(spreadDisease)
-        //  .then(randomEvent)
+            .then(next_turn);
 
         let game_over = await end_game();
         console.log(game_over);
@@ -604,7 +726,6 @@ async function gameLoop() {
             break;
         }
 
-        await next_turn();
     }
 
 
@@ -615,12 +736,3 @@ async function gameLoop() {
 
 gameLoop()
 
-
-
-/* 
-story / dev commentary or something (just a feature)
-story()
-while(1 === 1) {
-    gameLoop();
-}
-*/
