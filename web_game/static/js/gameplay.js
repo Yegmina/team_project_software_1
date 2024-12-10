@@ -480,8 +480,18 @@ async function place_markers() {
                 markers.addLayer(marker)
                 map.setView([lat, log])
 
-                //const placeName=document.createElement("h3")
-                //placeName.innerText = airport_info.airports[i]
+                //makes pins clickable
+                const placeName=document.createElement("h3")
+                placeName.innerText = airport_info.airport.name
+
+                const placeIcao = document.createElement('p')
+                placeIcao.innerText = icao
+
+                const article=document.createElement("article")
+
+                article.appendChild(placeName)
+                article.appendChild(placeIcao)
+                marker.bindPopup(article)
             }
             resolve();
         })
