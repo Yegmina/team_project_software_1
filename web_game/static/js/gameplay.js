@@ -31,7 +31,7 @@ body.removeChild(game_data_holder);
 
 // Utilities
 const timer = ms => new Promise(res => setTimeout(res, ms));
-// 
+//
 
 async function gameInitialize() {
     console.log(`Game Initalize`)
@@ -488,6 +488,7 @@ async function place_markers() {
                         var airport_info = await fetch(`/api/airports/info/${icao}`)
                         airport_info = await airport_info.json()
                         success = airport_info.success;
+                        console.log(success)
                     } catch (err) {
                         console.log(`Fetch airport ${icao} data failed: ${err}`);
                         console.log(`Trying again after ${seconds}.`)
@@ -504,12 +505,30 @@ async function place_markers() {
                 marker._icon.classList.add("huechange");
                 markers.addLayer(marker)
                 map.setView([lat, log])
+
+                //const placeName=document.createElement("h3")
+                //placeName.innerText = airport_info.airports[i]
             }
             resolve();
         })
     })
 }
 
+function recolor_map_pins(isInfected) {
+  // Get all elements with the class 'huechange'
+  let pins = document.getElementsByClassName('huechange');
+
+  // Check if there are any elements
+  if (pins.length === 0) {
+    console.warn("No pins found with the class 'huechange'.");
+    return;
+  }
+
+  // Apply the appropriate filter based on infection status
+  for (let pin of pins) {
+    pin.style.filter = isInfected ? 'hue-rotate(210deg)' : 'hue-rotate(60deg)';
+  }
+}
 
 async function gameLoop() {
     /* 
@@ -523,6 +542,7 @@ async function gameLoop() {
     */
     console.log("Now inside GameLoop");
     await place_markers()
+    recolor_map_pins(true)
     await gameInitialize();
 
     while (true) {
