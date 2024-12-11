@@ -6,26 +6,37 @@ import mysql
 from utils.ai.gemini import GeminiModel
 
 #<editor-fold desc = "MYSQL-cursor optimization">
+
 connection = mysql.connector.connect(
-    user="root",
-    password="root",
-    host="127.0.0.1",
+    user="yehort",
+    password="root123",
+    host="mysql.metropolia.fi",
     port=3306,
-    database="flight_game",
-    autocommit = True,
-    connection_timeout = 0.1,
+    database="yehort",
+    autocommit = True
 )
-
 cursor = connection.cursor()
-def run(s) :
-    cursor.execute(s)
-    try :
+def run(s):
+    global connection, cursor
+    try:
+        cursor.execute(s)
         return cursor.fetchall()
-    except mysql.connector.errors.InterfaceError as e :
+    except mysql.connector.errors.InterfaceError:
+        # Reconnect if connection is lost
+        # Below we can use local db if have troubles with connection, but for now it is same
+        connection = mysql.connector.connect(
+            user="yehort",
+            password="root123",
+            host="mysql.metropolia.fi",
+            port=3306,
+            database="yehort",
+            autocommit=True
+        )
+        cursor = connection.cursor()
+        cursor.execute(s)
+        return cursor.fetchall()
+    except Exception as e:
         return e
-    except Exception as e :
-        return e
-
 
 """Game_creating, saving, retrieving list of games etc"""
 
